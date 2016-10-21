@@ -56,9 +56,10 @@ public final class QueryUtils {
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
+            Log.v(LOG_TAG,"makeHttpRequest");
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem making the HTTP request.", e);
+            Log.v(LOG_TAG, "Problem making the HTTP request.", e);
         }
 
         // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
@@ -76,7 +77,7 @@ public final class QueryUtils {
         try {
             url = new URL(stringUrl);
         } catch (MalformedURLException e) {
-            Log.e(LOG_TAG, "Problem building the URL ", e);
+            Log.v(LOG_TAG, "Problem building the URL ", e);
         }
         return url;
     }
@@ -160,8 +161,9 @@ public final class QueryUtils {
             for (int i = 0; i < movieResultsArray.length(); i++) {
                 JSONObject currentMovie = movieResultsArray.getJSONObject(i);
                 String title = currentMovie.getString("title");
-                Movie day = new Movie("","","",title,"");
+                Movie day = new Movie("","","","",title);
                 movieArrayList.add(day);
+                Log.v(LOG_TAG,movieResultsArray.length() + "" );
             }
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,

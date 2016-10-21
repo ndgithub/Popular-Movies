@@ -24,7 +24,7 @@ public class MovieLoader extends AsyncTaskLoader {
      */
     @Override
     protected void onStartLoading() {
-        super.onStartLoading();
+        forceLoad();
     }
 
     /**
@@ -56,6 +56,9 @@ public class MovieLoader extends AsyncTaskLoader {
 
     @Override
     public ArrayList<Movie> loadInBackground() {
+        if (mUrl == null) {
+            return null;
+        }
         return QueryUtils.fetchMovieData(mUrl);
     }
 }
