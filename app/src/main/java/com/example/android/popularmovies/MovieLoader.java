@@ -56,8 +56,6 @@ public class MovieLoader extends AsyncTaskLoader {
 
     @Override
     public ArrayList<Movie> loadInBackground() {
-
-        // TODO: Fetch earthquak data creates movie objects and put in list.
-        return null;
+        return QueryUtils.fetchMovieData(mUrl);
     }
 }
