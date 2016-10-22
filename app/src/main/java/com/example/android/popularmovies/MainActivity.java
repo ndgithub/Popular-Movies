@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CursorAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,11 +26,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListView listView = (ListView) findViewById(R.id.list_view);
+        GridView gridView = (GridView) findViewById(R.id.list_view);
         movieAdapter = new MovieAdapter(this,new ArrayList<Movie>());
-        listView.setAdapter(movieAdapter);
+        gridView.setAdapter(movieAdapter);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
-        listView.setEmptyView(emptyView);
+        gridView.setEmptyView(emptyView);
         if (isConnectedToInternet()) {
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(0, null, this);
