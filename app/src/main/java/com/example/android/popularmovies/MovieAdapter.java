@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -15,15 +18,19 @@ import java.util.ArrayList;
  */
 
 public class MovieAdapter extends ArrayAdapter {
+    private Context context;
+    private LayoutInflater inflater;
+    private ArrayList objects;
 
-    /**
-     * Constructor
-     *
-     * @param context  The current context.
-     * @param \resource The resource ID for a layout file containing a TextView to use when
-     */
     public MovieAdapter(Context context, ArrayList objects) {
-        super(context,0,objects);
+        super(context,R.layout.list_item,objects);
+        this.context = context;
+        this.objects = objects;
+        inflater = LayoutInflater.from(context);
+        Picasso
+                .with(context)
+                .setIndicatorsEnabled(true);
+
     }
 
     @NonNull
@@ -31,15 +38,14 @@ public class MovieAdapter extends ArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItemView = convertView;
         if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+            listItemView = inflater.inflate(R.layout.list_item, parent, false);
         }
-
-        // Find the earthquake at the given position in the list of earthquakes
         Movie currentMovie = (Movie) getItem(position);
-
-        // Find the TextView with view ID magnitude
-        TextView titleView = (TextView) listItemView.findViewById(R.id.title);
-        titleView.setText(currentMovie.getTitle());
+        ImageView imageView = (ImageView) listItemView.findViewById(R.id.image);
+        String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
+        Picasso.with(context).load(pathToImage).into(imageView);
+        //titleView.setText(currentMovie.getTitle() + basePath + currentMovie.getPosterPath());
         return listItemView;
     }
 }
+//    https://image.tmdb.org/t/p/original/****PATH*****

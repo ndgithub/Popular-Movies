@@ -19,7 +19,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
-    private String LOG_TAG = "MainActivity";
+    private final String LOG_TAG = "MainActivity";
 
     MovieAdapter movieAdapter;
     @Override

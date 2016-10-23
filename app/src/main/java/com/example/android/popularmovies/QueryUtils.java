@@ -161,9 +161,8 @@ public final class QueryUtils {
             for (int i = 0; i < movieResultsArray.length(); i++) {
                 JSONObject currentMovie = movieResultsArray.getJSONObject(i);
                 String title = currentMovie.getString("title");
-                Movie day = new Movie("","","","",title);
-                movieArrayList.add(day);
-                Log.v(LOG_TAG,movieResultsArray.length() + "" );
+                String posterPath = currentMovie.getString("poster_path");
+                movieArrayList.add(new Movie("","","",posterPath,title));
             }
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,
