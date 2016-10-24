@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -19,16 +20,17 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
     private final String LOG_TAG = "MainActivity";
 
     MovieAdapter movieAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         GridView gridView = (GridView) findViewById(R.id.list_view);
-        movieAdapter = new MovieAdapter(this,new ArrayList<Movie>());
+        movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
         gridView.setAdapter(movieAdapter);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
@@ -41,7 +43,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Movie selectedMovie = (Movie) movieAdapter.getItem(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("date", selectedMovie.getDate());
+                bundle.putString("title", selectedMovie.getTitle());
+                bundle.putString("backdrop_path", selectedMovie.getBackdropPath());
+                bundle.putString("overview", selectedMovie.getOverview());
+                bundle.putString("rating", selectedMovie.getRating());
+                bundle.putString("posterPath", selectedMovie.getPosterPath());
+                Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
     }
@@ -49,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         String url = "https://api.themoviedb.org/3/movie/popular?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US";
-        return new MovieLoader(this,url);
+        return new MovieLoader(this, url);
     }
 
 
@@ -79,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Log.v(LOG_TAG, "Connected to internet");
             return true;
 
-        }
-        else {
+        } else {
             return false;
         }
     }

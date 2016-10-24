@@ -37,7 +37,9 @@ import java.util.ArrayList;
  */
 public final class QueryUtils {
 
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     /**
@@ -47,6 +49,7 @@ public final class QueryUtils {
      */
     private QueryUtils() {
     }
+
     public static ArrayList<Movie> fetchMovieData(String requestUrl) {
         // Create URL object
         URL url = createUrl(requestUrl);
@@ -54,7 +57,7 @@ public final class QueryUtils {
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
-            Log.v(LOG_TAG,"makeHttpRequest");
+            Log.v(LOG_TAG, "makeHttpRequest");
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
             Log.v(LOG_TAG, "Problem making the HTTP request.", e);
@@ -140,7 +143,7 @@ public final class QueryUtils {
         if (TextUtils.isEmpty(weatherJSON)) {
             return null;
         }
-        ArrayList<Movie> movieArrayList= new ArrayList<>();
+        ArrayList<Movie> movieArrayList = new ArrayList<>();
         try {
             JSONObject baseJsonResponse = new JSONObject(weatherJSON);
             JSONArray movieResultsArray = baseJsonResponse.getJSONArray("results");
@@ -153,7 +156,7 @@ public final class QueryUtils {
                 String rating = currentMovie.getString("vote_average");
                 String title = currentMovie.getString("title");
                 String backdropPath = currentMovie.getString("backdrop_path");
-                movieArrayList.add(new Movie(backdropPath,overview,posterPath,title,rating,date));
+                movieArrayList.add(new Movie(backdropPath, overview, posterPath, title, rating, date));
             }
         } catch (JSONException e) {
             //Prevent app from crashing if there is a problem with parsing json.

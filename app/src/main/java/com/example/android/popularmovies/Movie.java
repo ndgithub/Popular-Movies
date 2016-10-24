@@ -13,7 +13,7 @@ public class Movie {
     private String rating;
     private String date;
 
-    public Movie(String backdropPath,String overview, String posterPath, String title,String rating,String date) {
+    public Movie(String backdropPath, String overview, String posterPath, String title, String rating, String date) {
         this.backdropPath = backdropPath;
         this.overview = overview;
         this.posterPath = posterPath;
