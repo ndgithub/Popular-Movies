@@ -2,10 +2,8 @@ package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -13,16 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
     private final String LOG_TAG = "MainActivity";
-
     MovieAdapter movieAdapter;
 
     @Override
@@ -47,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Bundle bundle = new Bundle();
                 bundle.putString("date", selectedMovie.getDate());
                 bundle.putString("title", selectedMovie.getTitle());
-                bundle.putString("backdrop_path", selectedMovie.getBackdropPath());
+                bundle.putString("backdropPath", selectedMovie.getBackdropPath());
                 bundle.putString("overview", selectedMovie.getOverview());
                 bundle.putString("rating", selectedMovie.getRating());
                 bundle.putString("posterPath", selectedMovie.getPosterPath());
@@ -90,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (networkInfo != null && networkInfo.isConnected()) {
             Log.v(LOG_TAG, "Connected to internet");
             return true;
-
         } else {
             return false;
         }
