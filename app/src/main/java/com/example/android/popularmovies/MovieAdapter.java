@@ -21,6 +21,7 @@ public class MovieAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList objects;
+    private final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/w500";
 
     public MovieAdapter(Context context, ArrayList objects) {
         super(context,R.layout.list_item,objects);
@@ -29,8 +30,7 @@ public class MovieAdapter extends ArrayAdapter {
         inflater = LayoutInflater.from(context);
         Picasso
                 .with(context)
-                .setIndicatorsEnabled(true);
-
+                .setIndicatorsEnabled(false);
     }
 
     @NonNull
@@ -42,10 +42,8 @@ public class MovieAdapter extends ArrayAdapter {
         }
         Movie currentMovie = (Movie) getItem(position);
         ImageView imageView = (ImageView) listItemView.findViewById(R.id.image);
-        String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
-        Picasso.with(context).load(pathToImage).into(imageView);
-        //titleView.setText(currentMovie.getTitle() + basePath + currentMovie.getPosterPath());
+        String pathToImage = BASE_POSTER_URL + currentMovie.getPosterPath();
+        Picasso.with(context).load(pathToImage).resize(500,0).into(imageView);
         return listItemView;
     }
 }
-//    https://image.tmdb.org/t/p/original/****PATH*****

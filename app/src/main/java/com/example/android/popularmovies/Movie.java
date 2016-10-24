@@ -8,24 +8,22 @@ public class Movie {
 
     private String posterPath;
     private String overview;
-    private String id;
     private String title;
     private String backdropPath;
+    private String rating;
+    private String date;
 
-    public Movie(String backdropPath, String id, String overview, String posterPath, String title) {
+    public Movie(String backdropPath,String overview, String posterPath, String title,String rating,String date) {
         this.backdropPath = backdropPath;
-        this.id = id;
         this.overview = overview;
         this.posterPath = posterPath;
         this.title = title;
+        this.rating = rating;
+        this.date = date;
     }
 
     public String getBackdropPath() {
         return backdropPath;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getOverview() {
@@ -38,5 +36,13 @@ public class Movie {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public String getDate() {
+        return date;
     }
 }

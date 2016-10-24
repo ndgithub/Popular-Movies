@@ -47,8 +47,6 @@ public final class QueryUtils {
      */
     private QueryUtils() {
     }
-
-
     public static ArrayList<Movie> fetchMovieData(String requestUrl) {
         // Create URL object
         URL url = createUrl(requestUrl);
@@ -87,12 +85,9 @@ public final class QueryUtils {
      */
     private static String makeHttpRequest(URL url) throws IOException {
         String jsonResponse = "";
-
-        // If the URL is null, then return early.
         if (url == null) {
             return jsonResponse;
         }
-
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
         try {
@@ -107,7 +102,6 @@ public final class QueryUtils {
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             } else {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
@@ -127,10 +121,7 @@ public final class QueryUtils {
         return jsonResponse;
     }
 
-    /**
-     * Convert the {@link InputStream} into a String which contains the
-     * whole JSON response from the server.
-     */
+
     private static String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -145,10 +136,6 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    /**
-     * Return a list of {@link //Earthquake} objects that has been built up from
-     * parsing the given JSON response.
-     */
     private static ArrayList<Movie> extractFeaturesFromJson(String weatherJSON) {
         if (TextUtils.isEmpty(weatherJSON)) {
             return null;
@@ -157,21 +144,21 @@ public final class QueryUtils {
         try {
             JSONObject baseJsonResponse = new JSONObject(weatherJSON);
             JSONArray movieResultsArray = baseJsonResponse.getJSONArray("results");
-
             for (int i = 0; i < movieResultsArray.length(); i++) {
                 JSONObject currentMovie = movieResultsArray.getJSONObject(i);
-                String title = currentMovie.getString("title");
+                String id = currentMovie.getString("id");
                 String posterPath = currentMovie.getString("poster_path");
-                movieArrayList.add(new Movie("","","",posterPath,title));
+                String overview = currentMovie.getString("overview");
+                String date = currentMovie.getString("release_date");
+                String rating = currentMovie.getString("vote_average");
+                String title = currentMovie.getString("title");
+                String backdropPath = currentMovie.getString("backdrop_path");
+                movieArrayList.add(new Movie(backdropPath,overview,posterPath,title,rating,date));
             }
         } catch (JSONException e) {
-            // If an error is thrown when executing any of the above statements in the "try" block,
-            // catch the exception here, so the app doesn't crash. Print a log message
-            // with the message from the exception.
+            //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
-
         return movieArrayList;
     }
-
 }
