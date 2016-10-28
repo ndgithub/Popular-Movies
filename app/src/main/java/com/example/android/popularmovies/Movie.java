@@ -5,7 +5,7 @@ package com.example.android.popularmovies;
  */
 
 public class Movie {
-
+    private String id;
     private String posterPath;
     private String overview;
     private String title;
@@ -13,13 +13,18 @@ public class Movie {
     private String rating;
     private String date;
 
-    public Movie(String backdropPath, String overview, String posterPath, String title, String rating, String date) {
+    public Movie(String id,String backdropPath, String overview, String posterPath, String title, String rating, String date) {
+        this.id = id;
         this.backdropPath = backdropPath;
         this.overview = overview;
         this.posterPath = posterPath;
         this.title = title;
         this.rating = rating;
         this.date = date;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getBackdropPath() {

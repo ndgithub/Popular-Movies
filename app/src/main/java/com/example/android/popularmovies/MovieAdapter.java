@@ -1,26 +1,13 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Point;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 /**
@@ -49,9 +36,10 @@ public class MovieAdapter extends ArrayAdapter {
         }
         Movie currentMovie = (Movie) getItem(position);
         PosterImageView imageView = (PosterImageView) listItemView.findViewById(R.id.image);
-
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
+        TextView captionBar = (TextView) listItemView.findViewById(R.id.movie_titulo);
+        captionBar.setText("Movie Title \n Rating:5.5");
         return listItemView;
 
     }

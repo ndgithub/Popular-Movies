@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie selectedMovie = (Movie) movieAdapter.getItem(position);
                 Bundle bundle = new Bundle();
+                bundle.putString("id",selectedMovie.getId());
                 bundle.putString("date", selectedMovie.getDate());
                 bundle.putString("title", selectedMovie.getTitle());
                 bundle.putString("backdropPath", selectedMovie.getBackdropPath());

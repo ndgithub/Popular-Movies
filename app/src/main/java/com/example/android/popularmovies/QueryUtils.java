@@ -58,10 +58,22 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.v(LOG_TAG, "Problem making the HTTP request.", e);
         }
-        ArrayList<Movie> movieArrayList = extractFeaturesFromJson(jsonResponse);
+        ArrayList<Movie> movieArrayList = extractMovieFeaturesFromJson(jsonResponse);
         return movieArrayList;
     }
 
+    public static ArrayList<CastMember> fetchCastData(String requestUrl) {
+        URL url = createUrl(requestUrl);
+        String jsonResponse = null;
+        try {
+            Log.v(LOG_TAG, "makeHttpRequest");
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            Log.v(LOG_TAG, "Problem making the HTTP request.", e);
+        }
+        ArrayList<CastMember> castArrayList = extractCastFromJson(jsonResponse);
+        return castArrayList;
+    }
     /**
      * Returns new URL object from the given string URL.
      */
@@ -98,7 +110,7 @@ public final class QueryUtils {
                 Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the weather JSON results.", e);
+            Log.e(LOG_TAG, "Problem retrieving the JSON results.", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -125,7 +137,7 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static ArrayList<Movie> extractFeaturesFromJson(String weatherJSON) {
+    private static ArrayList<Movie> extractMovieFeaturesFromJson(String weatherJSON) {
         if (TextUtils.isEmpty(weatherJSON)) {
             return null;
         }
@@ -142,12 +154,33 @@ public final class QueryUtils {
                 String rating = currentMovie.getString("vote_average");
                 String title = currentMovie.getString("title");
                 String backdropPath = currentMovie.getString("backdrop_path");
-                movieArrayList.add(new Movie(backdropPath, overview, posterPath, title, rating, date));
+                movieArrayList.add(new Movie(id,backdropPath, overview, posterPath, title, rating, date));
             }
         } catch (JSONException e) {
             //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return movieArrayList;
+    }
+    private static ArrayList<CastMember> extractCastFromJson(String castJSON) {
+        if (TextUtils.isEmpty(castJSON)) {
+            return null;
+        }
+        ArrayList<CastMember> castArrayList = new ArrayList<>();
+        try {
+            JSONObject baseJsonResponse = new JSONObject(castJSON);
+            JSONArray castResultsArray = baseJsonResponse.getJSONArray("cast");
+            for (int i = 0; i < 6; i++) {
+                JSONObject currentCastMember = castResultsArray.getJSONObject(i);
+                String characterName = currentCastMember.getString("character");
+                String actorName = currentCastMember.getString("name");
+                String picPath = currentCastMember.getString("profile_path");
+                castArrayList.add(new CastMember(actorName,characterName,picPath));
+            }
+        } catch (JSONException e) {
+            //Prevent app from crashing if there is a problem with parsing json.
+            Log.e("QueryUtils", "Problem parsing the JSON results", e);
+        }
+        return castArrayList;
     }
 }
