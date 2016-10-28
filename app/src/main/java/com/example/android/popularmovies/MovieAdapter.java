@@ -1,11 +1,21 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Point;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,19 +31,16 @@ public class MovieAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList objects;
-    private final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/w500";
 
     public MovieAdapter(Context context, ArrayList objects) {
         super(context,R.layout.list_item,objects);
         this.context = context;
         this.objects = objects;
         inflater = LayoutInflater.from(context);
-        Picasso
-                .with(context)
-                .setIndicatorsEnabled(false);
+        Picasso.with(context).setIndicatorsEnabled(false);
     }
 
-    @NonNull
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View listItemView = convertView;
@@ -41,9 +48,11 @@ public class MovieAdapter extends ArrayAdapter {
             listItemView = inflater.inflate(R.layout.list_item, parent, false);
         }
         Movie currentMovie = (Movie) getItem(position);
-        ImageView imageView = (ImageView) listItemView.findViewById(R.id.image);
-        String pathToImage = BASE_POSTER_URL + currentMovie.getPosterPath();
-        Picasso.with(context).load(pathToImage).resize(500,0).into(imageView);
+        PosterImageView imageView = (PosterImageView) listItemView.findViewById(R.id.image);
+
+        String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
+        Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
         return listItemView;
+
     }
 }

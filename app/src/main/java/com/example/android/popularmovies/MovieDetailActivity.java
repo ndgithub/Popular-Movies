@@ -36,14 +36,15 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView ratingView = (TextView) this.findViewById(R.id.rating);
         TextView overviewView = (TextView) this.findViewById(R.id.overview);
 
-        final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w500";
-        Picasso.with(this).load(BASE_IMAGE_URL + backdropPath).resize(500,0).into(backdropView);
-        Picasso.with(this).load(BASE_IMAGE_URL + posterPath).resize(500,0).into(posterView);
+        final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
+        Picasso.with(this).load(BASE_IMAGE_URL + backdropPath).fit().centerCrop().into(backdropView);
+        Picasso.with(this).load(BASE_IMAGE_URL + posterPath).resize(400,0).into(posterView);
         titleView.setText(title);
         dateView.setText(date);
         titleView.setText(title);
         ratingView.setText(rating);
         overviewView.setText(overview);
+        this.setTitle(title);
     }
 }
 

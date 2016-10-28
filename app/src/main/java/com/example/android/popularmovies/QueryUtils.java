@@ -47,14 +47,10 @@ public final class QueryUtils {
      * This class is only meant to hold static variables and methods, which can be accessed
      * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
      */
-    private QueryUtils() {
-    }
+    private QueryUtils() {}
 
     public static ArrayList<Movie> fetchMovieData(String requestUrl) {
-        // Create URL object
         URL url = createUrl(requestUrl);
-
-        // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
         try {
             Log.v(LOG_TAG, "makeHttpRequest");
@@ -62,11 +58,7 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.v(LOG_TAG, "Problem making the HTTP request.", e);
         }
-
-        // Extract relevant fields from the JSON response and create a list of {@link Earthquake}s
         ArrayList<Movie> movieArrayList = extractFeaturesFromJson(jsonResponse);
-
-        // Return the list of {@link Earthquake}s
         return movieArrayList;
     }
 
@@ -99,9 +91,6 @@ public final class QueryUtils {
             urlConnection.setConnectTimeout(15000 /* milliseconds */);
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
-
-            // If the request was successful (response code 200),
-            // then read the input stream and parse the response.
             if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readFromStream(inputStream);
@@ -115,9 +104,6 @@ public final class QueryUtils {
                 urlConnection.disconnect();
             }
             if (inputStream != null) {
-                // Closing the input stream could throw an IOException, which is why
-                // the makeHttpRequest(URL url) method signature specifies than an IOException
-                // could be thrown.
                 inputStream.close();
             }
         }
