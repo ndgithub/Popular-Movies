@@ -29,8 +29,8 @@ public class MovieAdapter extends ArrayAdapter {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View listItemView = convertView;
+    public View getView(int position, View recycled, ViewGroup parent) {
+        View listItemView = recycled;
         if (listItemView == null) {
             listItemView = inflater.inflate(R.layout.list_item, parent, false);
         }
@@ -38,8 +38,8 @@ public class MovieAdapter extends ArrayAdapter {
         PosterImageView imageView = (PosterImageView) listItemView.findViewById(R.id.image);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
-        TextView captionBar = (TextView) listItemView.findViewById(R.id.movie_titulo);
-        captionBar.setText("Movie Title \n Rating:5.5");
+        //TextView captionBar = (TextView) listItemView.findViewById(R.id.movie_titulo);
+        //captionBar.setText(currentMovie.getTitle());
         return listItemView;
 
     }

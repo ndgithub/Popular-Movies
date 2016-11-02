@@ -1,15 +1,31 @@
 package com.example.android.popularmovies;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.w3c.dom.Text;
 
@@ -20,6 +36,8 @@ import java.util.ArrayList;
  */
 
 public class MovieDetailActivity extends AppCompatActivity {
+
+    CastAdapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,8 +68,10 @@ public class MovieDetailActivity extends AppCompatActivity {
         ratingView.setText(rating);
         overviewView.setText(overview);
         this.setTitle(title);
+        GridView listView = (GridView) findViewById(R.id.cast_grid_view);
+        mAdapter = new CastAdapter(this, new ArrayList<CastMember>());
+        listView.setAdapter(mAdapter);
         castAsyncTask mytask = new castAsyncTask();
-        Log.v("asdfasdfa",id);
         mytask.execute(id);
     }
 
@@ -66,11 +86,13 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<CastMember> castList) {
-            for (CastMember actor: castList) {
-                Log.v("asdf",actor.getActorName() + " " + actor.getProfilePicPath());
+            for (CastMember person: castList) {
+                Log.v("*****",person.getActorName());
             }
-        }
+            mAdapter.clear();
+            mAdapter.addAll(castList);
 
+        }
 
     }
 
