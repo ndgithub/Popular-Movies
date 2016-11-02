@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class CastAdapter extends ArrayAdapter<CastMember> {
     public CastAdapter(Context context, ArrayList<CastMember> objects) {
-        super(context,0, objects);
+        super(context, 0, objects);
     }
 
     @NonNull
@@ -43,38 +43,32 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
         CastMember currentActor = getItem(position);
         nameView.setText(currentActor.getActorName());
         charView.setText(currentActor.getCharacterName());
+        ImageView actorPic = (ImageView) listItemView.findViewById(R.id.actor_pic);
 
 
-        /*for (CastMember actor: castList) {
-            ImageView picView = new ImageView(getApplicationContext());
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            float pixPerDp = displayMetrics.density;
-            Log.v("adf",pixPerDp + "");
-            int paddingInpx = Math.round(2*pixPerDp);
-            picView.setPadding(paddingInpx,paddingInpx,paddingInpx,paddingInpx);
-
-            final int sdk = android.os.Build.VERSION.SDK_INT;
-            if(sdk < 16) {
-                picView.setBackgroundDrawable(getDrawable(R.drawable.actor_pic_background_circle));
-            } else {
-                picView.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.actor_pic_background_circle));
-            }
+        final int sdk = android.os.Build.VERSION.SDK_INT;
+        if (sdk < 16) {
+            actorPic.setBackgroundDrawable(getContext().getDrawable(R.drawable.actor_pic_background_circle));
+        } else {
+            actorPic.setBackground(ContextCompat.getDrawable(getContext().getApplicationContext(), R.drawable.actor_pic_background_circle));
+        }
 
 
+        Picasso.with(getContext())
+                .load("https://image.tmdb.org/t/p/w342" + currentActor.getProfilePicPath())
+                .transform(new CircleTransform())
+                .resize(275, 0)
+                .into(actorPic);
 
-            picView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            Picasso.with(getApplicationContext())
-                    .load("https://image.tmdb.org/t/p/w342" + actor.getProfilePicPath())
-                    .transform(new MovieDetailActivity.castAsyncTask.CircleTransform())
-                    .resize(300,0)
-                    .into(picView);
-            scrollView.addView(picView);
-        }*/
         return listItemView;
+
     }
 
-    /*public class CircleTransform implements Transformation {
+
+
+
+
+    public class CircleTransform implements Transformation {
         @Override
         public Bitmap transform(Bitmap source) {
             int size = Math.min(source.getWidth(), source.getHeight());
@@ -104,5 +98,5 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
         public String key() {
             return "circle";
         }
-    }*/
+    }
 }
