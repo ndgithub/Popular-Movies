@@ -119,6 +119,7 @@ public final class QueryUtils {
                 inputStream.close();
             }
         }
+
         return jsonResponse;
     }
 

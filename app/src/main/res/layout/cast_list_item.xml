@@ -9,7 +9,9 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/actor_pic"/>
+        android:id="@+id/actor_pic"
+        android:padding="10dp"
+        android:background="@drawable/actor_pic_background_circle" />
     <TextView
         android:id="@+id/real_name"
         android:layout_width="match_parent"
