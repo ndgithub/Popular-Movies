@@ -57,7 +57,7 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
         Picasso.with(getContext())
                 .load("https://image.tmdb.org/t/p/w342" + currentActor.getProfilePicPath())
                 .transform(new CircleTransform())
-                .resize(275, 0)
+                .resize(200, 0)
                 .into(actorPic);
 
         return listItemView;

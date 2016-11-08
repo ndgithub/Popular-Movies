@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     SharedPreferences sharedPref;
     String sortPref;
     SharedPreferences.Editor prefEditor;
+    LoaderManager loaderManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
         if (isConnectedToInternet()) {
-            LoaderManager loaderManager = getLoaderManager();
+            loaderManager = getLoaderManager();
             loaderManager.initLoader(0, null, this);
         } else {
             emptyView.setText("No Internet");
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         prefEditor.commit();
                         sortPref = sharedPref.getString("sort_by",null);
                         Log.v("**pop"," " + sortPref);
+                        //loaderManager.restartLoader(0,null,call);
 
                     } else if (itemId == R.id.top) {
                         Toast.makeText(getApplicationContext(),"top",Toast.LENGTH_SHORT).show();
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         prefEditor.commit();
                         sortPref = sharedPref.getString("sort_by",null);
                         Log.v("**top"," " + sortPref);
-                        recreate();
+                        //loaderManager.restartLoader(0,null,);
                     }
                     return true;
                 }
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader loader) {
         movieAdapter.clear();
+        onRestart();
     }
 
 

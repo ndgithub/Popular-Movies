@@ -4,28 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:textAlignment="center"
-    >
+    android:textAlignment="center">
+
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/actor_pic"
-        android:padding="10dp"
-        android:background="@drawable/actor_pic_background_circle" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/actor_pic_background_circle"
+        android:padding="2dp" />
+
     <TextView
         android:id="@+id/real_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:maxLines="2"
-        android:textSize="12sp"/>
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/character_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
         android:maxLines="2"
-        android:textSize="12sp"/>
+        android:textAlignment="center"
+        android:textSize="12sp" />
 </LinearLayout>
 
