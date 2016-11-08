@@ -1,12 +1,11 @@
 package com.example.android.popularmovies;
 
-import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,34 +18,39 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = "MainActivity";
     MovieAdapter movieAdapter;
     SharedPreferences sharedPref;
     String sortPref;
     SharedPreferences.Editor prefEditor;
-    LoaderManager loaderManager;
+    GridView gridView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_main);
-        GridView gridView = (GridView) findViewById(R.id.list_view);
-        movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
-        gridView.setAdapter(movieAdapter);
+        gridView = (GridView) findViewById(R.id.list_view);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
+
+        PreferenceManager.setDefaultValues(this,R.xml.pref_general,false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        sortPref = sharedPref.getString("sort_by",null);
+        Log.v("**OnCreateLoader", sortPref + "");
+        String url = "";
+
         if (isConnectedToInternet()) {
-            loaderManager = getLoaderManager();
-            loaderManager.initLoader(0, null, this);
+            MyAsyncTask task = new MyAsyncTask();
+            task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US");
+            Log.v("asdfasdfasdf ***", "asdfasdf");
         } else {
             emptyView.setText("No Internet");
         }
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -75,73 +79,37 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-            View menuItemView = findViewById(R.id.sort_by);
-            final PopupMenu popup = new PopupMenu(this, menuItemView);
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int itemId = item.getItemId();
-                    if (itemId == R.id.pop) {
-                        Toast.makeText(getApplicationContext(),"pop",Toast.LENGTH_SHORT).show();
-                        sharedPref = getPreferences(MODE_PRIVATE);
-                        prefEditor = sharedPref.edit();
-                        prefEditor.putString("sort_by","popular");
-                        prefEditor.commit();
-                        sortPref = sharedPref.getString("sort_by",null);
-                        Log.v("**pop"," " + sortPref);
-                        //loaderManager.restartLoader(0,null,call);
+        View menuItemView = findViewById(R.id.sort_by);
+        final PopupMenu popup = new PopupMenu(this, menuItemView);
 
-                    } else if (itemId == R.id.top) {
-                        Toast.makeText(getApplicationContext(),"top",Toast.LENGTH_SHORT).show();
-                        sharedPref = getPreferences(MODE_PRIVATE);
-                        prefEditor = sharedPref.edit();
-                        prefEditor.putString("sort_by","top_rated");
-                        prefEditor.commit();
-                        sortPref = sharedPref.getString("sort_by",null);
-                        Log.v("**top"," " + sortPref);
-                        //loaderManager.restartLoader(0,null,);
-                    }
-                    return true;
+
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.popup_menu, popup.getMenu());
+
+
+
+        popup.show();
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                prefEditor = sharedPref.edit();
+                if (itemId == R.id.pop) {
+                    prefEditor.putString("sort_by", "popular");
+                } else if (itemId == R.id.top) {
+                    prefEditor.putString("sort_by", "top_rated");
                 }
-            });
-
-            MenuInflater inflater = popup.getMenuInflater();
-            inflater.inflate(R.menu.popup_menu, popup.getMenu());
-            popup.show();
-
+                prefEditor.apply();
+                sortPref = sharedPref.getString("sort_by", null);
+                MyAsyncTask task = new MyAsyncTask();
+                task.execute("https://api.themoviedb.org/3/movie/" + sortPref
+                        + "?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US");
+                item.setChecked(!item.isChecked());
+                return true;
+            }
+        });
         return true;
-    }
-
-
-
-    @Override
-    public Loader onCreateLoader(int id, Bundle args) {
-        sharedPref = getPreferences(MODE_PRIVATE);
-        sortPref = sharedPref.getString("sort_by","popular");
-        Log.v("**OnCreateLoader",sortPref + "");
-        String url = "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US";
-        return new MovieLoader(this, url);
-    }
-
-
-    /**
-     * Called when a previously created loader is being reset, and thus
-     * making its data unavailable.  The application should at this point
-     * remove any references it has to the Loader's data.
-     *
-     * @param loader The Loader that is being reset.
-     */
-    @Override
-    public void onLoaderReset(Loader loader) {
-        movieAdapter.clear();
-        onRestart();
-    }
-
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> list) {
-        movieAdapter.clear();
-        movieAdapter.addAll(list);
     }
 
     private boolean isConnectedToInternet() {
@@ -155,5 +123,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    private class MyAsyncTask extends AsyncTask<String, String, ArrayList<Movie>> {
+        @Override
+        protected ArrayList<Movie> doInBackground(String... String) {
+            Log.v("*** doInBackground", String[0]);
+
+            ArrayList list = QueryUtils.fetchMovieData(String[0]);
+            Log.v("*** doInBackgroud", "asdf");
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> list) {
+            movieAdapter = new MovieAdapter(getApplicationContext(), list);
+            gridView.setAdapter(movieAdapter);
+        }
+    }
 
 }
