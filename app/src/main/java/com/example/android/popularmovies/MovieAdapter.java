@@ -38,8 +38,6 @@ public class MovieAdapter extends ArrayAdapter {
         PosterImageView imageView = (PosterImageView) listItemView.findViewById(R.id.image);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
-        //TextView captionBar = (TextView) listItemView.findViewById(R.id.movie_titulo);
-        //captionBar.setText(currentMovie.getTitle());
         return listItemView;
 
     }

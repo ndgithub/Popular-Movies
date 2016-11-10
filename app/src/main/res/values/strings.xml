@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="release_date">Release Date:</string>
+    <string name="overview">Overview:</string>
+    <string name="top_billed_cast">Top Billed Cast</string>
+    <string name="cast_unavailable">Cast Not Available</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="top_rated">Top Rated</string>
 </resources>

@@ -1,9 +1,5 @@
 package com.example.android.popularmovies;
 
-/**
- * Created by Nicky on 10/27/16.
- */
-
 public class CastMember {
     private String actorName;
     private String characterName;

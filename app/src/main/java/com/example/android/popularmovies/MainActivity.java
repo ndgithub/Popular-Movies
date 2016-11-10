@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private final String LOG_TAG = "MainActivity";
     MovieAdapter movieAdapter;
     SharedPreferences sharedPref;
     String sortPref;
@@ -36,19 +34,15 @@ public class MainActivity extends AppCompatActivity {
         gridView = (GridView) findViewById(R.id.list_view);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
-
-        PreferenceManager.setDefaultValues(this,R.xml.pref_general,false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        sortPref = sharedPref.getString("sort_by",null);
-        Log.v("**OnCreateLoader", sortPref + "");
-        String url = "";
+        sortPref = sharedPref.getString("sort_by", null);
 
         if (isConnectedToInternet()) {
             MyAsyncTask task = new MyAsyncTask();
-            task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US");
-            Log.v("asdfasdfasdf ***", "asdfasdf");
+            task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
         } else {
-            emptyView.setText("No Internet");
+            emptyView.setText(getString(R.string.no_internet));
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -81,15 +74,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         View menuItemView = findViewById(R.id.sort_by);
         final PopupMenu popup = new PopupMenu(this, menuItemView);
-
-
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
-
-
-
+        sortPref = sharedPref.getString("sort_by", null);
+        if (sortPref.equals("popular")) {
+            popup.getMenu().findItem(R.id.pop).setChecked(true);
+        } else {
+            popup.getMenu().findItem(R.id.top).setChecked(true);
+        }
         popup.show();
-
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -104,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 sortPref = sharedPref.getString("sort_by", null);
                 MyAsyncTask task = new MyAsyncTask();
                 task.execute("https://api.themoviedb.org/3/movie/" + sortPref
-                        + "?api_key=d962b00501dc49c8dfd38339a7daa32a&language=en-US");
-                item.setChecked(!item.isChecked());
+                        + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
                 return true;
             }
         });
@@ -115,21 +107,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean isConnectedToInternet() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            Log.v(LOG_TAG, "Connected to internet");
-            return true;
-        } else {
-            return false;
-        }
+        return (networkInfo != null && networkInfo.isConnected());
     }
 
     private class MyAsyncTask extends AsyncTask<String, String, ArrayList<Movie>> {
         @Override
         protected ArrayList<Movie> doInBackground(String... String) {
-            Log.v("*** doInBackground", String[0]);
-
             ArrayList list = QueryUtils.fetchMovieData(String[0]);
-            Log.v("*** doInBackgroud", "asdf");
             return list;
         }
 
@@ -139,5 +123,4 @@ public class MainActivity extends AppCompatActivity {
             gridView.setAdapter(movieAdapter);
         }
     }
-
 }

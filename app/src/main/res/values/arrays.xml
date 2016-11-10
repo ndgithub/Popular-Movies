@@ -2,8 +2,8 @@
 <resources>
 
     <string-array name="sort_by_options">
-        <item>"Most Popular"</item>
-        <item>"Top Rated"</item>
+        <item>@string/most_popular</item>
+        <item>@string/top_rated</item>
     </string-array>
 
     <string-array name="sort_by_values">

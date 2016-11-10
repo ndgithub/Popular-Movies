@@ -4,12 +4,10 @@
         <item
             android:id="@+id/pop"
             android:title="Most Popular"
-            android:checkable="true"
             />
         <item
             android:id="@+id/top"
             android:title="Top Rated"
-            android:checkable="true"
             />
     </group>
 </menu>

@@ -4,10 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-/**
- * Created by Nicky on 10/27/16.
- */
-
 public class PosterImageView extends ImageView {
     public PosterImageView(Context context) {
         super(context);

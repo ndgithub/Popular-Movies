@@ -150,7 +150,6 @@ public final class QueryUtils {
                 movieArrayList.add(new Movie(id,backdropPath, overview, posterPath, title, rating, date));
             }
         } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return movieArrayList;

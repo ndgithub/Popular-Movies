@@ -82,7 +82,7 @@
                             android:id="@+id/date"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Release Date: " />
+                            android:text="@string/release_date" />
 
 
                     </LinearLayout>
@@ -108,7 +108,7 @@
                         android:id="@+id/overview_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Overview"
+                        android:text="@string/overview"
                         android:textColor="#333333"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -139,7 +139,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Top Billed Cast"
+                        android:text="@string/top_billed_cast"
                         android:textColor="#333333"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -158,7 +158,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="8dp"
-                        android:text="Cast Not Available"
+                        android:text="@string/cast_unavailable"
                         android:textColor="#333333"
                         android:textSize="16sp" />
                 </LinearLayout>
