@@ -18,7 +18,6 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linear_layout_details"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
             android:layout_marginTop="33dp"
             android:divider="@drawable/shapes"
@@ -34,30 +33,37 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <ImageView
+                    <com.example.android.popularmovies.PosterImageView
                         android:id="@+id/poster"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-
+                        android:layout_weight="2"
                         />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingLeft="16dp">
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_weight="3">
 
                         <TextView
                             android:id="@+id/title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="8dp"
-                            android:paddingTop="8dp"
+                            android:paddingBottom="4dp"
+                            android:paddingTop="4dp"
                             android:textSize="24sp"
                             android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/release_date" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -78,11 +84,7 @@
                                 android:textSize="16dp" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/date"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="@string/release_date" />
+
 
 
                     </LinearLayout>

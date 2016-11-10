@@ -35,7 +35,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         String id = bundle.getString("id");
 
         ImageView backdropView = (ImageView) this.findViewById(R.id.backdrop);
-        ImageView posterView = (ImageView) this.findViewById(R.id.poster);
+        PosterImageView posterView = (PosterImageView) this.findViewById(R.id.poster);
         TextView titleView = (TextView) this.findViewById(R.id.title);
         TextView dateView = (TextView) this.findViewById(R.id.date);
         TextView ratingView = (TextView) this.findViewById(R.id.rating);
@@ -43,7 +43,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
         Picasso.with(this).load(BASE_IMAGE_URL + backdropPath).fit().centerCrop().into(backdropView);
-        Picasso.with(this).load(BASE_IMAGE_URL + posterPath).resize(400,0).into(posterView);
+        Picasso.with(this).load(BASE_IMAGE_URL + posterPath).fit().centerInside().into(posterView);
         titleView.setText(title);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
