@@ -39,6 +39,5 @@ public class MovieAdapter extends ArrayAdapter {
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
         return listItemView;
-
     }
 }

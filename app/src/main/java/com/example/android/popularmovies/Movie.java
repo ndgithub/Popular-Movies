@@ -23,9 +23,7 @@ public class Movie {
         this.date = date;
     }
 
-    public String getId() {
-        return id;
-    }
+    public String getId() {return id;}
 
     public String getBackdropPath() {
         return backdropPath;

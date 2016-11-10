@@ -17,15 +17,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    MovieAdapter movieAdapter;
-    SharedPreferences sharedPref;
-    String sortPref;
-    SharedPreferences.Editor prefEditor;
-    GridView gridView;
+    private MovieAdapter movieAdapter;
+    private SharedPreferences sharedPref;
+    private String sortPref;
+    private GridView gridView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +37,11 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
-
         if (isConnectedToInternet()) {
             MyAsyncTask task = new MyAsyncTask();
             task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
         } else {
-            emptyView.setText(getString(R.string.no_internet));
+            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int itemId = item.getItemId();
+                SharedPreferences.Editor prefEditor;
                 prefEditor = sharedPref.edit();
                 if (itemId == R.id.pop) {
                     prefEditor.putString("sort_by", "popular");
