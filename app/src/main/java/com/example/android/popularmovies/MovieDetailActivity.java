@@ -15,11 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-
-/**
- * Created by Nicky on 10/23/16.
- */
 
 public class MovieDetailActivity extends AppCompatActivity {
 
@@ -28,6 +23,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_movie_details);
         Bundle bundle = this.getIntent().getExtras();
         String backdropPath = bundle.getString("backdropPath");
@@ -72,6 +68,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         GridView listView = (GridView) findViewById(R.id.cast_grid_view);
         mAdapter = new CastAdapter(this, new ArrayList<CastMember>());
         listView.setAdapter(mAdapter);
+        TextView castEmptyView = (TextView) findViewById(R.id.cast_empyt_view);
+        listView.setEmptyView(castEmptyView);
         castAsyncTask mytask = new castAsyncTask();
         mytask.execute(id);
     }
@@ -80,8 +78,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected ArrayList<CastMember> doInBackground(String... movieID) {
-            String castURL = "http://api.themoviedb.org/3/movie/" + movieID[0] + "/casts?api_key=d962b00501dc49c8dfd38339a7daa32a";
-            Log.v("adsf", castURL);
+            String castURL = "http://api.themoviedb.org/3/movie/" + movieID[0] + "/casts?api_key=" + QueryUtils.API_KEY;
             return QueryUtils.fetchCastData(castURL);
         }
 

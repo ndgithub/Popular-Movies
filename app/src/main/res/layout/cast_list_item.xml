@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:maxLines="2"
         android:textAlignment="center"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        />
 </LinearLayout>
 

@@ -36,17 +36,9 @@ import java.util.ArrayList;
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
 public final class QueryUtils {
-
-    /**
-     * Tag for the log messages
-     */
+    public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    /**
-     * Create a private constructor because no one should ever create a {@link QueryUtils} object.
-     * This class is only meant to hold static variables and methods, which can be accessed
-     * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
-     */
     private QueryUtils() {}
 
     public static ArrayList<Movie> fetchMovieData(String requestUrl) {
