@@ -4,6 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+/*
+Code for this view class was taken from the following StackOverflow QnA:
+http://stackoverflow.com/questions/16506275/imageview-be-a-square-with-dynamic-width
+Answer provided by user a.bertucci http://stackoverflow.com/users/302645/a-bertucciq
+*/
+
 public class PosterImageView extends ImageView {
     public PosterImageView(Context context) {
         super(context);
@@ -23,4 +29,5 @@ public class PosterImageView extends ImageView {
         int newHeight = (int) Math.round(getMeasuredWidth() * 1.5);
         setMeasuredDimension(getMeasuredWidth(),newHeight);
     }
+
 }
