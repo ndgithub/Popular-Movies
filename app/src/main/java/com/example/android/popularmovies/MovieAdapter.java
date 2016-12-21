@@ -16,28 +16,37 @@ import java.util.ArrayList;
 
 public class MovieAdapter extends ArrayAdapter {
     private Context context;
-    private LayoutInflater inflater;
+    private LayoutInflater mInflater;
     private ArrayList objects;
 
     public MovieAdapter(Context context, ArrayList objects) {
         super(context,R.layout.list_item,objects);
         this.context = context;
         this.objects = objects;
-        inflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
         Picasso.with(context).setIndicatorsEnabled(false);
     }
 
+    static class ViewHolder {
+        private PosterImageView poster;
+
+
+    }
 
     @Override
     public View getView(int position, View recycled, ViewGroup parent) {
+        ViewHolder holder = new ViewHolder();
         View listItemView = recycled;
         if (listItemView == null) {
-            listItemView = inflater.inflate(R.layout.list_item, parent, false);
+            listItemView = mInflater.inflate(R.layout.list_item, parent, false);
+            holder.poster = (PosterImageView) listItemView.findViewById(R.id.image);
+            listItemView.setTag(holder);
+        } else {
+            holder = (ViewHolder) listItemView.getTag();
         }
         Movie currentMovie = (Movie) getItem(position);
-        PosterImageView imageView = (PosterImageView) listItemView.findViewById(R.id.image);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
-        Picasso.with(context).load(pathToImage).fit().centerCrop().into(imageView);
+        Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
         return listItemView;
     }
 }

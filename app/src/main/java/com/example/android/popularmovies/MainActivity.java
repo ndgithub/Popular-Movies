@@ -109,16 +109,17 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
-
+//TODO: don't use AsyncTask, use Volley for all network requests.
     private class MyAsyncTask extends AsyncTask<String, String, ArrayList<Movie>> {
         @Override
         protected ArrayList<Movie> doInBackground(String... String) {
-            ArrayList list = QueryUtils.fetchMovieData(String[0]);
-            return list;
+             return QueryUtils.fetchMovieData(String[0]);
+
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> list) {
+            //TODO: Check if list is empty. ***This is required*****
             movieAdapter = new MovieAdapter(getApplicationContext(), list);
             gridView.setAdapter(movieAdapter);
         }

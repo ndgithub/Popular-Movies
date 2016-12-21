@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
 public final class QueryUtils {
-    public static final String API_KEY = "";
+    public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
     private QueryUtils() {}
