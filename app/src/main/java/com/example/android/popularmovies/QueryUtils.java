@@ -15,6 +15,9 @@
  */
 package com.example.android.popularmovies;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,6 +35,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import static java.security.AccessController.getContext;
+
 /**
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
@@ -41,6 +46,11 @@ public final class QueryUtils {
 
     private QueryUtils() {}
 
+    public static boolean isConnectedToInternet(Context c) {
+        ConnectivityManager connMgr = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
     public static ArrayList<Movie> fetchMovieData(String requestUrl) {
         URL url = createUrl(requestUrl);
         String jsonResponse = null;

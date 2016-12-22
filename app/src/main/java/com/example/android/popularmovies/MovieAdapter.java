@@ -29,8 +29,6 @@ public class MovieAdapter extends ArrayAdapter {
 
     static class ViewHolder {
         private PosterImageView poster;
-
-
     }
 
     @Override

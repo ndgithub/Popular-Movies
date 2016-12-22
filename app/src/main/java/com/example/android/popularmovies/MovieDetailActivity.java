@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -84,8 +85,13 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<CastMember> castList) {
-            mAdapter.clear();
-            mAdapter.addAll(castList);
+            if (castList != null) {
+                mAdapter.clear();
+                mAdapter.addAll(castList);
+            } else {
+                Toast.makeText(getApplicationContext(),"No Internet Connection", Toast.LENGTH_SHORT);
+            }
+
         }
     }
 }

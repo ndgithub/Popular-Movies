@@ -27,30 +27,43 @@ import java.util.ArrayList;
  */
 
 public class CastAdapter extends ArrayAdapter<CastMember> {
+
+    private LayoutInflater mInflater;
+
     public CastAdapter(Context context, ArrayList<CastMember> objects) {
         super(context, 0, objects);
+        mInflater = LayoutInflater.from(context);
+    }
+
+    static class ViewHolder {
+        private TextView nameHolder;
+        private TextView charNameHolder;
+        private ImageView actorPicHolder;
     }
 
     @NonNull
     @Override
     public View getView(int position, View recycled, ViewGroup parent) {
         View listItemView = recycled;
+        ViewHolder holder = new ViewHolder();
         if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.cast_list_item, parent, false);
+            listItemView = mInflater.inflate(R.layout.cast_list_item, parent, false);
+            holder.nameHolder = (TextView) listItemView.findViewById(R.id.real_name);
+            holder.charNameHolder = (TextView) listItemView.findViewById(R.id.character_name);
+            holder.actorPicHolder = (ImageView) listItemView.findViewById(R.id.actor_pic);
+            listItemView.setTag(holder);
+        } else {
+            holder = (ViewHolder) listItemView.getTag();
         }
-        TextView nameView = (TextView) listItemView.findViewById(R.id.real_name);
-        TextView charView = (TextView) listItemView.findViewById(R.id.character_name);
         CastMember currentActor = getItem(position);
-        nameView.setText(currentActor.getActorName());
-        charView.setText(currentActor.getCharacterName());
-        ImageView actorPic = (ImageView) listItemView.findViewById(R.id.actor_pic);
-
+        holder.nameHolder.setText(currentActor.getActorName());
+        holder.charNameHolder.setText(currentActor.getCharacterName());
 
         final int sdk = android.os.Build.VERSION.SDK_INT;
-        if (sdk < 16) {
-            actorPic.setBackgroundDrawable(getContext().getDrawable(R.drawable.actor_pic_background_circle));
+        if (sdk > 16) {
+            holder.actorPicHolder.setBackgroundDrawable(getContext().getDrawable(R.drawable.actor_pic_background_circle));
         } else {
-            actorPic.setBackground(ContextCompat.getDrawable(getContext().getApplicationContext(), R.drawable.actor_pic_background_circle));
+            holder.actorPicHolder.setBackground(ContextCompat.getDrawable(getContext().getApplicationContext(), R.drawable.actor_pic_background_circle));
         }
 
 
@@ -58,7 +71,7 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
                 .load("https://image.tmdb.org/t/p/w342" + currentActor.getProfilePicPath())
                 .transform(new CircleTransform())
                 .resize(200, 0)
-                .into(actorPic);
+                .into(holder.actorPicHolder);
 
         return listItemView;
 

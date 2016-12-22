@@ -1,10 +1,7 @@
 package com.example.android.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -37,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
-        if (isConnectedToInternet()) {
+        if (QueryUtils.isConnectedToInternet(this)) {
             MyAsyncTask task = new MyAsyncTask();
             task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
         } else {
-            Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,24 +101,23 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isConnectedToInternet() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
-    }
 //TODO: don't use AsyncTask, use Volley for all network requests.
     private class MyAsyncTask extends AsyncTask<String, String, ArrayList<Movie>> {
         @Override
         protected ArrayList<Movie> doInBackground(String... String) {
              return QueryUtils.fetchMovieData(String[0]);
-
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> list) {
-            //TODO: Check if list is empty. ***This is required*****
-            movieAdapter = new MovieAdapter(getApplicationContext(), list);
-            gridView.setAdapter(movieAdapter);
+            if (list != null ) {
+                movieAdapter = new MovieAdapter(getApplicationContext(), list);
+                gridView.setAdapter(movieAdapter);
+            }
+            if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 }
