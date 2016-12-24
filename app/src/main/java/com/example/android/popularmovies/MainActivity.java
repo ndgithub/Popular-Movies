@@ -46,44 +46,10 @@ public class MainActivity extends AppCompatActivity {
         sortPref = sharedPref.getString("sort_by", null);
         requestQueue = Volley.newRequestQueue(this);
         if (QueryUtils.isConnectedToInternet(this)) {
-
-//************************************************************************************
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET,
-                            "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
-                                    QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
-
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
-                            if (list != null ) {
-                                movieAdapter = new MovieAdapter(getApplicationContext(), list);
-                                gridView.setAdapter(movieAdapter);
-                            }
-                            if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                                Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // TODO Auto-generated method stub
-
-                        }
-                    });
-
-            requestQueue.add(jsObjRequest);
-
-//******************************************************************************************
-
-           // MyAsyncTask task = new MyAsyncTask();
-            //task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
+           getMovieListAndUpdateUI();
         } else {
             Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
-
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -135,37 +101,42 @@ public class MainActivity extends AppCompatActivity {
                 }
                 prefEditor.apply();
                 sortPref = sharedPref.getString("sort_by", null);
-                JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                        (Request.Method.GET,
-                                "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
-                                        QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
-
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
-                                if (list != null ) {
-                                    movieAdapter = new MovieAdapter(getApplicationContext(), list);
-                                    gridView.setAdapter(movieAdapter);
-                                }
-                                if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                                    Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        }, new Response.ErrorListener() {
-
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                // TODO Auto-generated method stub
-
-                            }
-                        });
-
-                requestQueue.add(jsObjRequest);
+                getMovieListAndUpdateUI();
                 return true;
             }
         });
         return true;
+    }
+
+    private void getMovieListAndUpdateUI() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET,
+                        "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
+                                QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
+                        if (list != null ) {
+                            movieAdapter = new MovieAdapter(getApplicationContext(), list);
+                            gridView.setAdapter(movieAdapter);
+                        }
+                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        requestQueue.add(jsObjRequest);
+
     }
 
 }
