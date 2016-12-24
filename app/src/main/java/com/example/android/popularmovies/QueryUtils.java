@@ -44,25 +44,16 @@ public final class QueryUtils {
     public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    private QueryUtils() {}
+    private QueryUtils() {
+    }
 
     public static boolean isConnectedToInternet(Context c) {
         ConnectivityManager connMgr = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
     }
-    public static ArrayList<Movie> fetchMovieData(String requestUrl) {
-        URL url = createUrl(requestUrl);
-        String jsonResponse = null;
-        try {
-            Log.v(LOG_TAG, "makeHttpRequest");
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            Log.v(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-        ArrayList<Movie> movieArrayList = extractMovieFeaturesFromJson(jsonResponse);
-        return movieArrayList;
-    }
+
+
 
     public static ArrayList<CastMember> fetchCastData(String requestUrl) {
         URL url = createUrl(requestUrl);
@@ -76,6 +67,7 @@ public final class QueryUtils {
         ArrayList<CastMember> castArrayList = extractCastFromJson(jsonResponse);
         return castArrayList;
     }
+
     /**
      * Returns new URL object from the given string URL.
      */
@@ -140,13 +132,10 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static ArrayList<Movie> extractMovieFeaturesFromJson(String weatherJSON) {
-        if (TextUtils.isEmpty(weatherJSON)) {
-            return null;
-        }
+    public static ArrayList<Movie> extractMovieFeaturesFromJson(JSONObject baseJsonResponse) {
+
         ArrayList<Movie> movieArrayList = new ArrayList<>();
         try {
-            JSONObject baseJsonResponse = new JSONObject(weatherJSON);
             JSONArray movieResultsArray = baseJsonResponse.getJSONArray("results");
             for (int i = 0; i < movieResultsArray.length(); i++) {
                 JSONObject currentMovie = movieResultsArray.getJSONObject(i);
@@ -157,13 +146,14 @@ public final class QueryUtils {
                 String rating = currentMovie.getString("vote_average");
                 String title = currentMovie.getString("title");
                 String backdropPath = currentMovie.getString("backdrop_path");
-                movieArrayList.add(new Movie(id,backdropPath, overview, posterPath, title, rating, date));
+                movieArrayList.add(new Movie(id, backdropPath, overview, posterPath, title, rating, date));
             }
         } catch (JSONException e) {
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return movieArrayList;
     }
+
     private static ArrayList<CastMember> extractCastFromJson(String castJSON) {
         if (TextUtils.isEmpty(castJSON)) {
             return null;
@@ -177,7 +167,7 @@ public final class QueryUtils {
                 String characterName = currentCastMember.getString("character");
                 String actorName = currentCastMember.getString("name");
                 String picPath = currentCastMember.getString("profile_path");
-                castArrayList.add(new CastMember(actorName,characterName,picPath));
+                castArrayList.add(new CastMember(actorName, characterName, picPath));
             }
         } catch (JSONException e) {
             //Prevent app from crashing if there is a problem with parsing json.

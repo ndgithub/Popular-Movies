@@ -16,6 +16,15 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String sortPref;
     private GridView gridView;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +44,42 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
+        requestQueue = Volley.newRequestQueue(this);
         if (QueryUtils.isConnectedToInternet(this)) {
-            MyAsyncTask task = new MyAsyncTask();
-            task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
+
+//************************************************************************************
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
+                                    QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
+                            if (list != null ) {
+                                movieAdapter = new MovieAdapter(getApplicationContext(), list);
+                                gridView.setAdapter(movieAdapter);
+                            }
+                            if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                                Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO Auto-generated method stub
+
+                        }
+                    });
+
+            requestQueue.add(jsObjRequest);
+
+//******************************************************************************************
+
+           // MyAsyncTask task = new MyAsyncTask();
+            //task.execute("https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
         } else {
             Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
@@ -92,32 +135,37 @@ public class MainActivity extends AppCompatActivity {
                 }
                 prefEditor.apply();
                 sortPref = sharedPref.getString("sort_by", null);
-                MyAsyncTask task = new MyAsyncTask();
-                task.execute("https://api.themoviedb.org/3/movie/" + sortPref
-                        + "?api_key=" + QueryUtils.API_KEY + "&language=en-US");
+                JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                        (Request.Method.GET,
+                                "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
+                                        QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
+                                if (list != null ) {
+                                    movieAdapter = new MovieAdapter(getApplicationContext(), list);
+                                    gridView.setAdapter(movieAdapter);
+                                }
+                                if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                                    Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // TODO Auto-generated method stub
+
+                            }
+                        });
+
+                requestQueue.add(jsObjRequest);
                 return true;
             }
         });
         return true;
     }
 
-//TODO: don't use AsyncTask, use Volley for all network requests.
-    private class MyAsyncTask extends AsyncTask<String, String, ArrayList<Movie>> {
-        @Override
-        protected ArrayList<Movie> doInBackground(String... String) {
-             return QueryUtils.fetchMovieData(String[0]);
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Movie> list) {
-            if (list != null ) {
-                movieAdapter = new MovieAdapter(getApplicationContext(), list);
-                gridView.setAdapter(movieAdapter);
-            }
-            if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
-            }
-
-        }
-    }
 }
