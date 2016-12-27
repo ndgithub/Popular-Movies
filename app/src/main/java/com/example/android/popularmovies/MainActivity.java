@@ -2,7 +2,6 @@ package com.example.android.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String sortPref;
     private GridView gridView;
-    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
-        requestQueue = Volley.newRequestQueue(this);
+
         if (QueryUtils.isConnectedToInternet(this)) {
            getMovieListAndUpdateUI();
         } else {
@@ -109,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieListAndUpdateUI() {
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+        JsonObjectRequest jsMovieRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
                                 QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
@@ -130,12 +128,13 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
 
                     }
                 });
 
-        requestQueue.add(jsObjRequest);
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsMovieRequest);
+
 
     }
 

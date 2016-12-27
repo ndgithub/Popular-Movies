@@ -21,6 +21,9 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +47,7 @@ public final class QueryUtils {
     public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
     private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
+
     private QueryUtils() {
     }
 
@@ -53,20 +57,6 @@ public final class QueryUtils {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-
-
-    public static ArrayList<CastMember> fetchCastData(String requestUrl) {
-        URL url = createUrl(requestUrl);
-        String jsonResponse = null;
-        try {
-            Log.v(LOG_TAG, "makeHttpRequest");
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            Log.v(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-        ArrayList<CastMember> castArrayList = extractCastFromJson(jsonResponse);
-        return castArrayList;
-    }
 
     /**
      * Returns new URL object from the given string URL.
@@ -84,53 +74,6 @@ public final class QueryUtils {
     /**
      * Make an HTTP request to the given URL and return a String as the response.
      */
-    private static String makeHttpRequest(URL url) throws IOException {
-        String jsonResponse = "";
-        if (url == null) {
-            return jsonResponse;
-        }
-        HttpURLConnection urlConnection = null;
-        InputStream inputStream = null;
-        try {
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200) {
-                inputStream = urlConnection.getInputStream();
-                jsonResponse = readFromStream(inputStream);
-            } else {
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the JSON results.", e);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-
-        return jsonResponse;
-    }
-
-
-    private static String readFromStream(InputStream inputStream) throws IOException {
-        StringBuilder output = new StringBuilder();
-        if (inputStream != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            String line = reader.readLine();
-            while (line != null) {
-                output.append(line);
-                line = reader.readLine();
-            }
-        }
-        return output.toString();
-    }
 
     public static ArrayList<Movie> extractMovieFeaturesFromJson(JSONObject baseJsonResponse) {
 
@@ -154,14 +97,11 @@ public final class QueryUtils {
         return movieArrayList;
     }
 
-    private static ArrayList<CastMember> extractCastFromJson(String castJSON) {
-        if (TextUtils.isEmpty(castJSON)) {
-            return null;
-        }
+    public static ArrayList<CastMember> extractCastFromJson(JSONObject castJSON) {
+
         ArrayList<CastMember> castArrayList = new ArrayList<>();
         try {
-            JSONObject baseJsonResponse = new JSONObject(castJSON);
-            JSONArray castResultsArray = baseJsonResponse.getJSONArray("cast");
+            JSONArray castResultsArray = castJSON.getJSONArray("cast");
             for (int i = 0; i < 6; i++) {
                 JSONObject currentCastMember = castResultsArray.getJSONObject(i);
                 String characterName = currentCastMember.getString("character");

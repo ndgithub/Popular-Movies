@@ -1,6 +1,5 @@
 package com.example.android.popularmovies;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,8 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class MovieDetailActivity extends AppCompatActivity {
-
     CastAdapter mAdapter;
+    String movieId;
+    GridView listView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,7 +39,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         String title = bundle.getString("title");
         String overview = bundle.getString("overview");
         String rating = bundle.getString("rating");
-        String id = bundle.getString("id");
+        movieId = bundle.getString("id");
 
         ImageView backdropView = (ImageView) this.findViewById(R.id.backdrop);
         PosterImageView posterView = (PosterImageView) this.findViewById(R.id.poster);
@@ -60,39 +66,50 @@ public class MovieDetailActivity extends AppCompatActivity {
             Log.v("***","You got caught");
         }
 
-
-
         titleView.setText(title);
         ratingView.setText(rating);
         overviewView.setText(overview);
         this.setTitle(title);
-        GridView listView = (GridView) findViewById(R.id.cast_grid_view);
-        mAdapter = new CastAdapter(this, new ArrayList<CastMember>());
-        listView.setAdapter(mAdapter);
+        listView = (GridView) findViewById(R.id.cast_grid_view);
         TextView castEmptyView = (TextView) findViewById(R.id.cast_empyt_view);
         listView.setEmptyView(castEmptyView);
-        castAsyncTask mytask = new castAsyncTask();
-        mytask.execute(id);
+        mAdapter = new CastAdapter(getApplicationContext(), new ArrayList<CastMember>());
+        if (QueryUtils.isConnectedToInternet(this)) {
+            getCastListAndUpdateUI();
+        } else {
+            Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
-    private class castAsyncTask extends AsyncTask<String, String, ArrayList<CastMember>> {
+    private void getCastListAndUpdateUI() {
+        JsonObjectRequest jsCastRequest = new JsonObjectRequest
+                (Request.Method.GET,
+                        "http://api.themoviedb.org/3/movie/" + movieId + "/casts?api_key=" + QueryUtils.API_KEY,
+                        null, new Response.Listener<JSONObject>() {
 
-        @Override
-        protected ArrayList<CastMember> doInBackground(String... movieID) {
-            String castURL = "http://api.themoviedb.org/3/movie/" + movieID[0] + "/casts?api_key=" + QueryUtils.API_KEY;
-            return QueryUtils.fetchCastData(castURL);
-        }
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ArrayList<CastMember> list = QueryUtils.extractCastFromJson(response);
+                        if (list != null ) {
+                            mAdapter.addAll(list);
+                            listView.setAdapter(mAdapter);
+                        }
+                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
 
-        @Override
-        protected void onPostExecute(ArrayList<CastMember> castList) {
-            if (castList != null) {
-                mAdapter.clear();
-                mAdapter.addAll(castList);
-            } else {
-                Toast.makeText(getApplicationContext(),"No Internet Connection", Toast.LENGTH_SHORT);
-            }
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
 
-        }
+                    }
+                });
+
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsCastRequest);
+
     }
 }
 
