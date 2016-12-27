@@ -17,7 +17,7 @@
       </value>
     </option>
     <option name="myNotNulls">
-      <value>
+      <value>git st
         <list size="4">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
