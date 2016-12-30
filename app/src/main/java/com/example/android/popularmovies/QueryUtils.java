@@ -53,85 +53,6 @@ public final class QueryUtils {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-
-
-    public static ArrayList<CastMember> fetchCastData(String requestUrl) {
-        URL url = createUrl(requestUrl);
-        String jsonResponse = null;
-        try {
-            Log.v(LOG_TAG, "makeHttpRequest");
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            Log.v(LOG_TAG, "Problem making the HTTP request.", e);
-        }
-        ArrayList<CastMember> castArrayList = extractCastFromJson(jsonResponse);
-        return castArrayList;
-    }
-
-    /**
-     * Returns new URL object from the given string URL.
-     */
-    private static URL createUrl(String stringUrl) {
-        URL url = null;
-        try {
-            url = new URL(stringUrl);
-        } catch (MalformedURLException e) {
-            Log.v(LOG_TAG, "Problem building the URL ", e);
-        }
-        return url;
-    }
-
-    /**
-     * Make an HTTP request to the given URL and return a String as the response.
-     */
-    private static String makeHttpRequest(URL url) throws IOException {
-        String jsonResponse = "";
-        if (url == null) {
-            return jsonResponse;
-        }
-        HttpURLConnection urlConnection = null;
-        InputStream inputStream = null;
-        try {
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200) {
-                inputStream = urlConnection.getInputStream();
-                jsonResponse = readFromStream(inputStream);
-            } else {
-                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the JSON results.", e);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-
-        return jsonResponse;
-    }
-
-
-    private static String readFromStream(InputStream inputStream) throws IOException {
-        StringBuilder output = new StringBuilder();
-        if (inputStream != null) {
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            String line = reader.readLine();
-            while (line != null) {
-                output.append(line);
-                line = reader.readLine();
-            }
-        }
-        return output.toString();
-    }
-
     public static ArrayList<Movie> extractMovieFeaturesFromJson(JSONObject baseJsonResponse) {
 
         ArrayList<Movie> movieArrayList = new ArrayList<>();
@@ -154,13 +75,10 @@ public final class QueryUtils {
         return movieArrayList;
     }
 
-    private static ArrayList<CastMember> extractCastFromJson(String castJSON) {
-        if (TextUtils.isEmpty(castJSON)) {
-            return null;
-        }
+    public static ArrayList<CastMember> extractCastFromJson(JSONObject baseJsonResponse) {
+
         ArrayList<CastMember> castArrayList = new ArrayList<>();
         try {
-            JSONObject baseJsonResponse = new JSONObject(castJSON);
             JSONArray castResultsArray = baseJsonResponse.getJSONArray("cast");
             for (int i = 0; i < 6; i++) {
                 JSONObject currentCastMember = castResultsArray.getJSONObject(i);
@@ -169,6 +87,10 @@ public final class QueryUtils {
                 String picPath = currentCastMember.getString("profile_path");
                 castArrayList.add(new CastMember(actorName, characterName, picPath));
             }
+            for (int i = 0; i < 6; i++) {
+                Log.v("**********", castArrayList.get(i).getActorName());
+            }
+            Log.v("**", baseJsonResponse.toString());
         } catch (JSONException e) {
             //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);

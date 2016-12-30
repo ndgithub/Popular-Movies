@@ -21,7 +21,8 @@
         android:maxLines="2"
         android:textAlignment="center"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@android:color/black"/>
 
     <TextView
         android:id="@+id/character_name"
@@ -30,6 +31,7 @@
         android:maxLines="2"
         android:textAlignment="center"
         android:textSize="12sp"
+        android:textColor="@android:color/black"
         />
 </LinearLayout>
 

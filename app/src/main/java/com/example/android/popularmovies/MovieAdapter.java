@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class MovieAdapter extends ArrayAdapter {
             holder = (ViewHolder) listItemView.getTag();
         }
         Movie currentMovie = (Movie) getItem(position);
+        Log.v("**",currentMovie.getTitle());
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
         return listItemView;

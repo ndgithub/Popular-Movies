@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPref;
     private String sortPref;
     private GridView gridView;
-    private RequestQueue requestQueue;
+    ArrayList<Movie> list = new ArrayList<Movie>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +40,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         gridView = (GridView) findViewById(R.id.list_view);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
+        movieAdapter = new MovieAdapter(getApplicationContext(), list);
+        gridView.setAdapter(movieAdapter);
         gridView.setEmptyView(emptyView);
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
-        requestQueue = Volley.newRequestQueue(this);
         if (QueryUtils.isConnectedToInternet(this)) {
            getMovieListAndUpdateUI();
         } else {
@@ -116,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        ArrayList<Movie> list = QueryUtils.extractMovieFeaturesFromJson(response);
+                        list = QueryUtils.extractMovieFeaturesFromJson(response);
                         if (list != null ) {
-                            movieAdapter = new MovieAdapter(getApplicationContext(), list);
-                            gridView.setAdapter(movieAdapter);
+                            movieAdapter.clear();
+                            movieAdapter.addAll(list);
+                            movieAdapter.notifyDataSetChanged();
                         }
                         if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
                             Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        requestQueue.add(jsObjRequest);
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsObjRequest);
 
     }
 

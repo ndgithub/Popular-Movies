@@ -36,9 +36,9 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
     }
 
     static class ViewHolder {
-        private TextView nameHolder;
-        private TextView charNameHolder;
-        private ImageView actorPicHolder;
+        TextView nameHolder;
+        TextView charNameHolder;
+        ImageView actorPicHolder;
     }
 
     @NonNull
@@ -58,7 +58,7 @@ public class CastAdapter extends ArrayAdapter<CastMember> {
         CastMember currentActor = getItem(position);
         holder.nameHolder.setText(currentActor.getActorName());
         holder.charNameHolder.setText(currentActor.getCharacterName());
-
+        Log.v("asdf",currentActor.getActorName());
         final int sdk = android.os.Build.VERSION.SDK_INT;
         if (sdk > 16) {
             holder.actorPicHolder.setBackgroundDrawable(getContext().getDrawable(R.drawable.actor_pic_background_circle));
