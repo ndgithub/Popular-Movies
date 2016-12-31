@@ -9,4 +9,6 @@
     <string name="top_rated">Top Rated</string>
     <string name="error_retrieving_movies">Error Retrieving Movies</string>
     <string name="error_retrieving_movie_data">Error Retrieving Movie Data</string>
+
+    <string name="error_retrieving_cast_data">Error Retrieving Cast Info</string>
 </resources>

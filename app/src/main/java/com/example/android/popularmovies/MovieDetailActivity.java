@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     CastAdapter castAdapter;
     ArrayList<CastMember> castList;
-    String movieId;
+    Movie selectedMovie;
     GridView listView;
 
     @Override
@@ -34,16 +35,21 @@ public class MovieDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_movie_details);
-        Bundle bundle = this.getIntent().getExtras();
-        String backdropPath = bundle.getString("backdropPath");
-        String posterPath = bundle.getString("posterPath");
-        String date = bundle.getString("date");
-        String title = bundle.getString("title");
-        String overview = bundle.getString("overview");
-        String rating = bundle.getString("rating");
-        movieId = bundle.getString("id");
 
-        this.setTitle(title);
+        selectedMovie = Parcels.unwrap(getIntent().getParcelableExtra("movie"));
+
+
+
+//        Bundle bundle = this.getIntent().getExtras();
+//        String backdropPath = bundle.getString("backdropPath");
+//        String posterPath = bundle.getString("posterPath");
+//        String date = bundle.getString("date");
+//        String title = bundle.getString("title");
+//        String overview = bundle.getString("overview");
+//        String rating = bundle.getString("rating");
+//        movieId = bundle.getString("id");
+
+        this.setTitle(selectedMovie.getTitle());
 
         ImageView backdropView = (ImageView) this.findViewById(R.id.backdrop);
         PosterImageView posterView = (PosterImageView) this.findViewById(R.id.poster);
@@ -53,16 +59,16 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView overviewView = (TextView) this.findViewById(R.id.overview);
 
         final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
-        Picasso.with(this).load(BASE_IMAGE_URL + backdropPath).fit().centerCrop().into(backdropView);
-        Picasso.with(this).load(BASE_IMAGE_URL + posterPath).fit().centerInside().into(posterView);
-        titleView.setText(title);
+        Picasso.with(this).load(BASE_IMAGE_URL + selectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
+        Picasso.with(this).load(BASE_IMAGE_URL + selectedMovie.getPosterPath()).fit().centerInside().into(posterView);
+        titleView.setText(selectedMovie.getTitle());
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-mm-dd");
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy ");
         Date startDate;
 
         try {
-            startDate = df.parse(date);
+            startDate = df.parse(selectedMovie.getDate());
             String newDateString = formatter.format(startDate);
             dateView.append(newDateString);
             Log.v("***", newDateString);
@@ -70,9 +76,9 @@ public class MovieDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        titleView.setText(title);
-        ratingView.setText(rating);
-        overviewView.setText(overview);
+        titleView.setText(selectedMovie.getTitle());
+        ratingView.setText(selectedMovie.getRating());
+        overviewView.setText(selectedMovie.getOverview());
 
         listView = (GridView) findViewById(R.id.cast_grid_view);
         castList = new ArrayList<>();
@@ -88,7 +94,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private void getCastListAndUpdateUI() {
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
-                        "http://api.themoviedb.org/3/movie/" + movieId + "/casts?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
+                        "http://api.themoviedb.org/3/movie/" +  selectedMovie.getId() + "/casts?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -106,7 +112,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), R.string.error_retrieving_movie_data, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
                     }
                 });
 

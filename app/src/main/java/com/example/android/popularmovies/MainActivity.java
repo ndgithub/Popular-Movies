@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putString("rating", selectedMovie.getRating());
                 bundle.putString("posterPath", selectedMovie.getPosterPath());
                 Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-                intent.putExtras(bundle);
+                intent.putExtra("movie", Parcels.wrap(selectedMovie));
                 startActivity(intent);
             }
         });

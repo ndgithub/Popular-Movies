@@ -1,9 +1,12 @@
 package com.example.android.popularmovies;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Nicky on 10/21/16.
  */
 
+@Parcel
 public class Movie {
     private String id;
     private String posterPath;
@@ -12,6 +15,9 @@ public class Movie {
     private String backdropPath;
     private String rating;
     private String date;
+
+    public Movie() {
+    }
 
     public Movie(String id,String backdropPath, String overview, String posterPath, String title, String rating, String date) {
         this.id = id;
