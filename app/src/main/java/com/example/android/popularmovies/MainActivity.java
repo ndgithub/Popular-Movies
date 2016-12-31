@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                             movieAdapter.notifyDataSetChanged();
                         }
                         if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
 
                     }
                 });

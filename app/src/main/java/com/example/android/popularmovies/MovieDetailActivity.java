@@ -106,7 +106,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Toast.makeText(getApplicationContext(), R.string.error_retrieving_movie_data, Toast.LENGTH_SHORT).show();
                     }
                 });
 
