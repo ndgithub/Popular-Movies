@@ -57,13 +57,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie selectedMovie = (Movie) movieAdapter.getItem(position);
                 Bundle bundle = new Bundle();
-                bundle.putString("id", selectedMovie.getId());
-                bundle.putString("date", selectedMovie.getDate());
-                bundle.putString("title", selectedMovie.getTitle());
-                bundle.putString("backdropPath", selectedMovie.getBackdropPath());
-                bundle.putString("overview", selectedMovie.getOverview());
-                bundle.putString("rating", selectedMovie.getRating());
-                bundle.putString("posterPath", selectedMovie.getPosterPath());
                 Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
                 intent.putExtra("movie", Parcels.wrap(selectedMovie));
                 startActivity(intent);
@@ -124,17 +117,14 @@ public class MainActivity extends AppCompatActivity {
                             movieAdapter.addAll(list);
                             movieAdapter.notifyDataSetChanged();
                         }
-                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
-                        }
-
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(),R.string.no_internet,Toast.LENGTH_SHORT).show();
-
+                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 

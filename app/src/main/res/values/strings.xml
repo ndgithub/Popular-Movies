@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="no_internet">No Network Connection</string>
+    <string name="problem_with_movies">There was a problem showing the movies</string>
     <string name="release_date">Release Date:</string>
-    <string name="overview">Overview:</string>
+    <string name="overview">Overview</string>
     <string name="top_billed_cast">Top Billed Cast</string>
-    <string name="cast_unavailable">Cast Not Available</string>
+    <string name="cast_unavailable">Problem Showing Cast</string>
     <string name="most_popular">Most Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="error_retrieving_movies">Error Retrieving Movies</string>
     <string name="error_retrieving_movie_data">Error Retrieving Movie Data</string>
-
     <string name="error_retrieving_cast_data">Error Retrieving Cast Info</string>
+    <string name="no_internet">No Network Connection</string>
 </resources>

@@ -23,7 +23,8 @@
         android:id="@+id/empty_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/no_internet"
-        android:layout_gravity="center_horizontal"
+        android:text="@string/problem_with_movies"
+        android:textAlignment="center"
+        android:layout_gravity="center_vertical"
         android:textAppearance="?android:textAppearanceMedium"/>
 </LinearLayout>

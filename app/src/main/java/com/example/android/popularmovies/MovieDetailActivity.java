@@ -3,7 +3,6 @@ package com.example.android.popularmovies;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,17 +37,6 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         selectedMovie = Parcels.unwrap(getIntent().getParcelableExtra("movie"));
 
-
-
-//        Bundle bundle = this.getIntent().getExtras();
-//        String backdropPath = bundle.getString("backdropPath");
-//        String posterPath = bundle.getString("posterPath");
-//        String date = bundle.getString("date");
-//        String title = bundle.getString("title");
-//        String overview = bundle.getString("overview");
-//        String rating = bundle.getString("rating");
-//        movieId = bundle.getString("id");
-
         this.setTitle(selectedMovie.getTitle());
 
         ImageView backdropView = (ImageView) this.findViewById(R.id.backdrop);
@@ -71,7 +59,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             startDate = df.parse(selectedMovie.getDate());
             String newDateString = formatter.format(startDate);
             dateView.append(newDateString);
-            Log.v("***", newDateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -103,16 +90,17 @@ public class MovieDetailActivity extends AppCompatActivity {
                             castAdapter.clear();
                             castAdapter.addAll(castList);
                         }
-                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
-                        }
+
 
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
+                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
 

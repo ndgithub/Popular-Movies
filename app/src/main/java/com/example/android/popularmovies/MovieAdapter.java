@@ -18,12 +18,10 @@ import java.util.ArrayList;
 public class MovieAdapter extends ArrayAdapter {
     private Context context;
     private LayoutInflater mInflater;
-    private ArrayList objects;
 
     public MovieAdapter(Context context, ArrayList objects) {
         super(context,R.layout.list_item,objects);
         this.context = context;
-        this.objects = objects;
         mInflater = LayoutInflater.from(context);
         Picasso.with(context).setIndicatorsEnabled(false);
     }
@@ -44,7 +42,6 @@ public class MovieAdapter extends ArrayAdapter {
             holder = (ViewHolder) listItemView.getTag();
         }
         Movie currentMovie = (Movie) getItem(position);
-        Log.v("**",currentMovie.getTitle());
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
         return listItemView;
