@@ -79,34 +79,35 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     private void getCastListAndUpdateUI() {
-        JsonObjectRequest jsonObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        "http://api.themoviedb.org/3/movie/" +  selectedMovie.getId() + "/casts?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
+        if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+            JsonObjectRequest jsonObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
+                                    "/casts?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        castList = QueryUtils.extractCastFromJson(response);
-                        if (castList != null) {
-                            castAdapter.clear();
-                            castAdapter.addAll(castList);
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            castList = QueryUtils.extractCastFromJson(response);
+                            if (castList != null) {
+                                castAdapter.clear();
+                                castAdapter.addAll(castList);
+                            }
                         }
+                    }, new Response.ErrorListener() {
 
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                                Toast.makeText(getApplicationContext(), R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
+                            }
                         }
+                    });
+            SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjRequest);
 
-                    }
-                });
-
-        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjRequest);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
 
     }
 
 }
-

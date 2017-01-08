@@ -4,7 +4,7 @@
     <string name="release_date">Release Date:</string>
     <string name="overview">Overview</string>
     <string name="top_billed_cast">Top Billed Cast</string>
-    <string name="cast_unavailable">Problem Showing Cast</string>
+    <string name="cast_unavailable">Cast Unavailable</string>
     <string name="most_popular">Most Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="error_retrieving_movies">Error Retrieving Movies</string>

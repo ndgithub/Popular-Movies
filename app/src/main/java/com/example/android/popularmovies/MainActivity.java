@@ -2,7 +2,6 @@ package com.example.android.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,11 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -32,14 +29,13 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private SharedPreferences sharedPref;
     private String sortPref;
-    private GridView gridView;
     ArrayList<Movie> list = new ArrayList<Movie>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gridView = (GridView) findViewById(R.id.list_view);
+        GridView gridView = (GridView) findViewById(R.id.list_view);
         TextView emptyView = (TextView) findViewById(R.id.empty_view);
         movieAdapter = new MovieAdapter(getApplicationContext(), list);
         gridView.setAdapter(movieAdapter);
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         sortPref = sharedPref.getString("sort_by", null);
         if (QueryUtils.isConnectedToInternet(this)) {
-           getMovieListAndUpdateUI();
+            getMovieListAndUpdateUI();
         } else {
             Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
@@ -56,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie selectedMovie = (Movie) movieAdapter.getItem(position);
-                Bundle bundle = new Bundle();
                 Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
                 intent.putExtra("movie", Parcels.wrap(selectedMovie));
                 startActivity(intent);
@@ -104,32 +99,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieListAndUpdateUI() {
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET,
-                        "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
-                                QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
+        if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" +
+                                    QueryUtils.API_KEY + "&language=en-US", null, new Response.Listener<JSONObject>() {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        list = QueryUtils.extractMovieFeaturesFromJson(response);
-                        if (list != null ) {
-                            movieAdapter.clear();
-                            movieAdapter.addAll(list);
-                            movieAdapter.notifyDataSetChanged();
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            list = QueryUtils.extractMovieFeaturesFromJson(response);
+                            if (list != null) {
+                                movieAdapter.clear();
+                                movieAdapter.addAll(list);
+                            }
                         }
-                    }
-                }, new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (!QueryUtils.isConnectedToInternet(getApplicationContext())) {
-                            Toast.makeText(getApplicationContext(),R.string.error_retrieving_movies,Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), R.string.error_retrieving_movies, Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
-
-        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsObjRequest);
-
+                    });
+            SingletonRequestQueue.getInstance(this).addToRequestQueue(jsObjRequest);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
     }
-
 }
