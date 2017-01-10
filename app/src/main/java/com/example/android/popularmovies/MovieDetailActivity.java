@@ -1,12 +1,18 @@
 package com.example.android.popularmovies;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -26,8 +32,14 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     CastAdapter castAdapter;
     ArrayList<CastMember> castList;
+    GridView castGridView;
+
+    VideoAdapter videoAdapter;
+    ArrayList<Video> videoList;
+    GridView videoGridView;
+
     Movie selectedMovie;
-    GridView listView;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,14 +79,39 @@ public class MovieDetailActivity extends AppCompatActivity {
         ratingView.setText(selectedMovie.getRating());
         overviewView.setText(selectedMovie.getOverview());
 
-        listView = (GridView) findViewById(R.id.cast_grid_view);
+
+        castGridView = (GridView) findViewById(R.id.cast_grid_view);
         castList = new ArrayList<>();
         castAdapter = new CastAdapter(getApplicationContext(), castList);
-        listView.setAdapter(castAdapter);
+        castGridView.setAdapter(castAdapter);
         TextView castEmptyView = (TextView) findViewById(R.id.cast_empyt_view);
-        listView.setEmptyView(castEmptyView);
+        castGridView.setEmptyView(castEmptyView);
+
+        videoGridView = (GridView) findViewById(R.id.video_grid_view);
+        videoList = new ArrayList<>();
+        videoAdapter = new VideoAdapter(getApplicationContext(), videoList);
+        videoGridView.setAdapter(videoAdapter);
+        TextView videoEmptyView = (TextView) findViewById(R.id.video_empty_view);
+        videoGridView.setEmptyView(videoEmptyView);
+        videoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Video selectedVideo = (Video) videoAdapter.getItem(position);
+                String vidKey = selectedVideo.getKey();
+                Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
+                Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
+                try {
+                    startActivity(appIntent);
+                } catch (ActivityNotFoundException ex) {
+                    startActivity(webIntent);
+                }
+            }
+        });
+
 
         getCastListAndUpdateUI();
+        getTrailersAndUpdateUI();
 
     }
 
@@ -109,5 +146,41 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
     }
+
+    private void getTrailersAndUpdateUI() {
+        if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+            JsonObjectRequest jsonObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
+                                    "/videos?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            videoList = QueryUtils.getVideosFromJson(response);
+                            if (videoList != null) {
+                                videoAdapter.clear();
+                                videoAdapter.addAll(videoList);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                                Toast.makeText(getApplicationContext(), R.string.videos_unavailable, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+            SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjRequest);
+
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private void watchYoutubeVideo(String id){
+
+    }
+
 
 }

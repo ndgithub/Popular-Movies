@@ -11,4 +11,6 @@
     <string name="error_retrieving_movie_data">Error Retrieving Movie Data</string>
     <string name="error_retrieving_cast_data">Error Retrieving Cast Info</string>
     <string name="no_internet">No Network Connection</string>
+    <string name="videos">Videos</string>
+    <string name="videos_unavailable">Videos unavailable</string>
 </resources>

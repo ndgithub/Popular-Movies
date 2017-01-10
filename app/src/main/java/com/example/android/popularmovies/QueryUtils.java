@@ -41,7 +41,7 @@ import static java.security.AccessController.getContext;
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
 public final class QueryUtils {
-    public static final String API_KEY = "";
+    public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
 
     private QueryUtils() {
     }
@@ -86,14 +86,27 @@ public final class QueryUtils {
                 String picPath = currentCastMember.getString("profile_path");
                 castArrayList.add(new CastMember(actorName, characterName, picPath));
             }
-            for (int i = 0; i < 6; i++) {
-                Log.v("**********", castArrayList.get(i).getActorName());
-            }
-            Log.v("**", baseJsonResponse.toString());
         } catch (JSONException e) {
             //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return castArrayList;
+    }
+    public static ArrayList<Video> getVideosFromJson(JSONObject baseJsonResponse) {
+        ArrayList<Video> videoArrayList = new ArrayList<>();
+        try {
+            JSONArray videoResultsArray = baseJsonResponse.getJSONArray("results");
+            for (int i = 0; i < videoResultsArray.length(); i++) {
+                JSONObject currentVideo = videoResultsArray.getJSONObject(i);
+                String videoKey =  currentVideo.getString("key");
+                String videoName = currentVideo.getString("name");
+                videoArrayList.add(new Video(videoKey,videoName));
+            }
+
+        } catch (JSONException e) {
+            //Prevent app from crashing if there is a problem with parsing json.
+            Log.e("QueryUtils", "Problem parsing the JSON results", e);
+        }
+        return videoArrayList;
     }
 }
