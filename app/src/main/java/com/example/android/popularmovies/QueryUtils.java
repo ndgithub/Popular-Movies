@@ -109,4 +109,23 @@ public final class QueryUtils {
         }
         return videoArrayList;
     }
+
+    public static ArrayList<Review> getReviewsFromJson(JSONObject baseJsonResponse) {
+        ArrayList<Review> reviewArrayList = new ArrayList<>();
+        try {
+            JSONArray reviewResultsArray = baseJsonResponse.getJSONArray("results");
+            for (int i = 0; i < reviewResultsArray.length(); i++) {
+                JSONObject currentReview = reviewResultsArray.getJSONObject(i);
+                String reviewAuthor =  currentReview.getString("author");
+                String reviewContent = currentReview.getString("content");
+                String reviewURL = currentReview.getString("url");
+                reviewArrayList.add(new Review(reviewAuthor,reviewContent,reviewURL));
+            }
+
+        } catch (JSONException e) {
+            //Prevent app from crashing if there is a problem with parsing json.
+            Log.e("QueryUtils", "Problem parsing the JSON results", e);
+        }
+        return reviewArrayList;
+    }
 }

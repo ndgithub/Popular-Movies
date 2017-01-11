@@ -13,4 +13,9 @@
     <string name="no_internet">No Network Connection</string>
     <string name="videos">Videos</string>
     <string name="videos_unavailable">Videos unavailable</string>
+
+    <string name="reviews_unavailable">Reviews unavailable</string>
+    <string name="reviews">Reviews</string>
+    <string name="by">-</string>
+    <string name="read_full_review">READ FULL REVIEW</string>
 </resources>

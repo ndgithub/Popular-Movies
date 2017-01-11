@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,10 @@ public class MovieDetailActivity extends AppCompatActivity {
     VideoAdapter videoAdapter;
     ArrayList<Video> videoList;
     GridView videoGridView;
+
+    ReviewAdapter reviewAdapter;
+    ArrayList<Review> reviewList;
+    ListView reviewListView;
 
     Movie selectedMovie;
 
@@ -87,6 +92,13 @@ public class MovieDetailActivity extends AppCompatActivity {
         TextView castEmptyView = (TextView) findViewById(R.id.cast_empyt_view);
         castGridView.setEmptyView(castEmptyView);
 
+        reviewListView = (ListView) findViewById(R.id.review_list_view);
+        reviewList = new ArrayList<>();
+        reviewAdapter = new ReviewAdapter(getApplicationContext(), reviewList);
+        reviewListView.setAdapter(reviewAdapter);
+        TextView reviewEmptyView = (TextView) findViewById(R.id.review_empty_view);
+        reviewListView.setEmptyView(reviewEmptyView);
+
         videoGridView = (GridView) findViewById(R.id.video_grid_view);
         videoList = new ArrayList<>();
         videoAdapter = new VideoAdapter(getApplicationContext(), videoList);
@@ -108,10 +120,9 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
             }
         });
-
-
         getCastListAndUpdateUI();
         getTrailersAndUpdateUI();
+        getReviewsAndUpdateUI();
 
     }
 
@@ -178,9 +189,39 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
     }
-    private void watchYoutubeVideo(String id){
+
+    private void getReviewsAndUpdateUI() {
+        if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+            JsonObjectRequest jsonObjRequest = new JsonObjectRequest
+                    (Request.Method.GET,
+                            "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
+                                    "/reviews?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
+
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            reviewList = QueryUtils.getReviewsFromJson(response);
+                            if (reviewList != null) {
+                                reviewAdapter.clear();
+                                reviewAdapter.addAll(reviewList);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
+                                Toast.makeText(getApplicationContext(), R.string.reviews_unavailable, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+            SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjRequest);
+
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
 
     }
+
 
 
 }
