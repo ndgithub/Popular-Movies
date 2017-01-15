@@ -1,13 +1,16 @@
 package com.example.android.popularmovies;
 
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.android.popularmovies.data.MovieContract.FavoritesEntry;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -120,11 +124,25 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
         getCastListAndUpdateUI();
         getTrailersAndUpdateUI();
         getReviewsAndUpdateUI();
 
+        Button but = (Button) findViewById(R.id.fav_button);
+        but.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertFieldsIntoDb();
+            }
+        });
+
+
     }
+
+
 
     private void getCastListAndUpdateUI() {
         if (QueryUtils.isConnectedToInternet(getApplicationContext())) {
@@ -221,7 +239,26 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
     }
+    private void insertFieldsIntoDb() {
 
+        ContentValues cv = new ContentValues();
+        cv.put(FavoritesEntry.COLUMN_MOVIE_ID, selectedMovie.getId());
+        cv.put(FavoritesEntry.COLUMN_BACKDROP_PATH,selectedMovie.getBackdropPath());
+        cv.put(FavoritesEntry.COLUMN_OVERVIEW,selectedMovie.getOverview());
+        cv.put(FavoritesEntry.COLUMN_POSTER_PATH,selectedMovie.getPosterPath());
+        cv.put(FavoritesEntry.COLUMN_TITLE,selectedMovie.getTitle());
+        cv.put(FavoritesEntry.COLUMN_RATING,selectedMovie.getRating());
+        cv.put(FavoritesEntry.COLUMN_RELEASE_DATE,selectedMovie.getDate());
+
+        Uri newRowUri = getContentResolver().insert(FavoritesEntry.CONTENT_URI,cv);
+
+        if (newRowUri == null) {
+            Toast.makeText(this,"Oops, entry not saved, no se porque", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Movie Added to Favorites" + newRowUri, Toast.LENGTH_SHORT).show();
+            NavUtils.navigateUpFromSameTask(this);
+        }
+    }
 
 
 }

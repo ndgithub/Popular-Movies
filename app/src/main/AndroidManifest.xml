@@ -23,7 +23,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
+        <provider
+            android:name=".data.FavMovieProvider"
+            android:authorities="com.example.android.popularmovies"
+            android:exported="false" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

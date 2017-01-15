@@ -4,24 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import javax.sql.RowSetEvent;
 
 /**
  * Created by Nicky on 1/10/17.
  */
+
+
 
 public class ReviewAdapter extends ArrayAdapter<Review> {
     private Context context;
