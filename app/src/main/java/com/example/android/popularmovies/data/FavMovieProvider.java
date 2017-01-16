@@ -147,7 +147,7 @@ public class FavMovieProvider extends ContentProvider {
             Log.e(LOG_TAG, "Failed to insert row for " + uri);
             return null;
         }
-
+        database.close();
         // Return the new URI with the ID (of the newly inserted row) appended at the end
         return ContentUris.withAppendedId(uri, id);
     }
@@ -186,7 +186,9 @@ public class FavMovieProvider extends ContentProvider {
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
         // Returns the number of database rows affected by the update statement
-        return database.update(FavoritesEntry.TABLE_NAME, values, selection, selectionArgs);
+        int affectedRows = database.update(FavoritesEntry.TABLE_NAME, values, selection, selectionArgs);
+        database.close();
+        return affectedRows;
     }
 
     /**
@@ -201,12 +203,16 @@ public class FavMovieProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 // Delete all rows that match the selection and selection args
-                return database.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                int rows = database.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                database.close();
+                return rows;
             case MOVIE_ID:
                 // Delete a single row given by the ID in the URI
                 selection = FavoritesEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
-                return database.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                int numRows = database.delete(FavoritesEntry.TABLE_NAME, selection, selectionArgs);
+                database.close();
+                return numRows;
             default:
                 throw new IllegalArgumentException("Deletion is not supported for " + uri);
         }

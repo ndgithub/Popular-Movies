@@ -3,11 +3,12 @@ package com.example.android.popularmovies;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -48,7 +49,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     ListView reviewListView;
 
     Movie selectedMovie;
-
+    boolean favorite;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +84,31 @@ public class MovieDetailActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        final Button favButton = (Button) findViewById(R.id.fav_button);
+        favorite = isFavorite();
+        if (favorite) {
+            favButton.setText("Remove From Favorites");
+        }
+
+        //TODO: Make button pretty
+
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (favorite) {
+                    removeFromFavoritesDb();
+                    favButton.setText("Mark as Favorite");
+                    favorite = false;
+                } else {
+                    addToFavoritesDb();
+                    favButton.setText("Remove From Favorites");
+                    favorite = true;
+                }
+
+
+            }
+        });
 
         titleView.setText(selectedMovie.getTitle());
         ratingView.setText(selectedMovie.getRating());
@@ -126,22 +152,11 @@ public class MovieDetailActivity extends AppCompatActivity {
         });
 
 
-
         getCastListAndUpdateUI();
         getTrailersAndUpdateUI();
         getReviewsAndUpdateUI();
 
-        Button but = (Button) findViewById(R.id.fav_button);
-        but.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertFieldsIntoDb();
-            }
-        });
-
-
     }
-
 
 
     private void getCastListAndUpdateUI() {
@@ -239,25 +254,53 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
 
     }
-    private void insertFieldsIntoDb() {
+
+    private void addToFavoritesDb() {
 
         ContentValues cv = new ContentValues();
         cv.put(FavoritesEntry.COLUMN_MOVIE_ID, selectedMovie.getId());
-        cv.put(FavoritesEntry.COLUMN_BACKDROP_PATH,selectedMovie.getBackdropPath());
-        cv.put(FavoritesEntry.COLUMN_OVERVIEW,selectedMovie.getOverview());
-        cv.put(FavoritesEntry.COLUMN_POSTER_PATH,selectedMovie.getPosterPath());
-        cv.put(FavoritesEntry.COLUMN_TITLE,selectedMovie.getTitle());
-        cv.put(FavoritesEntry.COLUMN_RATING,selectedMovie.getRating());
-        cv.put(FavoritesEntry.COLUMN_RELEASE_DATE,selectedMovie.getDate());
+        cv.put(FavoritesEntry.COLUMN_BACKDROP_PATH, selectedMovie.getBackdropPath());
+        cv.put(FavoritesEntry.COLUMN_OVERVIEW, selectedMovie.getOverview());
+        cv.put(FavoritesEntry.COLUMN_POSTER_PATH, selectedMovie.getPosterPath());
+        cv.put(FavoritesEntry.COLUMN_TITLE, selectedMovie.getTitle());
+        cv.put(FavoritesEntry.COLUMN_RATING, selectedMovie.getRating());
+        cv.put(FavoritesEntry.COLUMN_RELEASE_DATE, selectedMovie.getDate());
 
-        Uri newRowUri = getContentResolver().insert(FavoritesEntry.CONTENT_URI,cv);
+        Uri newRowUri = getContentResolver().insert(FavoritesEntry.CONTENT_URI, cv);
 
         if (newRowUri == null) {
-            Toast.makeText(this,"Oops, entry not saved, no se porque", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Oops, entry not saved", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Movie Added to Favorites" + newRowUri, Toast.LENGTH_SHORT).show();
-            NavUtils.navigateUpFromSameTask(this);
+
         }
+    }
+
+    private void removeFromFavoritesDb() {
+        int rowsDel = getContentResolver().delete(FavoritesEntry.CONTENT_URI,
+                FavoritesEntry.COLUMN_MOVIE_ID + " = " + selectedMovie.getId(), null);
+        if (rowsDel == 1) {
+            Toast.makeText(this, "Removed from Favorites", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isFavorite() {
+        String thisMovieId = selectedMovie.getId();
+        String[] projection = {FavoritesEntry.COLUMN_MOVIE_ID};
+        Cursor cursor = getContentResolver().query(FavoritesEntry.CONTENT_URI, projection,
+                FavoritesEntry.COLUMN_MOVIE_ID + " = " + thisMovieId, null, null);
+        if (cursor.getCount() == 0) {
+            cursor.close();
+            return false;
+
+        } else {
+            cursor.close();
+            return true;
+        }
+
+
     }
 
 

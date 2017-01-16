@@ -7,6 +7,7 @@
     <string name="cast_unavailable">Cast Unavailable</string>
     <string name="most_popular">Most Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="favorites">Favorites</string>
     <string name="error_retrieving_movies">Error Retrieving Movies</string>
     <string name="error_retrieving_movie_data">Error Retrieving Movie Data</string>
     <string name="error_retrieving_cast_data">Error Retrieving Cast Info</string>
@@ -18,4 +19,6 @@
     <string name="reviews">Reviews</string>
     <string name="by">-</string>
     <string name="read_full_review">READ FULL REVIEW</string>
+
+    <string name="no_favorites">No Favorites Added</string>
 </resources>
