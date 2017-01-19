@@ -25,7 +25,6 @@ import com.example.android.popularmovies.data.MovieContract.FavoritesEntry;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -84,15 +83,9 @@ public class MainActivity extends AppCompatActivity {
             case "top_rated":
                 popup.getMenu().findItem(R.id.top).setChecked(true);
                 break;
-            case "favorites":
+            case "favorite":
                 popup.getMenu().findItem(R.id.fav).setChecked(true);
         }
-//        if (sortPref.equals("popular")) {
-//            popup.getMenu().findItem(R.id.pop).setChecked(true);
-//        } else {
-//            popup.getMenu().findItem(R.id.top).setChecked(true);
-//        }
-
 
         popup.show();
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -114,11 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-//                if (itemId == R.id.pop) {
-//                    prefEditor.putString("sort_by", "popular");
-//                } else if (itemId == R.id.top) {
-//                    prefEditor.putString("sort_by", "top_rated");
-//                }
                 prefEditor.apply();
                 sortPref = sharedPref.getString("sort_by", null);
                 getMovieListAndUpdateUI();

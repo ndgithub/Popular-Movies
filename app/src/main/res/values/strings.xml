@@ -21,4 +21,9 @@
     <string name="read_full_review">READ FULL REVIEW</string>
 
     <string name="no_favorites">No Favorites Added</string>
+    <string name="remove_favorites">Removed from Favorites Added</string>
+    <string name="add_favorites">Added to Favorites</string>
+    <string name="go_to_favorites">Go to Favorites</string>
+    <string name="rating">Rating: </string>
+
 </resources>
