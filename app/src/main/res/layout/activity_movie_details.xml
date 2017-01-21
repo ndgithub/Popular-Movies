@@ -40,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <com.example.android.popularmovies.PosterImageView
+                    <com.example.android.popularmovies.utils.PosterImageView
                         android:id="@+id/poster"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

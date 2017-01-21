@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.text.TextUtils;
 import android.util.Log;
+
+import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.data.Video;
+import com.example.android.popularmovies.data.CastMember;
+import com.example.android.popularmovies.data.Review;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Helper methods related to requesting and receiving earthquake data from USGS.

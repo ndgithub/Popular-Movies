@@ -1,13 +1,14 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.movieList;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
+import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.utils.PosterImageView;
+import com.example.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ public class MovieAdapter extends ArrayAdapter {
     private LayoutInflater mInflater;
 
     public MovieAdapter(Context context, ArrayList objects) {
-        super(context,R.layout.list_item,objects);
+        super(context, R.layout.list_item,objects);
         this.context = context;
         mInflater = LayoutInflater.from(context);
         Picasso.with(context).setIndicatorsEnabled(false);

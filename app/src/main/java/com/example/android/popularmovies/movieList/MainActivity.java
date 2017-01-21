@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.movieList;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,7 +20,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.android.popularmovies.data.MovieContract.FavoritesEntry;
+import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
+import com.example.android.popularmovies.utils.QueryUtils;
+import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.utils.SingletonRequestQueue;
+import com.example.android.popularmovies.data.MovieDbContract.FavoritesEntry;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;

@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.movieDetails;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,16 +7,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.data.CastMember;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 

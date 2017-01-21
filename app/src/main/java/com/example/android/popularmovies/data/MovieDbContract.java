@@ -8,11 +8,11 @@ import android.provider.BaseColumns;
  * Created by Nicky on 1/12/17.
  */
 
-public final class MovieContract {
+public final class MovieDbContract {
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
-    private MovieContract() {}
+    private MovieDbContract() {}
 
     /**
      * The "Content authority" is a name for the entire content provider, similar to the

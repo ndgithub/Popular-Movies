@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.data;
 
 import org.parceler.Parcel;
 
@@ -19,7 +19,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(String id,String backdropPath, String overview, String posterPath, String title, String rating, String date) {
+    public Movie(String id, String backdropPath, String overview, String posterPath, String title, String rating, String date) {
         this.id = id;
         this.backdropPath = backdropPath;
         this.overview = overview;

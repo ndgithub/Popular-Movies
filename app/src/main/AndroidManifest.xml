@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".movieList.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,11 +17,11 @@
         </activity>
 
         <activity
-            android:name=".MovieDetailActivity"
-            android:parentActivityName=".MainActivity">
+            android:name=".movieDetails.MovieDetailActivity"
+            android:parentActivityName=".movieList.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".movieList.MainActivity" />
         </activity>
         <provider
             android:name=".data.FavMovieProvider"

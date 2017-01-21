@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.android.popularmovies.data.MovieContract.FavoritesEntry;
+import com.example.android.popularmovies.data.MovieDbContract.FavoritesEntry;
 
 /**
  * Created by Nicky on 9/29/16.

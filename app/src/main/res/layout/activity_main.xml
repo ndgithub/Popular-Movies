@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#f4f4f4"
     android:orientation="vertical"
-    tools:context="com.example.android.popularmovies.MainActivity"
+    tools:context="com.example.android.popularmovies.movieList.MainActivity"
     android:padding="4dp">
 
     <GridView

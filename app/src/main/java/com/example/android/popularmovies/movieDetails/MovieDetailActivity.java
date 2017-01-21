@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.movieDetails;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -8,14 +8,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,7 +24,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.android.popularmovies.data.MovieContract.FavoritesEntry;
+import com.example.android.popularmovies.data.CastMember;
+import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.data.Review;
+import com.example.android.popularmovies.data.Video;
+import com.example.android.popularmovies.utils.PosterImageView;
+import com.example.android.popularmovies.utils.QueryUtils;
+import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.utils.SingletonRequestQueue;
+import com.example.android.popularmovies.data.MovieDbContract.FavoritesEntry;
+import com.example.android.popularmovies.movieList.MainActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;

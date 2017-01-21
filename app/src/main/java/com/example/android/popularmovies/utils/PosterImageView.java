@@ -1,4 +1,4 @@
-package com.example.android.popularmovies;
+package com.example.android.popularmovies.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
