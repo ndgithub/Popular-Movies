@@ -44,21 +44,12 @@ public class MainActivity extends AppCompatActivity implements MovieListContract
         emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
 
-        movieAdapter = new MovieAdapter(MainActivity.this, movieList);
-        gridView.setAdapter(movieAdapter);
-
-        MVPpresenter = movieListPresenter.getInstance(getContentResolver(), MainActivity.this,this);
+        MVPpresenter = movieListPresenter.getInstance(getContentResolver(), MainActivity.this,this,gridView);
         MVPpresenter.start();
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MVPpresenter.onMovieSelected(position);
-            }
-        });
         Log.v("***** - MainActivity","onCreate");
     }
 
+//TODO: Master Branch (before MVP call onCreate when UP is pressed also, but no problem. Also on rotation, so something with tht.
     @Override
     public void onRestart() {
         super.onRestart();
@@ -78,22 +69,10 @@ public class MainActivity extends AppCompatActivity implements MovieListContract
         return true;
     }
 
-    @Override
-    public void showMovies(ArrayList<Movie> movieList) {
-        if (movieList != null) {
-            movieAdapter.clear();
-            movieAdapter.addAll(movieList);
-            Log.v("***** - MainActivity", "showMovies, MovieList = " + movieList);
-        } else {
-            Toast.makeText(MainActivity.this, R.string.error_retrieving_movies, Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     @Override
-    public void showMovieDetailsUI(int position) {
-        Movie selectedMovie = (Movie) movieAdapter.getItem(position);
-        Intent intent = new Intent(MainActivity.this, MovieDetailActivity.class);
-        intent.putExtra("movie", Parcels.wrap(selectedMovie));
+    public void showMovieDetailsUI(Intent intent) {
         startActivity(intent);
     }
 
