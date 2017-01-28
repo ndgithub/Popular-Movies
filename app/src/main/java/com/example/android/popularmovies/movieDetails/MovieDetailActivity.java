@@ -44,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MovieDetailActivity extends AppCompatActivity {
+public class MovieDetailActivity extends AppCompatActivity implements MovieDetailsContract.View {
 
     CastAdapter castAdapter;
     ArrayList<CastMember> castList;
@@ -330,7 +330,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                 SharedPreferences.Editor prefEditor = sharedPreferences.edit();
                 prefEditor.putString("sort_by", "favorite");
                 prefEditor.apply();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(MovieDetailActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
