@@ -38,7 +38,7 @@ public class MVPmodel {
     private ArrayList<Movie> movieList = new ArrayList<>();
     private MovieListContract.UserActionsListener mPresenter = null;
 
-    private MVPmodel(ContentResolver contentResolver, Context context, MovieListContract.UserActionsListener presenter) {
+    public MVPmodel(ContentResolver contentResolver, Context context, MovieListContract.UserActionsListener presenter) {
         mContentResolver = contentResolver;
         mContext = context;
         PreferenceManager.setDefaultValues(context, R.xml.pref_general, false);
@@ -47,13 +47,6 @@ public class MVPmodel {
 
     }
 
-
-    public static MVPmodel getInstance(ContentResolver contentResolver, Context context,MovieListContract.UserActionsListener presenter) {
-        if (modelInstance == null) {
-            modelInstance = new MVPmodel(contentResolver, context,presenter);
-        }
-        return modelInstance;
-    }
 
     public void changeSortPreference(MenuItem item) {
         int itemId = item.getItemId();
@@ -86,7 +79,7 @@ public class MVPmodel {
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            movieList = modelInstance.extractMoviesFromJson(response);
+                            movieList = extractMoviesFromJson(response);
                             mPresenter.listRecieved(movieList);
                         }
                     }, new Response.ErrorListener() {

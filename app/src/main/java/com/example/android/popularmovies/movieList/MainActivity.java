@@ -1,8 +1,6 @@
 package com.example.android.popularmovies.movieList;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.PopupMenu;
@@ -11,20 +9,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.popularmovies.data.Movie;
-import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
-import com.example.android.popularmovies.utils.QueryUtils;
-import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.utils.SingletonRequestQueue;
-import com.example.android.popularmovies.data.MovieDbContract.FavoritesEntry;
 
-import org.json.JSONObject;
-import org.parceler.Parcels;
+import com.example.android.popularmovies.R;
 
 import java.util.ArrayList;
 
@@ -43,13 +33,12 @@ public class MainActivity extends AppCompatActivity implements MovieListContract
         gridView = (GridView) findViewById(R.id.list_view);
         emptyView = (TextView) findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
-
-        MVPpresenter = movieListPresenter.getInstance(getContentResolver(), MainActivity.this,this,gridView);
+        MVPpresenter = new movieListPresenter(getContentResolver(),MainActivity.this,this,gridView);
+        //MVPpresenter = movieListPresenter.getInstance(getContentResolver(), MainActivity.this,this,gridView);
         MVPpresenter.start();
         Log.v("***** - MainActivity","onCreate");
     }
 
-//TODO: Master Branch (before MVP call onCreate when UP is pressed also, but no problem. Also on rotation, so something with tht.
     @Override
     public void onRestart() {
         super.onRestart();

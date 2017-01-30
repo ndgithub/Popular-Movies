@@ -14,7 +14,7 @@ import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
-
+import com.example.android.popularmovies.movieList.MovieAdapter;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -30,33 +30,26 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     private ContentResolver mContentResolver;
     private MovieListContract.View mView;
 
-    private static movieListPresenter mMoviesListPresenter = null;
     private String sortPref;
     private Context mContext;
-    ArrayList<Movie> movieList = new ArrayList<>();
+    private ArrayList<Movie> mMovieList = new ArrayList<>();
     private GridView mGridView;
-    MovieAdapter mMovieAdapter;
+    private MovieAdapter mMovieAdapter;
 
 
-    private movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view, GridView gridView) {
+    public movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view, GridView gridView) {
         mContentResolver = contentResolver;
         mContext = context;
         mView = view;
-        model = MVPmodel.getInstance(mContentResolver, mContext, this);
+        model = new MVPmodel(contentResolver,mContext,this);
         mGridView = gridView;
-    }
-
-    public static movieListPresenter getInstance(ContentResolver contentResolver, Context context, MovieListContract.View view, GridView gridView) {
-        if (mMoviesListPresenter == null) {
-            mMoviesListPresenter = new movieListPresenter(contentResolver, context, view, gridView);
-        }
-        return mMoviesListPresenter;
+        Log.v("***** - presenter","Context: "+ mContext.getApplicationContext().toString());
     }
 
 
     @Override
     public void start() {
-        mMovieAdapter = new MovieAdapter(mContext, movieList);
+        mMovieAdapter = new MovieAdapter(mContext, mMovieList);
         mGridView.setAdapter(mMovieAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
