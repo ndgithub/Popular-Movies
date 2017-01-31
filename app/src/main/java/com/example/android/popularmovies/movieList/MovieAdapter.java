@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.movieList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,6 @@ import com.example.android.popularmovies.utils.PosterImageView;
 import com.example.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
-
-/**
- * Created by Nicky on 10/21/16.
- */
 
 public class MovieAdapter extends ArrayAdapter {
     private Context context;
@@ -45,6 +42,7 @@ public class MovieAdapter extends ArrayAdapter {
         Movie currentMovie = (Movie) getItem(position);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
+        Log.v("***** - MovieAdapter",currentMovie.getTitle() + " " + currentMovie.getPosterPath());
         return listItemView;
     }
 }

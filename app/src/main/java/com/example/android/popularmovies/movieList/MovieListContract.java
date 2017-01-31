@@ -7,10 +7,6 @@ import com.example.android.popularmovies.data.Movie;
 
 import java.util.ArrayList;
 
-/**
- * Created by Nicky on 1/20/17.
- */
-
 public interface MovieListContract {
 
     interface View {

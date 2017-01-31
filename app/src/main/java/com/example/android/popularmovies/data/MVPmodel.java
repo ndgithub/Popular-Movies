@@ -67,7 +67,7 @@ public class MVPmodel {
 
     public void getMovieList() {
         sortPref = getSortPref();
-        Log.v("MVPModel","sortPref is: " + sortPref);
+        Log.v("***** - MVPModel","sortPref is: " + sortPref);
         if (sortPref.equals("favorite")) {
             movieList = getFavoritesList();
             mPresenter.listRecieved(movieList);
@@ -81,6 +81,7 @@ public class MVPmodel {
                         public void onResponse(JSONObject response) {
                             movieList = extractMoviesFromJson(response);
                             mPresenter.listRecieved(movieList);
+                            Log.v("***** - MVPModel", "Volley onResponse");
                         }
                     }, new Response.ErrorListener() {
                         @Override
