@@ -14,9 +14,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ListFragmenter listFragment = new ListFragmenter();
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,listFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,new ListFragmenter()).commit();
 
         if (findViewById(R.id.details_container) != null) {
             mTwoPane = true;

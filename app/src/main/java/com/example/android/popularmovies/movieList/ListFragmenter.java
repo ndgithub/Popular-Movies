@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.movieList;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,17 +14,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
 
-public class ListFragmenter extends Fragment implements MovieListContract.View  {
+public class ListFragmenter extends Fragment implements MovieListContract.View {
 
     TextView emptyView;
     movieListPresenter MVPpresenter;
     GridView gridView;
-    View rootView;
+
 
     public ListFragmenter() {
     }
@@ -39,7 +41,7 @@ public class ListFragmenter extends Fragment implements MovieListContract.View  
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         gridView = (GridView) rootView.findViewById(R.id.list_view);
         emptyView = (TextView) rootView.findViewById(R.id.empty_view);
@@ -54,8 +56,14 @@ public class ListFragmenter extends Fragment implements MovieListContract.View  
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MVPpresenter = new movieListPresenter(getActivity().getContentResolver(),getActivity(), this, gridView);
+        MVPpresenter = new movieListPresenter(getActivity().getContentResolver(), getActivity(), this, gridView);
         MVPpresenter.start();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MVPpresenter.onMovieSelected(position);
+            }
+        });
         Log.v("***** - ListFragment", "onActivityCreated");
 
     }
@@ -68,7 +76,7 @@ public class ListFragmenter extends Fragment implements MovieListContract.View  
     @Override //Contract
     public void inflateSortOptionsMenu(String sortPref) {
         View menuItemView = getActivity().findViewById(R.id.sort_by);
-        final PopupMenu popup = new PopupMenu(getActivity(),menuItemView);
+        final PopupMenu popup = new PopupMenu(getActivity(), menuItemView);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.popup_menu, popup.getMenu());
         switch (sortPref) {
@@ -95,12 +103,15 @@ public class ListFragmenter extends Fragment implements MovieListContract.View  
     }
 
     @Override //Fragment
-    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.overflow_menu, menu);
     }
+
     @Override //Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
         MVPpresenter.onSortByTapped();
         return true;
     }
+
+
 }

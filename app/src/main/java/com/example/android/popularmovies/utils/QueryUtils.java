@@ -68,58 +68,5 @@ public final class QueryUtils {
         return movieArrayList;
     }
 
-    public static ArrayList<CastMember> extractCastFromJson(JSONObject baseJsonResponse) {
 
-        ArrayList<CastMember> castArrayList = new ArrayList<>();
-        try {
-            JSONArray castResultsArray = baseJsonResponse.getJSONArray("cast");
-            for (int i = 0; i < 6; i++) {
-                JSONObject currentCastMember = castResultsArray.getJSONObject(i);
-                String characterName = currentCastMember.getString("character");
-                String actorName = currentCastMember.getString("name");
-                String picPath = currentCastMember.getString("profile_path");
-                castArrayList.add(new CastMember(actorName, characterName, picPath));
-            }
-        } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
-            Log.e("QueryUtils", "Problem parsing the JSON results", e);
-        }
-        return castArrayList;
-    }
-    public static ArrayList<Video> getVideosFromJson(JSONObject baseJsonResponse) {
-        ArrayList<Video> videoArrayList = new ArrayList<>();
-        try {
-            JSONArray videoResultsArray = baseJsonResponse.getJSONArray("results");
-            for (int i = 0; i < videoResultsArray.length(); i++) {
-                JSONObject currentVideo = videoResultsArray.getJSONObject(i);
-                String videoKey =  currentVideo.getString("key");
-                String videoName = currentVideo.getString("name");
-                videoArrayList.add(new Video(videoKey,videoName));
-            }
-
-        } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
-            Log.e("QueryUtils", "Problem parsing the JSON results", e);
-        }
-        return videoArrayList;
-    }
-
-    public static ArrayList<Review> getReviewsFromJson(JSONObject baseJsonResponse) {
-        ArrayList<Review> reviewArrayList = new ArrayList<>();
-        try {
-            JSONArray reviewResultsArray = baseJsonResponse.getJSONArray("results");
-            for (int i = 0; i < reviewResultsArray.length(); i++) {
-                JSONObject currentReview = reviewResultsArray.getJSONObject(i);
-                String reviewAuthor =  currentReview.getString("author");
-                String reviewContent = currentReview.getString("content");
-                String reviewURL = currentReview.getString("url");
-                reviewArrayList.add(new Review(reviewAuthor,reviewContent,reviewURL));
-            }
-
-        } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
-            Log.e("QueryUtils", "Problem parsing the JSON results", e);
-        }
-        return reviewArrayList;
-    }
 }
