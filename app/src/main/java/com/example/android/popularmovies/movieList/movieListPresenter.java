@@ -35,8 +35,6 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
         Log.v("***** - presenter","Context: "+ mContext.getApplicationContext().toString());
     }
 
-
-
     @Override
     public void start() {
         mMovieAdapter = new MovieAdapter(mContext, mMovieList);
@@ -73,6 +71,6 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
         Bundle elBunidi = new Bundle();
         elBunidi.putParcelable("movie",Parcels.wrap(selectedMovie));
         intent.putExtra("movi",elBunidi);
-        mView.showMovieDetailsUI(intent);
+        mView.showMovieDetailsUI(elBunidi);
     }
 }

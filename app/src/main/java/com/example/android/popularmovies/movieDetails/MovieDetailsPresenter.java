@@ -23,10 +23,6 @@ import javax.sql.RowSetEvent;
 
 public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsListener {
 
-
-    private ArrayList<CastMember> mCastList = new ArrayList<>();
-    private ArrayList<Video> mVideoList = new ArrayList<>();
-    private ArrayList<Review> mReviewList = new ArrayList<>();
     private ContentResolver mContentResolver;
     private Context mContext;
     private MovieDetailsContract.View mView;
@@ -37,11 +33,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         mContext = context;
         mView = view;
         mModel = new MVPmodel(contentResolver,context,this);
-
     }
-
-
-
 
 
     @Override
@@ -90,6 +82,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         SharedPreferences.Editor prefEditor = sharedPreferences.edit();
         prefEditor.putString("sort_by", "favorite");
         prefEditor.apply();
+
         Intent intent = new Intent(mContext, MainActivity.class);
         mView.showFavorites(intent);
     }

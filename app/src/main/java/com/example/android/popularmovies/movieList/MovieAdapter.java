@@ -42,7 +42,7 @@ public class MovieAdapter extends ArrayAdapter {
         Movie currentMovie = (Movie) getItem(position);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
         Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
-        Log.v("***** - MovieAdapter",currentMovie.getTitle() + " " + currentMovie.getPosterPath());
+        //Log.v("***** - MovieAdapter",currentMovie.getTitle() + " " + currentMovie.getPosterPath());
         return listItemView;
     }
 }

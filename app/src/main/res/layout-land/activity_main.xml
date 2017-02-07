@@ -4,16 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/list_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
-    <fragment
+    <FrameLayout
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="#292847"
+        />
+
+    <FrameLayout
         android:id="@+id/details_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2" />
+        android:layout_weight="1" />
 
 </LinearLayout>

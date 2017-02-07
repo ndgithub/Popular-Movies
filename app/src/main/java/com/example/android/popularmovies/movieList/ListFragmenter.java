@@ -1,7 +1,6 @@
 package com.example.android.popularmovies.movieList;
 
-
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,9 +24,15 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
     TextView emptyView;
     movieListPresenter MVPpresenter;
     GridView gridView;
-
+    boolean mIsTwoPane;
+    onMovieSelectedListener mCallback;
 
     public ListFragmenter() {
+
+    }
+
+    public interface onMovieSelectedListener {
+         void onMovieSelected(Bundle bundle);
     }
 
     @Override //Fragment
@@ -35,6 +40,27 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
+
+    /**
+     * Called when a fragment is first attached to its context.
+     * {@link #onCreate(Bundle)} will be called after this.
+     *
+     * @param context
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.v("***** - ListFragment", "mCallback is: " + mCallback);
+
+        try {
+            mCallback = (onMovieSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+
 
     @Nullable
     @Override //Fragment
@@ -47,7 +73,7 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
         emptyView = (TextView) rootView.findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
 
-
+        mIsTwoPane = getArguments().getBoolean("twoPane");
         Log.v("***** - ListFragment", "onCreate");
         return rootView;
 
@@ -69,8 +95,10 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
     }
 
     @Override  //Contract
-    public void showMovieDetailsUI(Intent intent) {
-        startActivity(intent);
+    public void showMovieDetailsUI(Bundle movieBundle) {
+
+        mCallback.onMovieSelected(movieBundle);
+
     }
 
     @Override //Contract
