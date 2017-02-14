@@ -26,6 +26,7 @@ import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
 
 import com.example.android.popularmovies.movieList.ListFragmenter;
+import com.example.android.popularmovies.movieList.MainActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 import com.example.android.popularmovies.utils.PosterImageView;
 
@@ -70,7 +71,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.v("*** - DetailsFragment","onCreate");
     }
 
 
@@ -78,44 +79,44 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //TODO: why mTwoPane false;
-        Log.v("### - D onAttach", "mPinche is: " + mTwoPane);
+
+        boolean elbool = ActivityUtils.isTwoPane(getActivity());
+        Log.v("DetailsFramgnet", "" + elbool);
         if (ActivityUtils.isTwoPane(getActivity())) {
             Log.v("### - D onAttach", "1mCallback is: " + mCallback);
             try {
-                Log.v("### - Details","mjhCallback: " + mCallback);
+                Log.v("### - Details", "mjhCallback: " + mCallback);
                 mCallback = (onGoToFavoritesListener) activity;
-                Log.v("### - DetailsFragment", "2mCallback is: " + mCallback);
+                Log.v("!!! - DetailsFragment", "2mCallback is: " + mCallback);
             } catch (ClassCastException e) {
+                Log.v("!!! - DetailsFragment", "ya caught: " + mCallback);
                 throw new ClassCastException(activity.toString()
-                        + " must implement OnHeadlineSelectedListener");
+                        + " must implement Ongotofaveslistent");
+
             }
         }
     }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("movie",Parcels.wrap(selectedMovie));
+    }
+
 
 
     public interface onGoToFavoritesListener {
         void onGoToFavoritesList();
     }
 
-    /**
-     * Called when the fragment's activity has been created and this
-     * fragment's view hierarchy instantiated.  It can be used to do final
-     * initialization once these pieces are in place, such as retrieving
-     * views or restoring state.  It is also useful for fragments that use
-     * {@link #setRetainInstance(boolean)} to retain their instance,
-     * as this callback tells the fragment when it is fully associated with
-     * the new activity instance.  This is called after {@link #onCreateView}
-     * and before {@link #onViewStateRestored(Bundle)}.
-     *
-     * @param savedInstanceState If the fragment is being re-created from
-     *                           a previous saved state, this is the state.
-     */
+
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
+        Log.v("*** - DetailsFragment","onActivityCreated");
     }
 
     @Nullable
@@ -123,15 +124,14 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mTwoPane = getArguments().getBoolean("twoPane");
 
-        Log.v("***** - DetailsFragmnt8", "mTwoPane es: " + mTwoPane);
         rootView = inflater.inflate(R.layout.fragment_details, container, false);
         detailsPresenter = new MovieDetailsPresenter(getActivity().getContentResolver(), getActivity(), this);
-        selectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
 
-        if (selectedMovie != null) {
 
+
+
+            selectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
 
             //this.setTitle(selectedMovie.getTitle());
 
@@ -192,12 +192,12 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
             });
 
             detailsPresenter.start(selectedMovie);
-        } else {
-
-        }
+        Log.v("*** - DetailsFragment","onCreateView");
         return rootView;
+        }
 
-    }
+
+
 
     private void showSnackbar(String message) {
         Snackbar snackbar = Snackbar.make(rootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
@@ -263,7 +263,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void showFavorites(Intent intent) {
         if (ActivityUtils.isTwoPane(getActivity())) {
-            Log.v("### - Details1234","mCallback: " + mCallback);
             mCallback.onGoToFavoritesList();
         } else {
             startActivity(intent);

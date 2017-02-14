@@ -35,6 +35,7 @@ import java.util.ArrayList;
 public class MVPmodel {
 
     private static MVPmodel modelInstance = null;
+    public static boolean fromTop = true;
     private ContentResolver mContentResolver;
     private SharedPreferences sharedPref;
     private Context mContext;
@@ -79,7 +80,7 @@ public class MVPmodel {
 
     public void getMovieList() {
         sortPref = getSortPref();
-        Log.v("***** - MVPModel","sortPref is: " + sortPref);
+        //Log.v("***** - MVPModel","sortPref is: " + sortPref);
         if (sortPref.equals("favorite")) {
             movieList = getFavoritesList();
             mPresenter.listRecieved(movieList);
@@ -93,18 +94,18 @@ public class MVPmodel {
                         public void onResponse(JSONObject response) {
                             movieList = extractMoviesFromJson(response);
                             mPresenter.listRecieved(movieList);
-                            Log.v("***** - MVPModel", "Volley onResponse");
+
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.v("***** - MVPModel", "Volley Error");
+
                         }
                     });
             SingletonRequestQueue.getInstance(mContext.getApplicationContext()).addToRequestQueue(jsObjRequest);
-            Log.v("***** - MVPModel", "Movie List2: " + movieList);
+
         }
-        Log.v("***** - MVPModel", "Movie List3: " + movieList);
+
     }
 
     private ArrayList<Movie> extractMoviesFromJson(JSONObject baseJsonResponse) {
@@ -250,7 +251,6 @@ public class MVPmodel {
     }
 
     public boolean isFavorite(Movie selectedMovie) {
-        Log.v("***** - MVPModel","hay");
         String thisMovieId = selectedMovie.getId();
         String[] projection = {MovieDbContract.FavoritesEntry.COLUMN_MOVIE_ID};
         Cursor cursor = mContentResolver.query(MovieDbContract.FavoritesEntry.CONTENT_URI, projection,

@@ -13,9 +13,10 @@
         <ImageView
             android:id="@+id/backdrop"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="225dp"
             tools:ignore="ContentDescription"
-            android:background="#292847" />
+            android:background="#292847"
+            android:alpha="0.8"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linear_layout_details"

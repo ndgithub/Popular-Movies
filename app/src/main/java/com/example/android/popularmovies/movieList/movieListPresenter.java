@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import android.widget.GridView;
@@ -12,6 +11,7 @@ import android.widget.GridView;
 import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
+import com.example.android.popularmovies.utils.ActivityUtils;
 
 import org.parceler.Parcels;
 
@@ -22,9 +22,10 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     private MVPmodel model;
     private MovieListContract.View mView;
     private Context mContext;
-    private ArrayList<Movie> mMovieList = new ArrayList<>();
+    public ArrayList<Movie> mMovieList = new ArrayList<>();
     private GridView mGridView;
     private MovieAdapter mMovieAdapter;
+    Movie selectedMovie;
 
     public movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view, GridView gridView) {
 
@@ -32,7 +33,7 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
         mView = view;
         model = new MVPmodel(contentResolver,mContext,this);
         mGridView = gridView;
-        Log.v("***** - presenter","Context: "+ mContext.getApplicationContext().toString());
+
     }
 
     @Override
@@ -51,10 +52,11 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     public void listRecieved(ArrayList<Movie> movieList) {
         if (movieList != null) {
             mMovieAdapter.clear();
-            mMovieAdapter.addAll(movieList);
-            Log.v("***** - MainActivity", "showMovies, MovieList = " + movieList);
-        } else {
-            //Toast.makeText(mView, R.string.error_retrieving_movies, Toast.LENGTH_SHORT).show();
+            mMovieList = movieList;
+            mMovieAdapter.addAll(mMovieList);
+            if (ActivityUtils.isTwoPane(mContext) && MVPmodel.fromTop) {
+                onMovieSelected(0);
+            }
         }
     }
 
@@ -62,15 +64,21 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     public void onSortChanged(MenuItem item) {
         model.changeSortPreference(item);
         model.getMovieList();
+        MVPmodel.fromTop = true;
     }
 
     @Override
     public void onMovieSelected(int position) {
-        Movie selectedMovie = (Movie) mMovieAdapter.getItem(position);
+        selectedMovie = (Movie) mMovieAdapter.getItem(position);
         Intent intent = new Intent(mContext, MovieDetailActivity.class);
         Bundle elBunidi = new Bundle();
         elBunidi.putParcelable("movie",Parcels.wrap(selectedMovie));
         intent.putExtra("movi",elBunidi);
+        MVPmodel.fromTop = false;
         mView.showMovieDetailsUI(elBunidi);
+
     }
+
+
 }
+//TODO: if you click a movie, true, if you start app or sort change false.

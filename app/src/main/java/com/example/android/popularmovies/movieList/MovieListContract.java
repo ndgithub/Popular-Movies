@@ -13,6 +13,8 @@ public interface MovieListContract {
     interface View {
         void showMovieDetailsUI(Bundle movieBundle);
         void inflateSortOptionsMenu(String sortPref);
+
+
     }
 
     interface UserActionsListener {

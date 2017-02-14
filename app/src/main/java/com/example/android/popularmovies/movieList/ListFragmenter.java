@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.data.Movie;
 
 public class ListFragmenter extends Fragment implements MovieListContract.View {
 
@@ -35,22 +36,19 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
          void onMovieSelected(Bundle bundle);
     }
 
+
+
     @Override //Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+        Log.v("*** - ListFragment","onCreate");
+
     }
 
-    /**
-     * Called when a fragment is first attached to its context.
-     * {@link #onCreate(Bundle)} will be called after this.
-     *
-     * @param context
-     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.v("***** - ListFragment", "mCallback is: " + mCallback);
+        setHasOptionsMenu(true);
 
         try {
             mCallback = (onMovieSelectedListener) context;
@@ -58,9 +56,10 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
         }
+
+
+
     }
-
-
 
     @Nullable
     @Override //Fragment
@@ -73,8 +72,7 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
         emptyView = (TextView) rootView.findViewById(R.id.empty_view);
         gridView.setEmptyView(emptyView);
 
-        mIsTwoPane = getArguments().getBoolean("twoPane");
-        Log.v("***** - ListFragment", "onCreate");
+        Log.v("**** - ListFragment", "onCreateView");
         return rootView;
 
     }
@@ -90,13 +88,10 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
                 MVPpresenter.onMovieSelected(position);
             }
         });
-        Log.v("***** - ListFragment", "onActivityCreated");
-
     }
 
     @Override  //Contract
     public void showMovieDetailsUI(Bundle movieBundle) {
-
         mCallback.onMovieSelected(movieBundle);
 
     }
@@ -119,7 +114,6 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
                 break;
         }
 
-        Log.v("***** - ListFragment", "inflateSortOptionsMenu");
         popup.show();
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override

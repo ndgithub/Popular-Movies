@@ -12,9 +12,9 @@ import com.example.android.popularmovies.movieDetails.DetailsFragment;
 import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
-import org.parceler.Parcels;
 
-public class MainActivity extends AppCompatActivity implements ListFragmenter.onMovieSelectedListener, DetailsFragment.onGoToFavoritesListener {
+public class MainActivity extends AppCompatActivity implements
+        ListFragmenter.onMovieSelectedListener, DetailsFragment.onGoToFavoritesListener {
 
     boolean mIsTwoPane;
     DetailsFragment detailsFragment;
@@ -25,45 +25,61 @@ public class MainActivity extends AppCompatActivity implements ListFragmenter.on
         setContentView(R.layout.activity_main);
         Bundle bundle = new Bundle();
 
-        if (findViewById(R.id.details_fragment) != null) {
-            mIsTwoPane = true;
+        ListFragmenter listFragmenter = new ListFragmenter();
+        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment, listFragmenter).commit();
+        Log.v("*** - MainActivity", "onCreate");
+        if (detailsFragment == null) {
+            Log.v("*** MainAct create","detaila framents is null");
+        } else {
+            Log.v("*** MainAct create","detaila framents is NOT null");
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (detailsFragment == null) {
+            Log.v("*** MainAct stop","detaila framents is null");
+        } else {
+            Log.v("*** MainAct stop","detaila framents is NOT null");
+        }
+
+
+    }
+
+    @Override //Interface method in ListFragment
+    public void onMovieSelected(Bundle bundle) {
+
+        if (ActivityUtils.isTwoPane(getApplicationContext())) {
             detailsFragment = new DetailsFragment();
             detailsFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.details_fragment, detailsFragment).commit();
         } else {
-            mIsTwoPane = false;
+            Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
+            intent.putExtra("movieBundle", bundle);
+            startActivity(intent);
         }
+        Log.v("*** - MainActivity","onMovieSelected");
 
-        ListFragmenter listFragmenter = new ListFragmenter();
-        listFragmenter.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,listFragmenter).commit();
-
-    }
-
-   @Override //Interface method
-   public void onMovieSelected(Bundle bundle) {
-       if (ActivityUtils.isTwoPane(getApplicationContext())) {
-           detailsFragment = new DetailsFragment();
-           detailsFragment.setArguments(bundle);
-           getFragmentManager().beginTransaction().replace(R.id.details_fragment, detailsFragment).commit();
-       } else {
-           Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-           intent.putExtra("movieBundle",bundle);
-           startActivity(intent);
-       }
     }
 
     @Override //Interface Method
     public void onGoToFavoritesList() {
-        Log.v("###","mIsTwoPane: " + mIsTwoPane);
         ListFragmenter listFragmenter = new ListFragmenter();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("twoPane",mIsTwoPane);
-        listFragmenter.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment,listFragmenter).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment, listFragmenter).commit();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v("*** - MainActivity","onDestroy");
     }
 
 }
+
+
 
 
 

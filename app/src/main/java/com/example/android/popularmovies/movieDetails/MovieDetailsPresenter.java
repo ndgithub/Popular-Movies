@@ -32,7 +32,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         mContentResolver = contentResolver;
         mContext = context;
         mView = view;
-        mModel = new MVPmodel(contentResolver,context,this);
+        mModel = new MVPmodel(contentResolver, context, this);
     }
 
 
@@ -43,7 +43,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
 
-        mView.showTrailer(appIntent,webIntent);
+        mView.showTrailer(appIntent, webIntent);
 
 
     }
@@ -73,7 +73,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
 
 
     public boolean isFavorite(Movie selectedMovie) {
-       return mModel.isFavorite(selectedMovie);
+        return mModel.isFavorite(selectedMovie);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         SharedPreferences.Editor prefEditor = sharedPreferences.edit();
         prefEditor.putString("sort_by", "favorite");
         prefEditor.apply();
-
+        MVPmodel.fromTop = true;
         Intent intent = new Intent(mContext, MainActivity.class);
         mView.showFavorites(intent);
     }
@@ -115,8 +115,6 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         }
 
     }
-
-
 
 
 }
