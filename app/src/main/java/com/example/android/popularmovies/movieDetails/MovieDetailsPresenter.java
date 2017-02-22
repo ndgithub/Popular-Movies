@@ -23,13 +23,12 @@ import javax.sql.RowSetEvent;
 
 public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsListener {
 
-    private ContentResolver mContentResolver;
+
     private Context mContext;
     private MovieDetailsContract.View mView;
     private MVPmodel mModel;
 
     public MovieDetailsPresenter(ContentResolver contentResolver, Context context, MovieDetailsContract.View view) {
-        mContentResolver = contentResolver;
         mContext = context;
         mView = view;
         mModel = new MVPmodel(contentResolver, context, this);

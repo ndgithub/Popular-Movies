@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * Helper methods related to requesting and receiving earthquake data from USGS.
  */
 public final class QueryUtils {
-    public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
+    public static final String API_KEY = "";
 
     private QueryUtils() {
     }
@@ -46,27 +46,6 @@ public final class QueryUtils {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-    public static ArrayList<Movie> extractMovieFeaturesFromJson(JSONObject baseJsonResponse) {
-
-        ArrayList<Movie> movieArrayList = new ArrayList<>();
-        try {
-            JSONArray movieResultsArray = baseJsonResponse.getJSONArray("results");
-            for (int i = 0; i < movieResultsArray.length(); i++) {
-                JSONObject currentMovie = movieResultsArray.getJSONObject(i);
-                String id = currentMovie.getString("id");
-                String posterPath = currentMovie.getString("poster_path");
-                String overview = currentMovie.getString("overview");
-                String date = currentMovie.getString("release_date");
-                String rating = currentMovie.getString("vote_average");
-                String title = currentMovie.getString("title");
-                String backdropPath = currentMovie.getString("backdrop_path");
-                movieArrayList.add(new Movie(id, backdropPath, overview, posterPath, title, rating, date));
-            }
-        } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the JSON results", e);
-        }
-        return movieArrayList;
-    }
 
 
 }

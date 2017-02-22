@@ -16,9 +16,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
-import com.example.android.popularmovies.utils.ActivityUtils;
 
 import java.util.ArrayList;
 
@@ -83,12 +81,12 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MVPpresenter = new movieListPresenter(getActivity().getContentResolver(), getActivity(), this, gridView);
+        MVPpresenter = new movieListPresenter(getActivity().getContentResolver(), getActivity(), this);
         MVPpresenter.start();
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MVPpresenter.onMovieSelected(position);
+                MVPpresenter.onMovieSelected(position,mMovieList);
             }
         });
     }
@@ -131,9 +129,8 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieAdapter.clear();
         mMovieList = list;
         mMovieAdapter.addAll(mMovieList);
-        if (ActivityUtils.isTwoPane(getContext()) && MVPmodel.fromTop) {
-            MVPpresenter.onMovieSelected(0);
-        }
+        MVPpresenter.showFirst(mMovieList);
+
     }
 
     @Override //Fragment
@@ -147,8 +144,6 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         return true;
     }
 
-    public Movie getSelectedMovie(int position) {
-        return mMovieList.get(position);
-    }
+
 
 }

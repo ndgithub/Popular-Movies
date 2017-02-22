@@ -13,13 +13,13 @@ public interface MovieListContract {
         void showMovieDetailsUI(Bundle movieBundle);
         void inflateSortOptionsMenu(String sortPref);
         void showMovieList(ArrayList<Movie> list);
-        Movie getSelectedMovie(int position);
     }
 
     interface UserActionsListener {
         void onSortChanged(MenuItem item);
-        void onMovieSelected(int position);
+        void onMovieSelected(int position,ArrayList<Movie> movieList);
         void start();
         void listRecieved(ArrayList<Movie> movieList);
+        void showFirst(ArrayList<Movie> movieList);
     }
 }

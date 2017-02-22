@@ -23,14 +23,11 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     private MovieListContract.View mView;
     private Context mContext;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
-    private GridView mGridView;
-    private MovieAdapter mMovieAdapter;
 
-    public movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view, GridView gridView) {
+    public movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view) {
         mContext = context;
         mView = view;
         model = new MVPmodel(contentResolver,mContext,this);
-        mGridView = gridView;
     }
 
     @Override
@@ -42,6 +39,13 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     public void listRecieved(ArrayList<Movie> movieList) {
         if (movieList != null) {
             mView.showMovieList(movieList);
+        }
+    }
+
+    @Override
+    public void showFirst(ArrayList<Movie> movieList) {
+        if (ActivityUtils.isTwoPane(mContext) && MVPmodel.fromTop) {
+            onMovieSelected(0,movieList);
         }
     }
 
@@ -59,8 +63,8 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     }
 
     @Override
-    public void onMovieSelected(int position) {
-        Movie selectedMovie = mView.getSelectedMovie(position);
+    public void onMovieSelected(int position,ArrayList<Movie> movieList) {
+        Movie selectedMovie = movieList.get(position);
         Intent intent = new Intent(mContext, MovieDetailActivity.class);
         Bundle elBunidi = new Bundle();
         elBunidi.putParcelable("movie",Parcels.wrap(selectedMovie));

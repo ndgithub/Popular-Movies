@@ -29,13 +29,9 @@ public interface MovieDetailsContract {
 
     interface UserActionsListener {
 
-        // void onClickReadFullReview();  --Handled by ReviewAdapter
         void onFavoriteButtonClicked(boolean fav, Movie selectedMovie);
         void onTrailerClicked(Video selectedVideo);
-
         void onGoToFavorites();
-
-
 
     }
 }

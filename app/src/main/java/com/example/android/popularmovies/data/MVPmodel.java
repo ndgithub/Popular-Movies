@@ -80,7 +80,6 @@ public class MVPmodel {
 
     public void getMovieList() {
         sortPref = getSortPref();
-        //Log.v("***** - MVPModel","sortPref is: " + sortPref);
         if (sortPref.equals("favorite")) {
             movieList = getFavoritesList();
             mPresenter.listRecieved(movieList);
@@ -222,7 +221,6 @@ public class MVPmodel {
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(jsonObjRequest);
     }
 
-    //TODO: Reviews get cutoff (also videos)
     public void getReviewsAndUpdateUI(Movie selectedMovie) {
 
             JsonObjectRequest jsonObjRequest = new JsonObjectRequest
@@ -313,7 +311,6 @@ public class MVPmodel {
                 castArrayList.add(new CastMember(actorName, characterName, picPath));
             }
         } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return castArrayList;
@@ -330,7 +327,6 @@ public class MVPmodel {
             }
 
         } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return videoArrayList;
@@ -349,7 +345,6 @@ public class MVPmodel {
             }
 
         } catch (JSONException e) {
-            //Prevent app from crashing if there is a problem with parsing json.
             Log.e("QueryUtils", "Problem parsing the JSON results", e);
         }
         return reviewArrayList;
