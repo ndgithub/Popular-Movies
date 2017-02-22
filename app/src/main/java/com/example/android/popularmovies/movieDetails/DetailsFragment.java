@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,6 @@ import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
 
-import com.example.android.popularmovies.movieList.ListFragmenter;
-import com.example.android.popularmovies.movieList.MainActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 import com.example.android.popularmovies.utils.PosterImageView;
 
@@ -55,13 +52,10 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     Movie selectedMovie;
     boolean favorite;
-    String snackbarText;
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
     View rootView;
     MovieDetailsPresenter detailsPresenter;
     onGoToFavoritesListener mCallback;
-
-    boolean mTwoPane;
 
     public DetailsFragment() {
 
@@ -71,7 +65,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("*** - DetailsFragment","onCreate");
     }
 
 
@@ -79,17 +72,10 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        boolean elbool = ActivityUtils.isTwoPane(getActivity());
-        Log.v("DetailsFramgnet", "" + elbool);
         if (ActivityUtils.isTwoPane(getActivity())) {
-            Log.v("### - D onAttach", "1mCallback is: " + mCallback);
             try {
-                Log.v("### - Details", "mjhCallback: " + mCallback);
                 mCallback = (onGoToFavoritesListener) activity;
-                Log.v("!!! - DetailsFragment", "2mCallback is: " + mCallback);
             } catch (ClassCastException e) {
-                Log.v("!!! - DetailsFragment", "ya caught: " + mCallback);
                 throw new ClassCastException(activity.toString()
                         + " must implement Ongotofaveslistent");
 
@@ -104,19 +90,14 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         outState.putParcelable("movie",Parcels.wrap(selectedMovie));
     }
 
-
-
     public interface onGoToFavoritesListener {
         void onGoToFavoritesList();
     }
 
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        Log.v("*** - DetailsFragment","onActivityCreated");
     }
 
     @Nullable
@@ -128,13 +109,11 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         rootView = inflater.inflate(R.layout.fragment_details, container, false);
         detailsPresenter = new MovieDetailsPresenter(getActivity().getContentResolver(), getActivity(), this);
 
-
-
-
             selectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
 
-            //this.setTitle(selectedMovie.getTitle());
-
+            if (!ActivityUtils.isTwoPane(getActivity())) {
+                getActivity().setTitle(selectedMovie.getTitle());
+            }
             ImageView backdropView = (ImageView) rootView.findViewById(R.id.backdrop);
             Picasso.with(getActivity()).load(BASE_IMAGE_URL + selectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
 
@@ -192,7 +171,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
             });
 
             detailsPresenter.start(selectedMovie);
-        Log.v("*** - DetailsFragment","onCreateView");
         return rootView;
         }
 

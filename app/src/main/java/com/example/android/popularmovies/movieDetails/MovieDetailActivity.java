@@ -16,8 +16,6 @@ public class MovieDetailActivity extends AppCompatActivity {
         boolean elbool = ActivityUtils.isTwoPane(getApplicationContext());
         super.onCreate(savedInstanceState);
 
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_movie_details);
         DetailsFragment detailsFragment = new DetailsFragment();

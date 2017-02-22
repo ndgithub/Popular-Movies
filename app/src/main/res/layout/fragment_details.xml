@@ -4,7 +4,7 @@
     android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f4f4f4">
+    android:background="#292847">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,6 +18,8 @@
             android:background="#292847"
             android:alpha="0.8"/>
 
+
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linear_layout_details"
             android:layout_width="match_parent"
@@ -25,7 +27,8 @@
             android:layout_marginTop="15dp"
             android:divider="@drawable/shapes"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="8dp"
+            >
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"

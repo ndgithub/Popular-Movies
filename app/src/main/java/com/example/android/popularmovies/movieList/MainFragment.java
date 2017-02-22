@@ -1,12 +1,10 @@
 package com.example.android.popularmovies.movieList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,17 +16,22 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.utils.ActivityUtils;
 
-public class ListFragmenter extends Fragment implements MovieListContract.View {
+import java.util.ArrayList;
+
+public class MainFragment extends Fragment implements MovieListContract.View {
 
     TextView emptyView;
     movieListPresenter MVPpresenter;
     GridView gridView;
-    boolean mIsTwoPane;
     onMovieSelectedListener mCallback;
+    MovieAdapter mMovieAdapter;
+    ArrayList<Movie> mMovieList;
 
-    public ListFragmenter() {
+    public MainFragment() {
 
     }
 
@@ -41,7 +44,6 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
     @Override //Fragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("*** - ListFragment","onCreate");
 
     }
 
@@ -54,10 +56,8 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
             mCallback = (onMovieSelectedListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement onMovieSelectedListener");
         }
-
-
 
     }
 
@@ -66,13 +66,16 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        mMovieList = new ArrayList<>();
+        mMovieAdapter = new MovieAdapter(getContext(),mMovieList);
+
+
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
-
         gridView = (GridView) rootView.findViewById(R.id.list_view);
-        emptyView = (TextView) rootView.findViewById(R.id.empty_view);
+        gridView.setAdapter(mMovieAdapter);
         gridView.setEmptyView(emptyView);
+        emptyView = (TextView) rootView.findViewById(R.id.empty_view);
 
-        Log.v("**** - ListFragment", "onCreateView");
         return rootView;
 
     }
@@ -93,7 +96,6 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
     @Override  //Contract
     public void showMovieDetailsUI(Bundle movieBundle) {
         mCallback.onMovieSelected(movieBundle);
-
     }
 
     @Override //Contract
@@ -124,6 +126,16 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
         });
     }
 
+    @Override
+    public void showMovieList(ArrayList<Movie> list) {
+        mMovieAdapter.clear();
+        mMovieList = list;
+        mMovieAdapter.addAll(mMovieList);
+        if (ActivityUtils.isTwoPane(getContext()) && MVPmodel.fromTop) {
+            MVPpresenter.onMovieSelected(0);
+        }
+    }
+
     @Override //Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.overflow_menu, menu);
@@ -135,5 +147,8 @@ public class ListFragmenter extends Fragment implements MovieListContract.View {
         return true;
     }
 
+    public Movie getSelectedMovie(int position) {
+        return mMovieList.get(position);
+    }
 
 }

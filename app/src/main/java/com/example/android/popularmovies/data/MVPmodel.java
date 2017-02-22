@@ -94,12 +94,10 @@ public class MVPmodel {
                         public void onResponse(JSONObject response) {
                             movieList = extractMoviesFromJson(response);
                             mPresenter.listRecieved(movieList);
-
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
                         }
                     });
             SingletonRequestQueue.getInstance(mContext.getApplicationContext()).addToRequestQueue(jsObjRequest);

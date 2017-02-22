@@ -42,7 +42,6 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
-
         mView.showTrailer(appIntent, webIntent);
 
 
@@ -84,6 +83,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         prefEditor.apply();
         MVPmodel.fromTop = true;
         Intent intent = new Intent(mContext, MainActivity.class);
+
         mView.showFavorites(intent);
     }
 
@@ -113,8 +113,6 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         } else {
             mModel.addToFavoritesDb(selectedMovie);
         }
-
     }
-
 
 }
