@@ -1,25 +1,25 @@
 package com.example.android.popularmovies.data;
 
 public class CastMember {
-    private String actorName;
-    private String characterName;
-    private String profilePicPath;
+    private String mActorName;
+    private String mCharacterName;
+    private String mProfilePicPath;
 
     public CastMember(String actorName, String characterName,String profilePicPath) {
-        this.actorName = actorName;
-        this.characterName = characterName;
-        this.profilePicPath = profilePicPath;
+        this.mActorName = actorName;
+        this.mCharacterName = characterName;
+        this.mProfilePicPath = profilePicPath;
     }
 
     public String getActorName() {
-        return actorName;
+        return mActorName;
     }
 
     public String getCharacterName() {
-        return characterName;
+        return mCharacterName;
     }
 
     public String getProfilePicPath() {
-        return profilePicPath;
+        return mProfilePicPath;
     }
 }

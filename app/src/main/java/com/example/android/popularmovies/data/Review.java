@@ -5,25 +5,25 @@ package com.example.android.popularmovies.data;
  */
 
 public class Review {
-    private String author;
-    private String content;
-    private String URL;
+    private String mAuthor;
+    private String mContent;
+    private String mURL;
 
     public Review(String author, String content, String URL) {
-        this.author = author;
-        this.content = content;
-        this.URL = URL;
+        this.mAuthor = author;
+        this.mContent = content;
+        this.mURL = URL;
     }
 
     public String getAuthor() {
-        return author;
+        return mAuthor;
     }
 
     public String getContent() {
-        return content;
+        return mContent;
     }
 
     public String getURL() {
-        return URL;
+        return mURL;
     }
 }

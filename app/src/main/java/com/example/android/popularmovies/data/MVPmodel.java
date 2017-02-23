@@ -16,9 +16,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.movieDetails.MovieDetailsPresenter;
-import com.example.android.popularmovies.movieList.MovieListContract;
-import com.example.android.popularmovies.movieList.movieListPresenter;
+import com.example.android.popularmovies.moviedetails.MovieDetailsPresenter;
+import com.example.android.popularmovies.movielist.MovieListPresenter;
 import com.example.android.popularmovies.utils.QueryUtils;
 import com.example.android.popularmovies.utils.SingletonRequestQueue;
 
@@ -34,21 +33,20 @@ import java.util.ArrayList;
 
 public class MVPmodel {
 
-    private static MVPmodel modelInstance = null;
     public static boolean fromTop = true;
     private ContentResolver mContentResolver;
-    private SharedPreferences sharedPref;
+    private SharedPreferences mSharedPref;
     private Context mContext;
-    private String sortPref;
-    private ArrayList<Movie> movieList = new ArrayList<>();
-    private movieListPresenter mPresenter = null;
-    private MovieDetailsPresenter movieDetailsPresenter = null;
+    private String mSortPref;
+    private ArrayList<Movie> mMovieList = new ArrayList<>();
+    private MovieListPresenter mPresenter = null;
+    private MovieDetailsPresenter mMovieDetailsPresenter = null;
 
-    public MVPmodel(ContentResolver contentResolver, Context context, movieListPresenter presenter) {
+    public MVPmodel(ContentResolver contentResolver, Context context, MovieListPresenter presenter) {
         mContentResolver = contentResolver;
         mContext = context;
         PreferenceManager.setDefaultValues(context, R.xml.pref_general, false);
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         mPresenter = presenter;
     }
 
@@ -56,15 +54,15 @@ public class MVPmodel {
         mContentResolver = contentResolver;
         mContext = context;
         PreferenceManager.setDefaultValues(context, R.xml.pref_general, false);
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        movieDetailsPresenter = detailsPresenter;
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        mMovieDetailsPresenter = detailsPresenter;
     }
 
 
     public void changeSortPreference(MenuItem item) {
         int itemId = item.getItemId();
         SharedPreferences.Editor prefEditor;
-        prefEditor = sharedPref.edit();
+        prefEditor = mSharedPref.edit();
         switch (itemId) {
             case (R.id.pop):
                 prefEditor.putString("sort_by", "popular");
@@ -79,20 +77,20 @@ public class MVPmodel {
     }
 
     public void getMovieList() {
-        sortPref = getSortPref();
-        if (sortPref.equals("favorite")) {
-            movieList = getFavoritesList();
-            mPresenter.listRecieved(movieList);
+        mSortPref = getSortPref();
+        if (mSortPref.equals("favorite")) {
+            mMovieList = getFavoritesList();
+            mPresenter.listRecieved(mMovieList);
         } else {
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET,
-                            "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US",
+                            "https://api.themoviedb.org/3/movie/" + mSortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US",
                             null, new Response.Listener<JSONObject>() {
 
                         @Override
                         public void onResponse(JSONObject response) {
-                            movieList = extractMoviesFromJson(response);
-                            mPresenter.listRecieved(movieList);
+                            mMovieList = extractMoviesFromJson(response);
+                            mPresenter.listRecieved(mMovieList);
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -171,7 +169,7 @@ public class MVPmodel {
     }
 
     public String getSortPref() {
-        return sharedPref.getString("sort_by", null);
+        return mSharedPref.getString("sort_by", null);
     }
 
     public void getTrailersAndUpdateUI(Movie selectedMovie) {
@@ -183,7 +181,7 @@ public class MVPmodel {
                     @Override
                     public void onResponse(JSONObject response) {
                         ArrayList<Video> videoList = getVideosFromJson(response);
-                        movieDetailsPresenter.trailerListRecieved(videoList);
+                        mMovieDetailsPresenter.trailerListRecieved(videoList);
 
                     }
                 }, new Response.ErrorListener() {
@@ -207,7 +205,7 @@ public class MVPmodel {
                     @Override
                     public void onResponse(JSONObject response) {
                         ArrayList<CastMember> castList = extractCastFromJson(response);
-                        movieDetailsPresenter.castListRecieved(castList);
+                        mMovieDetailsPresenter.castListRecieved(castList);
                     }
                 }, new Response.ErrorListener() {
 
@@ -231,7 +229,7 @@ public class MVPmodel {
                         @Override
                         public void onResponse(JSONObject response) {
                             ArrayList<Review> reviewList = getReviewsFromJson(response);
-                            movieDetailsPresenter.reviewListRecieved(reviewList);
+                            mMovieDetailsPresenter.reviewListRecieved(reviewList);
                         }
                     }, new Response.ErrorListener() {
 
@@ -277,9 +275,9 @@ public class MVPmodel {
         Uri newRowUri = mContentResolver.insert(MovieDbContract.FavoritesEntry.CONTENT_URI, cv);
 
         if (newRowUri == null) {
-            movieDetailsPresenter.favAddError();
+            mMovieDetailsPresenter.favAddError();
         } else {
-            movieDetailsPresenter.onAddedToFavorites();
+            mMovieDetailsPresenter.onAddedToFavorites();
 
         }
     }
@@ -289,11 +287,11 @@ public class MVPmodel {
                 MovieDbContract.FavoritesEntry.COLUMN_MOVIE_ID + " = " + selectedMovie.getId(), null);
         if (rowsDel == 1) {
 
-            movieDetailsPresenter.onRemovedFromFavorites();
+            mMovieDetailsPresenter.onRemovedFromFavorites();
 
         } else {
 
-            movieDetailsPresenter.favRemoveError();
+            mMovieDetailsPresenter.favRemoveError();
         }
     }
 

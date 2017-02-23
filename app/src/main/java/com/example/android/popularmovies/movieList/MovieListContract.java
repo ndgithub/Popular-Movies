@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.movieList;
+package com.example.android.popularmovies.movielist;
 
 import android.os.Bundle;
 import android.view.MenuItem;

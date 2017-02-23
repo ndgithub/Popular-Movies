@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.movieDetails;
+package com.example.android.popularmovies.moviedetails;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,14 +23,14 @@ import java.util.ArrayList;
 
 
 public class ReviewAdapter extends ArrayAdapter<Review> {
-    private Context context;
+    private Context mContext;
 
     private LayoutInflater mInflater;
 
     public ReviewAdapter(Context context, ArrayList<Review> objects) {
         super(context, 0, objects);
         mInflater = LayoutInflater.from(context);
-        this.context = context;
+        this.mContext = context;
     }
 
     static class ViewHolder {
@@ -64,7 +64,7 @@ public class ReviewAdapter extends ArrayAdapter<Review> {
                 Intent webIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse(currentReview.getURL()));
                 webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(webIntent);
+                mContext.startActivity(webIntent);
             }
         });
 

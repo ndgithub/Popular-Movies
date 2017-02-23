@@ -1,7 +1,6 @@
-package com.example.android.popularmovies.movieList;
+package com.example.android.popularmovies.movielist;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,12 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class MovieAdapter extends ArrayAdapter {
-    private Context context;
+    private Context mContext;
     private LayoutInflater mInflater;
 
     public MovieAdapter(Context context, ArrayList objects) {
         super(context, R.layout.list_item,objects);
-        this.context = context;
+        this.mContext = context;
         mInflater = LayoutInflater.from(context);
         Picasso.with(context).setIndicatorsEnabled(false);
     }
@@ -31,18 +30,17 @@ public class MovieAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, View recycled, ViewGroup parent) {
         ViewHolder holder = new ViewHolder();
-        View listItemView = recycled;
-        if (listItemView == null) {
-            listItemView = mInflater.inflate(R.layout.list_item, parent, false);
-            holder.poster = (PosterImageView) listItemView.findViewById(R.id.image);
-            listItemView.setTag(holder);
+
+        if (recycled == null) {
+            recycled = mInflater.inflate(R.layout.list_item, parent, false);
+            holder.poster = (PosterImageView) recycled.findViewById(R.id.image);
+            recycled.setTag(holder);
         } else {
-            holder = (ViewHolder) listItemView.getTag();
+            holder = (ViewHolder) recycled.getTag();
         }
         Movie currentMovie = (Movie) getItem(position);
         String pathToImage = "https://image.tmdb.org/t/p/w500" + currentMovie.getPosterPath();
-        Picasso.with(context).load(pathToImage).fit().centerCrop().into(holder.poster);
-        //Log.v("***** - MovieAdapter",currentMovie.getTitle() + " " + currentMovie.getPosterPath());
-        return listItemView;
+        Picasso.with(mContext).load(pathToImage).fit().centerCrop().into(holder.poster);
+        return recycled;
     }
 }

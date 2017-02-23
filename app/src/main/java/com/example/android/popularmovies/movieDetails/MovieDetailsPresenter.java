@@ -1,6 +1,5 @@
-package com.example.android.popularmovies.movieDetails;
+package com.example.android.popularmovies.moviedetails;
 
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,18 +7,14 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-
-import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.CastMember;
 import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
-import com.example.android.popularmovies.movieList.MainActivity;
+import com.example.android.popularmovies.movielist.MainActivity;
 
 import java.util.ArrayList;
-
-import javax.sql.RowSetEvent;
 
 public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsListener {
 

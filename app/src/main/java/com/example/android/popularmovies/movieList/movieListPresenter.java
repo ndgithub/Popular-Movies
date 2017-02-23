@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.movieList;
+package com.example.android.popularmovies.movielist;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -6,33 +6,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import android.widget.GridView;
-
 import com.example.android.popularmovies.data.MVPmodel;
 import com.example.android.popularmovies.data.Movie;
-import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
+import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-public class movieListPresenter implements MovieListContract.UserActionsListener {
+public class MovieListPresenter implements MovieListContract.UserActionsListener {
 
-    private MVPmodel model;
+    private MVPmodel mModel;
     private MovieListContract.View mView;
     private Context mContext;
-    private ArrayList<Movie> mMovieList = new ArrayList<>();
 
-    public movieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view) {
+    public MovieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view) {
         mContext = context;
         mView = view;
-        model = new MVPmodel(contentResolver,mContext,this);
+        mModel = new MVPmodel(contentResolver,mContext,this);
     }
 
     @Override
     public void start() {
-        model.getMovieList();
+        mModel.getMovieList();
     }
 
     @Override
@@ -50,7 +47,7 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     }
 
     public void onSortByTapped() {
-        String sortPref = model.getSortPref();
+        String sortPref = mModel.getSortPref();
         mView.inflateSortOptionsMenu(sortPref);
     }
 
@@ -58,8 +55,8 @@ public class movieListPresenter implements MovieListContract.UserActionsListener
     @Override
     public void onSortChanged(MenuItem item) {
         MVPmodel.fromTop = true;
-        model.changeSortPreference(item);
-        model.getMovieList();
+        mModel.changeSortPreference(item);
+        mModel.getMovieList();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.movieDetails;
+package com.example.android.popularmovies.moviedetails;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -38,23 +38,23 @@ import java.util.Date;
 
 public class DetailsFragment extends Fragment implements MovieDetailsContract.View {
     CastAdapter mCastAdapter;
-    ArrayList<CastMember> castList;
-    GridView castGridView;
+    ArrayList<CastMember> mCastList;
+    GridView mCastGridView;
 
     VideoAdapter mVideoAdapter;
-    ArrayList<Video> videoList;
-    GridView videoGridView;
+    ArrayList<Video> mVideoList;
+    GridView mVideoGridView;
 
     ReviewAdapter mReviewAdapter;
-    ArrayList<Review> reviewList;
-    ListView reviewListView;
-    ImageView favButton;
+    ArrayList<Review> mReviewList;
+    ListView mReviewListView;
+    ImageView mFavButton;
 
-    Movie selectedMovie;
-    boolean favorite;
+    Movie mSelectedMovie;
+    boolean mFavorite;
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
-    View rootView;
-    MovieDetailsPresenter detailsPresenter;
+    View mRootView;
+    MovieDetailsPresenter mDetailsPresenter;
     onGoToFavoritesListener mCallback;
 
     public DetailsFragment() {
@@ -87,7 +87,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("movie",Parcels.wrap(selectedMovie));
+        outState.putParcelable("movie",Parcels.wrap(mSelectedMovie));
     }
 
     public interface onGoToFavoritesListener {
@@ -106,83 +106,83 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         super.onCreateView(inflater, container, savedInstanceState);
 
 
-        rootView = inflater.inflate(R.layout.fragment_details, container, false);
-        detailsPresenter = new MovieDetailsPresenter(getActivity().getContentResolver(), getActivity(), this);
+        mRootView = inflater.inflate(R.layout.fragment_details, container, false);
+        mDetailsPresenter = new MovieDetailsPresenter(getActivity().getContentResolver(), getActivity(), this);
 
-            selectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
+        mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
 
             if (!ActivityUtils.isTwoPane(getActivity())) {
-                getActivity().setTitle(selectedMovie.getTitle());
+                getActivity().setTitle(mSelectedMovie.getTitle());
             }
-            ImageView backdropView = (ImageView) rootView.findViewById(R.id.backdrop);
-            Picasso.with(getActivity()).load(BASE_IMAGE_URL + selectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
+            ImageView backdropView = (ImageView) mRootView.findViewById(R.id.backdrop);
+            Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
 
-            PosterImageView posterView = (PosterImageView) rootView.findViewById(R.id.poster);
-            Picasso.with(getActivity()).load(BASE_IMAGE_URL + selectedMovie.getPosterPath()).fit().centerInside().into(posterView);
+            PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
+            Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
 
-            TextView titleView = (TextView) rootView.findViewById(R.id.title);
-            titleView.setText(selectedMovie.getTitle());
+            TextView titleView = (TextView) mRootView.findViewById(R.id.title);
+            titleView.setText(mSelectedMovie.getTitle());
 
-            TextView ratingView = (TextView) rootView.findViewById(R.id.rating);
-            ratingView.setText(selectedMovie.getRating());
+            TextView ratingView = (TextView) mRootView.findViewById(R.id.rating);
+            ratingView.setText(mSelectedMovie.getRating());
 
-            TextView overviewView = (TextView) rootView.findViewById(R.id.overview);
-            overviewView.setText(selectedMovie.getOverview());
+            TextView overviewView = (TextView) mRootView.findViewById(R.id.overview);
+            overviewView.setText(mSelectedMovie.getOverview());
 
-            TextView dateView = (TextView) rootView.findViewById(R.id.date);
-            dateView.setText("Release Date: " + formatDate(selectedMovie.getDate()));
+            TextView dateView = (TextView) mRootView.findViewById(R.id.date);
+            dateView.setText("Release Date: " + formatDate(mSelectedMovie.getDate()));
 
-            favorite = detailsPresenter.isFavorite(selectedMovie);
+            mFavorite = mDetailsPresenter.isFavorite(mSelectedMovie);
             showFavButton();
 
 
-            castGridView = (GridView) rootView.findViewById(R.id.cast_grid_view);
-            castList = new ArrayList<>();
-            mCastAdapter = new CastAdapter(getActivity(), castList);
-            castGridView.setAdapter(mCastAdapter);
-            TextView castEmptyView = (TextView) rootView.findViewById(R.id.cast_empyt_view);
-            castGridView.setEmptyView(castEmptyView);
-            showCastList(castList);
+        mCastGridView = (GridView) mRootView.findViewById(R.id.cast_grid_view);
+        mCastList = new ArrayList<>();
+            mCastAdapter = new CastAdapter(getActivity(), mCastList);
+        mCastGridView.setAdapter(mCastAdapter);
+            TextView castEmptyView = (TextView) mRootView.findViewById(R.id.cast_empyt_view);
+        mCastGridView.setEmptyView(castEmptyView);
+            showCastList(mCastList);
 
-            reviewListView = (ListView) rootView.findViewById(R.id.review_list_view);
-            reviewList = new ArrayList<>();
-            mReviewAdapter = new ReviewAdapter(getActivity(), reviewList);
-            reviewListView.setAdapter(mReviewAdapter);
-            TextView reviewEmptyView = (TextView) rootView.findViewById(R.id.review_empty_view);
-            reviewListView.setEmptyView(reviewEmptyView);
-            showReviewList(reviewList);
-
-
-            videoGridView = (GridView) rootView.findViewById(R.id.video_grid_view);
-            videoList = new ArrayList<>();
-            mVideoAdapter = new VideoAdapter(getActivity(), videoList);
-            videoGridView.setAdapter(mVideoAdapter);
-            TextView videoEmptyView = (TextView) rootView.findViewById(R.id.video_empty_view);
-            videoGridView.setEmptyView(videoEmptyView);
-            showVideoList(videoList);
+            mReviewListView = (ListView) mRootView.findViewById(R.id.review_list_view);
+            mReviewList = new ArrayList<>();
+            mReviewAdapter = new ReviewAdapter(getActivity(), mReviewList);
+            mReviewListView.setAdapter(mReviewAdapter);
+            TextView reviewEmptyView = (TextView) mRootView.findViewById(R.id.review_empty_view);
+            mReviewListView.setEmptyView(reviewEmptyView);
+            showReviewList(mReviewList);
 
 
-            videoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            mVideoGridView = (GridView) mRootView.findViewById(R.id.video_grid_view);
+        mVideoList = new ArrayList<>();
+            mVideoAdapter = new VideoAdapter(getActivity(), mVideoList);
+            mVideoGridView.setAdapter(mVideoAdapter);
+            TextView videoEmptyView = (TextView) mRootView.findViewById(R.id.video_empty_view);
+            mVideoGridView.setEmptyView(videoEmptyView);
+            showVideoList(mVideoList);
+
+
+            mVideoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     Video selectedVideo = (Video) mVideoAdapter.getItem(position);
-                    detailsPresenter.onTrailerClicked(selectedVideo);
+                    mDetailsPresenter.onTrailerClicked(selectedVideo);
                 }
             });
 
-            detailsPresenter.start(selectedMovie);
-        return rootView;
+        mDetailsPresenter.start(mSelectedMovie);
+        return mRootView;
         }
 
 
 
 
     private void showSnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(rootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(mRootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.go_to_favorites, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                detailsPresenter.onGoToFavorites();
+                mDetailsPresenter.onGoToFavorites();
             }
         });
         snackbar.show();
@@ -214,10 +214,10 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     @Override
-    public void showReviewList(ArrayList<Review> reviewList) {
-        if (reviewList != null) {
+    public void showReviewList(ArrayList<Review> mReviewList) {
+        if (mReviewList != null) {
             mReviewAdapter.clear();
-            mReviewAdapter.addAll(reviewList);
+            mReviewAdapter.addAll(mReviewList);
         }
     }
 
@@ -248,16 +248,16 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     private void showFavButton() {
-        favButton = (ImageView) rootView.findViewById(R.id.fav_button);
-        if (favorite) {
-            favButton.setImageResource(R.drawable.ic_favorite_black_24dp);
+        mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);
+        if (mFavorite) {
+            mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
         } else {
-            favButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            mFavButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         }
-        favButton.setOnClickListener(new View.OnClickListener() {
+        mFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                detailsPresenter.onFavoriteButtonClicked(favorite, selectedMovie);
+                mDetailsPresenter.onFavoriteButtonClicked(mFavorite, mSelectedMovie);
 
             }
         });
@@ -265,10 +265,10 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     public void updateFavorite(boolean fav) {
         if (fav) {
-            favorite = true;
+            mFavorite = true;
             showSnackbar("Added to Favorites");
         } else {
-            favorite = false;
+            mFavorite = false;
             showSnackbar("Removed From Favorites");
         }
         showFavButton();

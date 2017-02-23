@@ -1,12 +1,12 @@
-package com.example.android.popularmovies.movieList;
+package com.example.android.popularmovies.movielist;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.movieDetails.DetailsFragment;
-import com.example.android.popularmovies.movieDetails.MovieDetailActivity;
+import com.example.android.popularmovies.moviedetails.DetailsFragment;
+import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
 

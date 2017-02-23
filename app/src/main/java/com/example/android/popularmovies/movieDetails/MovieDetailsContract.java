@@ -1,4 +1,4 @@
-package com.example.android.popularmovies.movieDetails;
+package com.example.android.popularmovies.moviedetails;
 
 import android.content.Intent;
 
