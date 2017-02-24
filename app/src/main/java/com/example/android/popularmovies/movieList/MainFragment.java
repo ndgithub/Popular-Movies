@@ -67,7 +67,6 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieList = new ArrayList<>();
         mMovieAdapter = new MovieAdapter(getContext(),mMovieList);
 
-
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.list_view);
         mGridView.setAdapter(mMovieAdapter);
@@ -130,7 +129,6 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieList = list;
         mMovieAdapter.addAll(mMovieList);
         mMVPpresenter.showFirst(mMovieList);
-
     }
 
     @Override //Fragment
@@ -143,7 +141,5 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMVPpresenter.onSortByTapped();
         return true;
     }
-
-
 
 }
