@@ -22,8 +22,5 @@ public class MovieDetailActivity extends AppCompatActivity {
         Bundle bundie = getIntent().getBundleExtra("movieBundle");
         detailsFragment.setArguments(bundie);
         getFragmentManager().beginTransaction().replace(R.id.details_container, detailsFragment).commit();
-
     }
-
-
 }
