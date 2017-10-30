@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 
 public final class QueryUtils {
-    public static final String API_KEY = "";
+    public static final String API_KEY = "d962b00501dc49c8dfd38339a7daa32a";
 
     private QueryUtils() {
     }
