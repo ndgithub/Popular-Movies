@@ -5,7 +5,7 @@ Android application thats shows popular and top rated moves using the tmdb.com A
 * Implements the MVP architectural pattern. 
 
 
-# Screenshots
+## Screenshots
 <table>
   <tr>
     <td>
