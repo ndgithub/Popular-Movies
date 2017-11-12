@@ -9,9 +9,9 @@ Android application thats shows popular and top rated moves using the tmdb.com A
 <table>
   <tr>
     <td>
-<img src="https://raw.githubusercontent.com/ndgithub/popular-movies/master/screenshots/phone_master_portrait.png" alt="alt text" width="400"> </td>
+<img src="https://raw.githubusercontent.com/ndgithub/popular-movies/master/screenshots/phone_master_portrait.png" alt="alt text" width="300"> </td>
     <td>
-<img src="https://raw.githubusercontent.com/ndgithub/popular-movies/master/screenshots/phone_detail_view.png" alt="alt text" width="400"></td></tr></table>
+<img src="https://raw.githubusercontent.com/ndgithub/popular-movies/master/screenshots/phone_detail_view.png" alt="alt text" width="300"></td></tr></table>
 <img src="https://raw.githubusercontent.com/ndgithub/popular-movies/master/screenshots/tablet.png" alt="alt text" width="600">
 
 
