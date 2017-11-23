@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements
 }
 
 
-// get details Presnetr to be not a dependency of model .
-// Don't depend on concrete view in presenter, depend on interface
 
 
 

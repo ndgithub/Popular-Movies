@@ -58,25 +58,18 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
     View mRootView;
     MovieDetailsContract.UserActionsListener mDetailsPresenter;
-    ModelInterface mModel;
     onGoToFavoritesListener mCallback;
 
     public DetailsFragment() {
 
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        mModel = new MVPmodel(getActivity().getContentResolver(),getActivity());
-        mDetailsPresenter = new MovieDetailsPresenter(mModel,this);
-
+        mDetailsPresenter = new MovieDetailsPresenter(new MVPmodel(getActivity().getContentResolver(),getActivity()), this);
     }
 
-
-    //TODO: Why using deprecated method
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);

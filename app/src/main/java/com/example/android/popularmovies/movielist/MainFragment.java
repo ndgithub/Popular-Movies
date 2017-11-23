@@ -38,7 +38,6 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     private Context mContext;
 
     private  MovieListPresenter mPresenter;
-    private ModelInterface mModel;
 
 
     public MainFragment() {
@@ -52,8 +51,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-        mModel = new MVPmodel(getActivity().getContentResolver(),mContext);
-        mPresenter = new MovieListPresenter(mModel,this);
+        mPresenter = new MovieListPresenter(new MVPmodel(getActivity().getContentResolver(),mContext),this);
     }
 
     @Override
