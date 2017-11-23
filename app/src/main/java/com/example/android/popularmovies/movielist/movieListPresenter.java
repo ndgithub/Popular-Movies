@@ -1,52 +1,48 @@
 package com.example.android.popularmovies.movielist;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
+
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.data.MVPmodel;
+import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
-import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
-import com.example.android.popularmovies.utils.ActivityUtils;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
 public class MovieListPresenter implements MovieListContract.UserActionsListener {
 
-    private MVPmodel mModel;
+    private ModelInterface mModel;
     private MovieListContract.View mView;
-    private Context mContext;
 
-    public MovieListPresenter(ContentResolver contentResolver, Context context, MovieListContract.View view) {
-        mContext = context;
+    public MovieListPresenter(ModelInterface model, MovieListContract.View view) {
         mView = view;
-        mModel = new MVPmodel(contentResolver,mContext,this);
+        mModel = model;
     }
 
     @Override
     public void start() {
-        mModel.getMovieList();
+        showMovieList();
+    }
+
+    private void showMovieList() {
+        mModel.getMovieList(new ModelInterface.LoadMoviesCallback() {
+            @Override
+            public void onMoviesLoaded(ArrayList<Movie> movieList) {
+                if (movieList != null) {
+                    mView.showMovieList(movieList);
+                }
+            }
+        });
     }
 
     @Override
-    public void listRecieved(ArrayList<Movie> movieList) {
-        if (movieList != null) {
-            mView.showMovieList(movieList);
+    public void showFirst() {
+        if (MVPmodel.fromTop) {
+            onMovieSelected(0);
         }
     }
 
-    @Override
-    public void showFirst(ArrayList<Movie> movieList) {
-        if (ActivityUtils.isTwoPane(mContext) && MVPmodel.fromTop) {
-            onMovieSelected(0,movieList);
-        }
-    }
-
-    public void onSortByTapped() {
+    void onSortByTapped() {
         String sortPref = mModel.getSortPref();
         mView.inflateSortOptionsMenu(sortPref);
     }
@@ -56,17 +52,12 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     public void onSortChanged(MenuItem item) {
         MVPmodel.fromTop = true;
         mModel.changeSortPreference(item);
-        mModel.getMovieList();
+        showMovieList();
     }
 
     @Override
-    public void onMovieSelected(int position,ArrayList<Movie> movieList) {
-        Movie selectedMovie = movieList.get(position);
-        Intent intent = new Intent(mContext, MovieDetailActivity.class);
-        Bundle elBunidi = new Bundle();
-        elBunidi.putParcelable("movie",Parcels.wrap(selectedMovie));
-        intent.putExtra("movi",elBunidi);
+    public void onMovieSelected(int position) {
         MVPmodel.fromTop = false;
-        mView.showMovieDetailsUI(elBunidi);
+        mView.showMovieDetailsUI(position);
     }
 }

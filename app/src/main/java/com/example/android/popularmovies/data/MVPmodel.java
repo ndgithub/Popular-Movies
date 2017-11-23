@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
  * Created by Nicky on 1/23/17.
  */
 
-public class MVPmodel {
+public class MVPmodel implements ModelInterface {
 
     public static boolean fromTop = true;
     private ContentResolver mContentResolver;
@@ -42,27 +41,19 @@ public class MVPmodel {
     private MovieListPresenter mPresenter = null;
     private MovieDetailsPresenter mMovieDetailsPresenter = null;
 
-    public MVPmodel(ContentResolver contentResolver, Context context, MovieListPresenter presenter) {
+    public MVPmodel(ContentResolver contentResolver, Context context) {
         mContentResolver = contentResolver;
         mContext = context;
         PreferenceManager.setDefaultValues(context, R.xml.pref_general, false);
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        mPresenter = presenter;
+
     }
 
-    public MVPmodel(ContentResolver contentResolver, Context context, MovieDetailsPresenter detailsPresenter) {
-        mContentResolver = contentResolver;
-        mContext = context;
-        PreferenceManager.setDefaultValues(context, R.xml.pref_general, false);
-        mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        mMovieDetailsPresenter = detailsPresenter;
-    }
 
 
     public void changeSortPreference(MenuItem item) {
         int itemId = item.getItemId();
-        SharedPreferences.Editor prefEditor;
-        prefEditor = mSharedPref.edit();
+        SharedPreferences.Editor prefEditor = mSharedPref.edit();
         switch (itemId) {
             case (R.id.pop):
                 prefEditor.putString("sort_by", "popular");
@@ -76,11 +67,21 @@ public class MVPmodel {
         prefEditor.apply();
     }
 
-    public void getMovieList() {
+    public void updateSortToFavorites() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+        prefEditor.putString("sort_by", "favorite");
+        prefEditor.apply();
+        MVPmodel.fromTop = true;
+
+    }
+
+
+    public void getMovieList(final LoadMoviesCallback callback) {
         mSortPref = getSortPref();
         if (mSortPref.equals("favorite")) {
             mMovieList = getFavoritesList();
-            mPresenter.listRecieved(mMovieList);
+            callback.onMoviesLoaded(mMovieList);
         } else {
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET,
@@ -90,7 +91,7 @@ public class MVPmodel {
                         @Override
                         public void onResponse(JSONObject response) {
                             mMovieList = extractMoviesFromJson(response);
-                            mPresenter.listRecieved(mMovieList);
+                            callback.onMoviesLoaded(mMovieList);
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -172,7 +173,7 @@ public class MVPmodel {
         return mSharedPref.getString("sort_by", null);
     }
 
-    public void getTrailersAndUpdateUI(Movie selectedMovie) {
+    public void getTrailers(Movie selectedMovie, final ModelInterface.TrailersLoadedCallback callback) {
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
@@ -181,7 +182,7 @@ public class MVPmodel {
                     @Override
                     public void onResponse(JSONObject response) {
                         ArrayList<Video> videoList = getVideosFromJson(response);
-                        mMovieDetailsPresenter.trailerListRecieved(videoList);
+                        callback.onVideosLoaded(videoList);
 
                     }
                 }, new Response.ErrorListener() {
@@ -189,14 +190,14 @@ public class MVPmodel {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (QueryUtils.isConnectedToInternet(mContext)) {
-                            Toast.makeText(mContext, R.string.videos_unavailable, Toast.LENGTH_SHORT).show();
+                            callback.errorLoadingVideos();
                         }
                     }
                 });
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(jsonObjRequest);
     }
 
-    public void getCastListAndUpdateUI(Movie selectedMovie) {
+    public void getCast(Movie selectedMovie, final ModelInterface.CastLoadedCallback callback) {
         JsonObjectRequest jsonObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
@@ -205,42 +206,42 @@ public class MVPmodel {
                     @Override
                     public void onResponse(JSONObject response) {
                         ArrayList<CastMember> castList = extractCastFromJson(response);
-                        mMovieDetailsPresenter.castListRecieved(castList);
+                        callback.onCastLoaded(castList);
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (QueryUtils.isConnectedToInternet(mContext)) {
-                            Toast.makeText(mContext, R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
+                            callback.errorLoadingCast();
                         }
                     }
                 });
         SingletonRequestQueue.getInstance(mContext).addToRequestQueue(jsonObjRequest);
     }
 
-    public void getReviewsAndUpdateUI(Movie selectedMovie) {
+    public void getReviews(Movie selectedMovie, final ModelInterface.ReviewsLoadedCallback callback) {
 
-            JsonObjectRequest jsonObjRequest = new JsonObjectRequest
-                    (Request.Method.GET,
-                            "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
-                                    "/reviews?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjRequest = new JsonObjectRequest
+                (Request.Method.GET,
+                        "http://api.themoviedb.org/3/movie/" + selectedMovie.getId() +
+                                "/reviews?api_key=" + QueryUtils.API_KEY, null, new Response.Listener<JSONObject>() {
 
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            ArrayList<Review> reviewList = getReviewsFromJson(response);
-                            mMovieDetailsPresenter.reviewListRecieved(reviewList);
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ArrayList<Review> reviewList = getReviewsFromJson(response);
+                        callback.onReviewsLoaded(reviewList);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (QueryUtils.isConnectedToInternet(mContext)) {
+                            callback.errorLoadingReviews();
                         }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            if (QueryUtils.isConnectedToInternet(mContext)) {
-                                Toast.makeText(mContext, R.string.reviews_unavailable, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-            SingletonRequestQueue.getInstance(mContext).addToRequestQueue(jsonObjRequest);
+                    }
+                });
+        SingletonRequestQueue.getInstance(mContext).addToRequestQueue(jsonObjRequest);
 
     }
 
@@ -261,7 +262,7 @@ public class MVPmodel {
 
     }
 
-    public void addToFavoritesDb(Movie selectedMovie) {
+    public void addToFavoritesDb(Movie selectedMovie, ModelInterface.addFavoritesCallback callback) {
 
         ContentValues cv = new ContentValues();
         cv.put(MovieDbContract.FavoritesEntry.COLUMN_MOVIE_ID, selectedMovie.getId());
@@ -275,23 +276,20 @@ public class MVPmodel {
         Uri newRowUri = mContentResolver.insert(MovieDbContract.FavoritesEntry.CONTENT_URI, cv);
 
         if (newRowUri == null) {
-            mMovieDetailsPresenter.favAddError();
+            callback.errorAddingToFav();
         } else {
-            mMovieDetailsPresenter.onAddedToFavorites();
+            callback.successAddingToFav();
 
         }
     }
 
-    public void removeFromFavoritesDb(Movie selectedMovie) {
+    public void removeFromFavoritesDb(Movie selectedMovie, ModelInterface.removeFavoritesCallback callback) {
         int rowsDel = mContentResolver.delete(MovieDbContract.FavoritesEntry.CONTENT_URI,
                 MovieDbContract.FavoritesEntry.COLUMN_MOVIE_ID + " = " + selectedMovie.getId(), null);
         if (rowsDel == 1) {
-
-            mMovieDetailsPresenter.onRemovedFromFavorites();
-
+            callback.successRemovingFav();
         } else {
-
-            mMovieDetailsPresenter.favRemoveError();
+            callback.errorRemovingFav();
         }
     }
 
@@ -313,15 +311,16 @@ public class MVPmodel {
         }
         return castArrayList;
     }
+
     public static ArrayList<Video> getVideosFromJson(JSONObject baseJsonResponse) {
         ArrayList<Video> videoArrayList = new ArrayList<>();
         try {
             JSONArray videoResultsArray = baseJsonResponse.getJSONArray("results");
             for (int i = 0; i < videoResultsArray.length(); i++) {
                 JSONObject currentVideo = videoResultsArray.getJSONObject(i);
-                String videoKey =  currentVideo.getString("key");
+                String videoKey = currentVideo.getString("key");
                 String videoName = currentVideo.getString("name");
-                videoArrayList.add(new Video(videoKey,videoName));
+                videoArrayList.add(new Video(videoKey, videoName));
             }
 
         } catch (JSONException e) {
@@ -336,10 +335,10 @@ public class MVPmodel {
             JSONArray reviewResultsArray = baseJsonResponse.getJSONArray("results");
             for (int i = 0; i < reviewResultsArray.length(); i++) {
                 JSONObject currentReview = reviewResultsArray.getJSONObject(i);
-                String reviewAuthor =  currentReview.getString("author");
+                String reviewAuthor = currentReview.getString("author");
                 String reviewContent = currentReview.getString("content");
                 String reviewURL = currentReview.getString("url");
-                reviewArrayList.add(new Review(reviewAuthor,reviewContent,reviewURL));
+                reviewArrayList.add(new Review(reviewAuthor, reviewContent, reviewURL));
             }
 
         } catch (JSONException e) {
@@ -347,4 +346,6 @@ public class MVPmodel {
         }
         return reviewArrayList;
     }
+
+
 }

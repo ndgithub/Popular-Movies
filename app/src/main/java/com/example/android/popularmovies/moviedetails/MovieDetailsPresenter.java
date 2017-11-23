@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.CastMember;
 import com.example.android.popularmovies.data.MVPmodel;
+import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
@@ -18,50 +20,56 @@ import java.util.ArrayList;
 
 public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsListener {
 
-
-    private Context mContext;
     private MovieDetailsContract.View mView;
-    private MVPmodel mModel;
+    private ModelInterface mModel;
 
-    public MovieDetailsPresenter(ContentResolver contentResolver, Context context, MovieDetailsContract.View view) {
-        mContext = context;
+    public MovieDetailsPresenter(ModelInterface model, MovieDetailsContract.View view) {
         mView = view;
-        mModel = new MVPmodel(contentResolver, context, this);
-    }
-
-
-    @Override
-    public void onTrailerClicked(Video selectedVideo) {
-        String vidKey = selectedVideo.getKey();
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
-        mView.showTrailer(appIntent, webIntent);
-
-
+        mModel = model;
     }
 
 
     public void start(Movie selectedMovie) {
-        mModel.getCastListAndUpdateUI(selectedMovie);
-        mModel.getTrailersAndUpdateUI(selectedMovie);
-        mModel.getReviewsAndUpdateUI(selectedMovie);
+        loadUI(selectedMovie);
     }
 
+    private void loadUI(Movie selectedMovie) {
+        mView.showMainInfoCard();
+        mModel.getCast(selectedMovie, new ModelInterface.CastLoadedCallback() {
+            @Override
+            public void onCastLoaded(ArrayList<CastMember> castList) {
+                mView.showCastList(castList);
+            }
 
-    //Callback from model
-    public void castListRecieved(ArrayList<CastMember> castList) {
-        mView.showCastList(castList);
-    }
+            @Override
+            public void errorLoadingCast() {
+                mView.notifyErrorLoadingCast();
+            }
 
-    //Callback from model
-    public void reviewListRecieved(ArrayList<Review> reviewList) {
-        mView.showReviewList(reviewList);
-    }
 
-    //Callback from model
-    public void trailerListRecieved(ArrayList<Video> videoList) {
-        mView.showVideoList(videoList);
+        });
+        mModel.getTrailers(selectedMovie, new ModelInterface.TrailersLoadedCallback() {
+            @Override
+            public void onVideosLoaded(ArrayList<Video> trailersList) {
+                mView.showTrailersList(trailersList);
+            }
+
+            @Override
+            public void errorLoadingVideos() {
+                mView.notifyErrorLoadingTrailers();
+            }
+        });
+        mModel.getReviews(selectedMovie, new ModelInterface.ReviewsLoadedCallback() {
+            @Override
+            public void onReviewsLoaded(ArrayList<Review> reviewList) {
+                mView.showReviewList(reviewList);
+            }
+
+            @Override
+            public void errorLoadingReviews() {
+                mView.notifyErrorLoadingReviews();
+            }
+        });
     }
 
 
@@ -71,42 +79,48 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
 
     @Override
     public void onGoToFavorites() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
-        prefEditor.putString("sort_by", "favorite");
-        prefEditor.apply();
-        MVPmodel.fromTop = true;
-        Intent intent = new Intent(mContext, MainActivity.class);
-
-        mView.showFavorites(intent);
-    }
-
-    //Callback from model
-    public void onAddedToFavorites() {
-        mView.updateFavorite(true);
-
-    }
-
-    //Callback from model
-    public void onRemovedFromFavorites() {
-        mView.updateFavorite(false);
-    }
-
-    public void favRemoveError() {
-        mView.showAddError();
-    }
-
-    public void favAddError() {
-        mView.showRemoveError();
+        mModel.updateSortToFavorites();
+        mView.showFavorites();
     }
 
     @Override
-    public void onFavoriteButtonClicked(boolean fav, Movie selectedMovie) {
+    public void onFavoriteButtonClicked(final boolean fav, Movie selectedMovie) {
         if (fav) {
-            mModel.removeFromFavoritesDb(selectedMovie);
+            mModel.removeFromFavoritesDb(selectedMovie, new ModelInterface.removeFavoritesCallback() {
+                @Override
+                public void errorRemovingFav() {
+                    mView.notifyErrorRemovingFav();
+                }
+
+                @Override
+                public void successRemovingFav() {
+                    mView.updateFavorite(!fav);
+                }
+            });
         } else {
-            mModel.addToFavoritesDb(selectedMovie);
+            mModel.addToFavoritesDb(selectedMovie, new ModelInterface.addFavoritesCallback() {
+                @Override
+                public void errorAddingToFav() {
+                    mView.notifyErrorAddingFav();
+                }
+
+                @Override
+                public void successAddingToFav() {
+                    mView.updateFavorite(!fav);
+                }
+            });
         }
     }
+
+    @Override
+    public void onTrailerClicked(Video selectedVideo) {
+        String vidKey = selectedVideo.getKey();
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
+        mView.showTrailer(appIntent, webIntent);
+
+    }
+
 
 }

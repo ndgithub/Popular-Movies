@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,14 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.CastMember;
+import com.example.android.popularmovies.data.MVPmodel;
+import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
 
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
 
+import com.example.android.popularmovies.movielist.MainActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 import com.example.android.popularmovies.utils.PosterImageView;
 
@@ -46,7 +50,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     GridView mVideoGridView;
 
     ReviewAdapter mReviewAdapter;
-    ArrayList<Review> mReviewList;
     ListView mReviewListView;
     ImageView mFavButton;
 
@@ -54,7 +57,8 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     boolean mFavorite;
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
     View mRootView;
-    MovieDetailsPresenter mDetailsPresenter;
+    MovieDetailsContract.UserActionsListener mDetailsPresenter;
+    ModelInterface mModel;
     onGoToFavoritesListener mCallback;
 
     public DetailsFragment() {
@@ -64,7 +68,11 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        mModel = new MVPmodel(getActivity().getContentResolver(),getActivity());
+        mDetailsPresenter = new MovieDetailsPresenter(mModel,this);
+
     }
 
 
@@ -77,7 +85,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
                 mCallback = (onGoToFavoritesListener) activity;
             } catch (ClassCastException e) {
                 throw new ClassCastException(activity.toString()
-                        + " must implement Ongotofaveslistent");
+                        + " must implement Ongotofaveslistener");
 
             }
         }
@@ -87,7 +95,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("movie",Parcels.wrap(mSelectedMovie));
+        outState.putParcelable("movie", Parcels.wrap(mSelectedMovie));
     }
 
     public interface onGoToFavoritesListener {
@@ -100,82 +108,47 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         super.onActivityCreated(savedInstanceState);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mDetailsPresenter.start(mSelectedMovie);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-
         mRootView = inflater.inflate(R.layout.fragment_details, container, false);
-        mDetailsPresenter = new MovieDetailsPresenter(getActivity().getContentResolver(), getActivity(), this);
-
         mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
 
-            if (!ActivityUtils.isTwoPane(getActivity())) {
-                getActivity().setTitle(mSelectedMovie.getTitle());
-            }
-            ImageView backdropView = (ImageView) mRootView.findViewById(R.id.backdrop);
-            Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
-
-            PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
-            Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
-
-            TextView titleView = (TextView) mRootView.findViewById(R.id.title);
-            titleView.setText(mSelectedMovie.getTitle());
-
-            TextView ratingView = (TextView) mRootView.findViewById(R.id.rating);
-            ratingView.setText(mSelectedMovie.getRating());
-
-            TextView overviewView = (TextView) mRootView.findViewById(R.id.overview);
-            overviewView.setText(mSelectedMovie.getOverview());
-
-            TextView dateView = (TextView) mRootView.findViewById(R.id.date);
-            dateView.setText("Release Date: " + formatDate(mSelectedMovie.getDate()));
-
-            mFavorite = mDetailsPresenter.isFavorite(mSelectedMovie);
-            showFavButton();
-
-
-        mCastGridView = (GridView) mRootView.findViewById(R.id.cast_grid_view);
-        mCastList = new ArrayList<>();
-            mCastAdapter = new CastAdapter(getActivity(), mCastList);
-        mCastGridView.setAdapter(mCastAdapter);
-            TextView castEmptyView = (TextView) mRootView.findViewById(R.id.cast_empyt_view);
-        mCastGridView.setEmptyView(castEmptyView);
-            showCastList(mCastList);
-
-            mReviewListView = (ListView) mRootView.findViewById(R.id.review_list_view);
-            mReviewList = new ArrayList<>();
-            mReviewAdapter = new ReviewAdapter(getActivity(), mReviewList);
-            mReviewListView.setAdapter(mReviewAdapter);
-            TextView reviewEmptyView = (TextView) mRootView.findViewById(R.id.review_empty_view);
-            mReviewListView.setEmptyView(reviewEmptyView);
-            showReviewList(mReviewList);
-
-
-            mVideoGridView = (GridView) mRootView.findViewById(R.id.video_grid_view);
-        mVideoList = new ArrayList<>();
-            mVideoAdapter = new VideoAdapter(getActivity(), mVideoList);
-            mVideoGridView.setAdapter(mVideoAdapter);
-            TextView videoEmptyView = (TextView) mRootView.findViewById(R.id.video_empty_view);
-            mVideoGridView.setEmptyView(videoEmptyView);
-            showVideoList(mVideoList);
-
-
-            mVideoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                    Video selectedVideo = (Video) mVideoAdapter.getItem(position);
-                    mDetailsPresenter.onTrailerClicked(selectedVideo);
-                }
-            });
-
-        mDetailsPresenter.start(mSelectedMovie);
         return mRootView;
+    }
+
+    public void showMainInfoCard() {
+        if (!ActivityUtils.isTwoPane(getActivity())) {
+            getActivity().setTitle(mSelectedMovie.getTitle());
         }
+        ImageView backdropView = (ImageView) mRootView.findViewById(R.id.backdrop);
+        Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
+
+        PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
+        Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
+
+        TextView titleView = (TextView) mRootView.findViewById(R.id.title);
+        titleView.setText(mSelectedMovie.getTitle());
+
+        TextView ratingView = (TextView) mRootView.findViewById(R.id.rating);
+        ratingView.setText(mSelectedMovie.getRating());
+
+        TextView overviewView = (TextView) mRootView.findViewById(R.id.overview);
+        overviewView.setText(mSelectedMovie.getOverview());
+
+        TextView dateView = (TextView) mRootView.findViewById(R.id.date);
+        dateView.setText(getString(R.string.release_date) + formatDate(mSelectedMovie.getDate()));
 
 
-
+        showFavButton();
+    }
 
     private void showSnackbar(String message) {
         Snackbar snackbar = Snackbar.make(mRootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
@@ -207,6 +180,16 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     @Override
     public void showCastList(ArrayList<CastMember> castList) {
+
+        mCastGridView = (GridView) mRootView.findViewById(R.id.cast_grid_view);
+        mCastList = new ArrayList<>();
+        mCastAdapter = new CastAdapter(getActivity(), mCastList);
+
+        mCastGridView.setAdapter(mCastAdapter);
+        TextView castEmptyView = (TextView) mRootView.findViewById(R.id.cast_empyt_view);
+        mCastGridView.setEmptyView(castEmptyView);
+
+
         if (castList != null) {
             mCastAdapter.clear();
             mCastAdapter.addAll(castList);
@@ -215,6 +198,15 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     @Override
     public void showReviewList(ArrayList<Review> mReviewList) {
+
+        mReviewListView = (ListView) mRootView.findViewById(R.id.review_list_view);
+        mReviewList = new ArrayList<>();
+        mReviewAdapter = new ReviewAdapter(getActivity(), mReviewList);
+        mReviewListView.setAdapter(mReviewAdapter);
+        TextView reviewEmptyView = (TextView) mRootView.findViewById(R.id.review_empty_view);
+        mReviewListView.setEmptyView(reviewEmptyView);
+
+
         if (mReviewList != null) {
             mReviewAdapter.clear();
             mReviewAdapter.addAll(mReviewList);
@@ -222,7 +214,24 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     @Override
-    public void showVideoList(ArrayList<Video> videoList) {
+    public void showTrailersList(ArrayList<Video> videoList) {
+
+        mVideoGridView = (GridView) mRootView.findViewById(R.id.video_grid_view);
+        mVideoList = new ArrayList<>();
+        mVideoAdapter = new VideoAdapter(getActivity(), mVideoList);
+        mVideoGridView.setAdapter(mVideoAdapter);
+        TextView videoEmptyView = (TextView) mRootView.findViewById(R.id.video_empty_view);
+        mVideoGridView.setEmptyView(videoEmptyView);
+
+        mVideoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Video selectedVideo = (Video) mVideoAdapter.getItem(position);
+                mDetailsPresenter.onTrailerClicked(selectedVideo);
+            }
+        });
+
+
         if (videoList != null) {
             mVideoAdapter.clear();
             mVideoAdapter.addAll(videoList);
@@ -239,15 +248,18 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     @Override
-    public void showFavorites(Intent intent) {
+    public void showFavorites() {
         if (ActivityUtils.isTwoPane(getActivity())) {
             mCallback.onGoToFavoritesList();
         } else {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
     }
 
     private void showFavButton() {
+        mFavorite = mDetailsPresenter.isFavorite(mSelectedMovie);
+
         mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);
         if (mFavorite) {
             mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -266,23 +278,36 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public void updateFavorite(boolean fav) {
         if (fav) {
             mFavorite = true;
-            showSnackbar("Added to Favorites");
+            showSnackbar(getString(R.string.add_favorites));
         } else {
             mFavorite = false;
-            showSnackbar("Removed From Favorites");
+            showSnackbar(getString(R.string.remove_favorites));
         }
         showFavButton();
     }
 
     @Override
-    public void showAddError() {
-        Toast.makeText(getActivity(), "Didn't work! Movie not added to favorites", Toast.LENGTH_SHORT).show();
+    public void notifyErrorAddingFav() {
+        Toast.makeText(getActivity(), getString(R.string.error_adding_fav), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showRemoveError() {
-        Toast.makeText(getActivity(), "Didn't work! Movie not removed from favorites", Toast.LENGTH_SHORT).show();
+    public void notifyErrorRemovingFav() {
+        Toast.makeText(getActivity(), getString(R.string.error_removing_fav), Toast.LENGTH_SHORT).show();
     }
+    @Override
+    public void notifyErrorLoadingCast() {
+        Toast.makeText(getActivity(), R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
 
+    }
+    @Override
+    public void notifyErrorLoadingTrailers() {
+        Toast.makeText(getActivity(), R.string.videos_unavailable, Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void notifyErrorLoadingReviews() {
+        Toast.makeText(getActivity(), R.string.reviews_unavailable, Toast.LENGTH_SHORT).show();
+
+    }
 
 }

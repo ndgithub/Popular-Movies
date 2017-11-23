@@ -1,6 +1,8 @@
 package com.example.android.popularmovies.movielist;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,33 +18,42 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.data.MVPmodel;
+import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
+import com.example.android.popularmovies.utils.ActivityUtils;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
 public class MainFragment extends Fragment implements MovieListContract.View {
 
     private TextView mEmptyView;
-    private  MovieListPresenter mMVPpresenter;
     private GridView mGridView;
     private onMovieSelectedListener mCallback;
     private MovieAdapter mMovieAdapter;
     private ArrayList<Movie> mMovieList;
+    private Context mContext;
+
+    private  MovieListPresenter mPresenter;
+    private ModelInterface mModel;
+
 
     public MainFragment() {
-
     }
 
     public interface onMovieSelectedListener {
          void onMovieSelected(Bundle bundle);
     }
 
-
-
-    @Override //Fragment
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mContext = getContext();
+        mModel = new MVPmodel(getActivity().getContentResolver(),mContext);
+        mPresenter = new MovieListPresenter(mModel,this);
     }
 
     @Override
@@ -60,7 +71,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     }
 
     @Nullable
-    @Override //Fragment
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
@@ -80,22 +91,27 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mMVPpresenter = new MovieListPresenter(getActivity().getContentResolver(), getActivity(), this);
-        mMVPpresenter.start();
+
+        mPresenter.start();
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mMVPpresenter.onMovieSelected(position,mMovieList);
+                mPresenter.onMovieSelected(position);
             }
         });
     }
 
-    @Override  //Contract
-    public void showMovieDetailsUI(Bundle movieBundle) {
-        mCallback.onMovieSelected(movieBundle);
+    @Override  //View Interace Method
+    public void showMovieDetailsUI(int position) {
+        Movie selectedMovie = mMovieList.get(position);
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("movie", Parcels.wrap(selectedMovie));
+        intent.putExtra("movi",bundle);
+        mCallback.onMovieSelected(bundle);
     }
 
-    @Override //Contract
+    @Override //View Interace Method
     public void inflateSortOptionsMenu(String sortPref) {
         View menuItemView = getActivity().findViewById(R.id.sort_by);
         final PopupMenu popup = new PopupMenu(getActivity(), menuItemView);
@@ -117,7 +133,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                mMVPpresenter.onSortChanged(menuItem);
+                mPresenter.onSortChanged(menuItem);
                 return true;
             }
         });
@@ -128,7 +144,9 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieAdapter.clear();
         mMovieList = list;
         mMovieAdapter.addAll(mMovieList);
-        mMVPpresenter.showFirst(mMovieList);
+        if (ActivityUtils.isTwoPane(mContext)) {
+            mPresenter.showFirst();
+        }
     }
 
     @Override //Fragment
@@ -138,7 +156,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
 
     @Override //Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
-        mMVPpresenter.onSortByTapped();
+        mPresenter.onSortByTapped();
         return true;
     }
 

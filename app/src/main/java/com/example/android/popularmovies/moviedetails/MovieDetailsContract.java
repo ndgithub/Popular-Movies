@@ -16,22 +16,25 @@ import java.util.ArrayList;
 public interface MovieDetailsContract {
 
     interface View {
-        void showFavorites(Intent intent);
+        void showMainInfoCard();
+        void showFavorites();
         void showCastList(ArrayList<CastMember> castList);
         void showReviewList(ArrayList<Review> reviewList);
-        void showVideoList(ArrayList<Video> videoList);
+        void showTrailersList(ArrayList<Video> trailersList);
         void showTrailer(Intent appIntent, Intent webIntent);
         void updateFavorite(boolean fav);
-        void showAddError();
-        void showRemoveError();
-
+        void notifyErrorRemovingFav();
+        void notifyErrorAddingFav();
+        void notifyErrorLoadingCast();
+        void notifyErrorLoadingReviews();
+        void notifyErrorLoadingTrailers();
     }
 
     interface UserActionsListener {
-
+        void start(Movie selectedMovie);
         void onFavoriteButtonClicked(boolean fav, Movie selectedMovie);
         void onTrailerClicked(Video selectedVideo);
         void onGoToFavorites();
-
+        boolean isFavorite(Movie selectedMovie);
     }
 }

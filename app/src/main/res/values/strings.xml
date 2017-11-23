@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="problem_with_movies">There was a problem showing the movies</string>
-    <string name="release_date">Release Date:</string>
+    <string name="release_date">Release Date: </string>
     <string name="overview">Overview</string>
     <string name="top_billed_cast">Top Billed Cast</string>
     <string name="cast_unavailable">Cast Unavailable</string>
@@ -21,9 +21,10 @@
     <string name="read_full_review">READ FULL REVIEW</string>
 
     <string name="no_favorites">No Favorites Added</string>
-    <string name="remove_favorites">Removed from Favorites Added</string>
+    <string name="remove_favorites">Removed from Favorites</string>
     <string name="add_favorites">Added to Favorites</string>
     <string name="go_to_favorites">Go to Favorites</string>
     <string name="rating">Rating: </string>
-
+    <string name="error_adding_fav">"Didn't work! Movie not added to favorites"</string>
+    <string name="error_removing_fav">"Didn't work! Movie not removed from favorites"</string>
 </resources>
