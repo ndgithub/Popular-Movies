@@ -69,7 +69,6 @@ public class MVPmodel implements ModelInterface {
         prefEditor.putString("sort_by", "favorite");
         prefEditor.apply();
         MVPmodel.fromTop = true;
-
     }
 
 

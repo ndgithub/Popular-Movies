@@ -42,7 +42,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
         }
     }
 
-    void onSortByTapped() {
+    public void onSortByTapped() {
         String sortPref = mModel.getSortPref();
         mView.inflateSortOptionsMenu(sortPref);
     }

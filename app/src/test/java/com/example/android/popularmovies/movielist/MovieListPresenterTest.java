@@ -17,7 +17,9 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,8 +51,8 @@ public class MovieListPresenterTest {
     @Before
     public void setupPresenter() {
         MockitoAnnotations.initMocks(this);
-        movieList.add(new Movie("346364","/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg","overview","/tcheoA2nPATCm2vvXw2hVQoaEFD.jpg","It","7.3","2017-09-05"));
-        mPresenter = new MovieListPresenter(mModel,mView);
+        movieList.add(new Movie("346364", "/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg", "overview", "/tcheoA2nPATCm2vvXw2hVQoaEFD.jpg", "It", "7.3", "2017-09-05"));
+        mPresenter = new MovieListPresenter(mModel, mView);
     }
 
     @Test
@@ -76,9 +78,20 @@ public class MovieListPresenterTest {
         verify(mView).inflateSortOptionsMenu(pref);
     }
 
+    @Test
+    public void onSortChanged_test() {
+        //Call method under test
+        mPresenter.onSortChanged(mMenuItemCaptor.capture());
 
+        //Verify that model updates sharedPref
+        verify(mModel).changeSortPreference(mMenuItemCaptor.capture());
 
+    }
 
+    @Test
+    public void onMovieSelected_test() {
+        mPresenter.onMovieSelected(anyInt());
+         verify(mView).showMovieDetailsUI(anyInt());
 
-
+    }
 }
