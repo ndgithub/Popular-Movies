@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
 
 }
 
-
+// Create an arraylist of Movies to test the presenter (as something the repo returns).
 
 
 

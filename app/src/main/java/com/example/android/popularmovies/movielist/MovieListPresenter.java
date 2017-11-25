@@ -24,7 +24,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
         showMovieList();
     }
 
-    private void showMovieList() {
+    public void showMovieList() {
         mModel.getMovieList(new ModelInterface.LoadMoviesCallback() {
             @Override
             public void onMoviesLoaded(ArrayList<Movie> movieList) {

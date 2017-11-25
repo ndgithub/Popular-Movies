@@ -38,8 +38,6 @@ public class MVPmodel implements ModelInterface {
     private Context mContext;
     private String mSortPref;
     private ArrayList<Movie> mMovieList = new ArrayList<>();
-    private MovieListPresenter mPresenter = null;
-    private MovieDetailsPresenter mMovieDetailsPresenter = null;
 
     public MVPmodel(ContentResolver contentResolver, Context context) {
         mContentResolver = contentResolver;
@@ -48,8 +46,6 @@ public class MVPmodel implements ModelInterface {
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
     }
-
-
 
     public void changeSortPreference(MenuItem item) {
         int itemId = item.getItemId();
