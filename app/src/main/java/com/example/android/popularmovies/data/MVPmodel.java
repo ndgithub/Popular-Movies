@@ -15,8 +15,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.moviedetails.MovieDetailsPresenter;
-import com.example.android.popularmovies.movielist.MovieListPresenter;
 import com.example.android.popularmovies.utils.QueryUtils;
 import com.example.android.popularmovies.utils.SingletonRequestQueue;
 
@@ -185,7 +183,7 @@ public class MVPmodel implements ModelInterface {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (QueryUtils.isConnectedToInternet(mContext)) {
-                            callback.errorLoadingVideos();
+                            callback.onErrorLoadingVideos();
                         }
                     }
                 });
@@ -208,7 +206,7 @@ public class MVPmodel implements ModelInterface {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (QueryUtils.isConnectedToInternet(mContext)) {
-                            callback.errorLoadingCast();
+                            callback.onErrorLoadingCast();
                         }
                     }
                 });
@@ -232,7 +230,7 @@ public class MVPmodel implements ModelInterface {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if (QueryUtils.isConnectedToInternet(mContext)) {
-                            callback.errorLoadingReviews();
+                            callback.onErrorLoadingReviews();
                         }
                     }
                 });
@@ -282,9 +280,9 @@ public class MVPmodel implements ModelInterface {
         int rowsDel = mContentResolver.delete(MovieDbContract.FavoritesEntry.CONTENT_URI,
                 MovieDbContract.FavoritesEntry.COLUMN_MOVIE_ID + " = " + selectedMovie.getId(), null);
         if (rowsDel == 1) {
-            callback.successRemovingFav();
+            callback.onSuccessRemovingFav();
         } else {
-            callback.errorRemovingFav();
+            callback.onErrorRemovingFav();
         }
     }
 

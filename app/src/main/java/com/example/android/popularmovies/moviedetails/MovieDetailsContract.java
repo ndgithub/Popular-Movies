@@ -16,17 +16,43 @@ import java.util.ArrayList;
 public interface MovieDetailsContract {
 
     interface View {
-        void showMainInfoCard();
+
+        void showActivityTitle(String title);
+
+        void showTitle(String title);
+
+        void showBackdrop(String path);
+
+        void showPoster(String path);
+
+        void showRating(String rating);
+
+        void showOverview(String overview);
+
+        void showDate(String date);
+
+        void showFavButton();
+
         void showFavorites();
+
         void showCastList(ArrayList<CastMember> castList);
+
         void showReviewList(ArrayList<Review> reviewList);
+
         void showTrailersList(ArrayList<Video> trailersList);
-        void showTrailer(Intent appIntent, Intent webIntent);
+
+        void showTrailer(String videoKey);
+
         void updateFavorite(boolean fav);
+
         void notifyErrorRemovingFav();
+
         void notifyErrorAddingFav();
+
         void notifyErrorLoadingCast();
+
         void notifyErrorLoadingReviews();
+
         void notifyErrorLoadingTrailers();
     }
 

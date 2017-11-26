@@ -45,7 +45,6 @@ public class MovieListPresenterTest {
     @Captor
     ArgumentCaptor<MenuItem> mMenuItemCaptor;
 
-
     private MovieListPresenter mPresenter;
 
     @Before
@@ -62,7 +61,6 @@ public class MovieListPresenterTest {
         mLoadMoviesCallbackCaptor.getValue().onMoviesLoaded(movieList);
         verify(mView).showMovieList(movieList);
     }
-
 
     @Test
     public void onSortByTapped_test() {
@@ -85,7 +83,6 @@ public class MovieListPresenterTest {
 
         //Verify that model updates sharedPref
         verify(mModel).changeSortPreference(mMenuItemCaptor.capture());
-
     }
 
     @Test

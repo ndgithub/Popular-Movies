@@ -16,17 +16,17 @@ public interface ModelInterface {
 
     interface CastLoadedCallback {
         void onCastLoaded(ArrayList<CastMember> castList);
-        void errorLoadingCast();
+        void onErrorLoadingCast();
     }
 
     interface ReviewsLoadedCallback {
         void onReviewsLoaded(ArrayList<Review> reviewList);
-        void errorLoadingReviews();
+        void onErrorLoadingReviews();
     }
 
     interface TrailersLoadedCallback {
         void onVideosLoaded(ArrayList<Video> reviewList);
-        void errorLoadingVideos();
+        void onErrorLoadingVideos();
     }
 
     interface addFavoritesCallback {
@@ -35,17 +35,14 @@ public interface ModelInterface {
     }
 
     interface removeFavoritesCallback {
-        void errorRemovingFav();
-        void successRemovingFav();
+        void onErrorRemovingFav();
+        void onSuccessRemovingFav();
     }
 
     String getSortPref();
     void changeSortPreference(MenuItem item);
-
     void getMovieList(LoadMoviesCallback callback);
-
     void updateSortToFavorites();
-
     void getCast(Movie selectedMovie, ModelInterface.CastLoadedCallback callback);
     void getTrailers(Movie selectedMovie, ModelInterface.TrailersLoadedCallback callback);
     void getReviews(Movie selectedMovie,ModelInterface.ReviewsLoadedCallback callback);
@@ -53,9 +50,6 @@ public interface ModelInterface {
     void removeFromFavoritesDb(Movie selectedMovie, removeFavoritesCallback callback);
     void addToFavoritesDb(Movie selectedMovie, addFavoritesCallback callback);
 
-    //    void getMovie();
-    //    void getFavorites();
-    //    void saveMovie();
 
 
 }

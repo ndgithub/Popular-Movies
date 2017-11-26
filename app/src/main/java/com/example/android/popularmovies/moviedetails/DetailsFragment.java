@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -113,47 +114,52 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_details, container, false);
         mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
-
         return mRootView;
     }
 
-    public void showMainInfoCard() {
+
+    @Override
+    public void showActivityTitle(String title) {
         if (!ActivityUtils.isTwoPane(getActivity())) {
             getActivity().setTitle(mSelectedMovie.getTitle());
         }
-        ImageView backdropView = (ImageView) mRootView.findViewById(R.id.backdrop);
-        Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getBackdropPath()).fit().centerCrop().into(backdropView);
+    }
 
+    @Override
+    public void showTitle(String title) {
+        TextView titleView = (TextView) mRootView.findViewById(R.id.title);
+        titleView.setText(title);
+    }
+
+    @Override
+    public void showBackdrop(String path) {
+        ImageView backdropView = (ImageView) mRootView.findViewById(R.id.backdrop);
+        Picasso.with(getActivity()).load(BASE_IMAGE_URL + path).fit().centerCrop().into(backdropView);
+    }
+
+    @Override
+    public void  showPoster(String path) {
         PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
         Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
+    }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.title);
-        titleView.setText(mSelectedMovie.getTitle());
-
+    @Override
+    public void showRating(String rating) {
         TextView ratingView = (TextView) mRootView.findViewById(R.id.rating);
-        ratingView.setText(mSelectedMovie.getRating());
+        ratingView.setText(rating);
+    }
 
+    @Override
+    public void showOverview(String overview) {
         TextView overviewView = (TextView) mRootView.findViewById(R.id.overview);
-        overviewView.setText(mSelectedMovie.getOverview());
+        overviewView.setText(overview);
+    }
 
+    @Override
+    public void showDate(String date) {
         TextView dateView = (TextView) mRootView.findViewById(R.id.date);
-        dateView.setText(getString(R.string.release_date) + formatDate(mSelectedMovie.getDate()));
-
-
-        showFavButton();
+        dateView.setText(getString(R.string.release_date) + formatDate(date));
     }
-
-    private void showSnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(mRootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
-        snackbar.setAction(R.string.go_to_favorites, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDetailsPresenter.onGoToFavorites();
-            }
-        });
-        snackbar.show();
-    }
-
     private String formatDate(String inputDate) {
         Date releaseDate;
         String newDateString;
@@ -170,6 +176,18 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         }
     }
 
+
+
+    private void showSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(mRootView.findViewById(R.id.scroll_view), message, Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.go_to_favorites, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDetailsPresenter.onGoToFavorites();
+            }
+        });
+        snackbar.show();
+    }
 
     @Override
     public void showCastList(ArrayList<CastMember> castList) {
@@ -231,8 +249,14 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         }
     }
 
+
+
+
     @Override
-    public void showTrailer(Intent appIntent, Intent webIntent) {
+    public void showTrailer(String vidKey) {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
         try {
             startActivity(appIntent);
         } catch (ActivityNotFoundException ex) {
@@ -250,7 +274,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         }
     }
 
-    private void showFavButton() {
+    public void showFavButton() {
         mFavorite = mDetailsPresenter.isFavorite(mSelectedMovie);
 
         mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);

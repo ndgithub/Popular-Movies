@@ -16,7 +16,10 @@ import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
 import com.example.android.popularmovies.movielist.MainActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsListener {
 
@@ -34,7 +37,14 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
     }
 
     private void loadUI(Movie selectedMovie) {
-        mView.showMainInfoCard();
+        mView.showActivityTitle(selectedMovie.getTitle());
+        mView.showTitle(selectedMovie.getTitle());
+        mView.showRating(selectedMovie.getRating());
+        mView.showBackdrop(selectedMovie.getBackdropPath());
+        mView.showPoster(selectedMovie.getPosterPath());
+        mView.showOverview(selectedMovie.getOverview());
+        mView.showDate(selectedMovie.getDate());
+
         mModel.getCast(selectedMovie, new ModelInterface.CastLoadedCallback() {
             @Override
             public void onCastLoaded(ArrayList<CastMember> castList) {
@@ -42,12 +52,13 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
             }
 
             @Override
-            public void errorLoadingCast() {
+            public void onErrorLoadingCast() {
                 mView.notifyErrorLoadingCast();
             }
 
 
         });
+
         mModel.getTrailers(selectedMovie, new ModelInterface.TrailersLoadedCallback() {
             @Override
             public void onVideosLoaded(ArrayList<Video> trailersList) {
@@ -55,10 +66,11 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
             }
 
             @Override
-            public void errorLoadingVideos() {
+            public void onErrorLoadingVideos() {
                 mView.notifyErrorLoadingTrailers();
             }
         });
+
         mModel.getReviews(selectedMovie, new ModelInterface.ReviewsLoadedCallback() {
             @Override
             public void onReviewsLoaded(ArrayList<Review> reviewList) {
@@ -66,7 +78,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
             }
 
             @Override
-            public void errorLoadingReviews() {
+            public void onErrorLoadingReviews() {
                 mView.notifyErrorLoadingReviews();
             }
         });
@@ -88,12 +100,12 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         if (fav) {
             mModel.removeFromFavoritesDb(selectedMovie, new ModelInterface.removeFavoritesCallback() {
                 @Override
-                public void errorRemovingFav() {
+                public void onErrorRemovingFav() {
                     mView.notifyErrorRemovingFav();
                 }
 
                 @Override
-                public void successRemovingFav() {
+                public void onSuccessRemovingFav() {
                     mView.updateFavorite(!fav);
                 }
             });
@@ -115,10 +127,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
     @Override
     public void onTrailerClicked(Video selectedVideo) {
         String vidKey = selectedVideo.getKey();
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
-        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://www.youtube.com/watch?v=" + vidKey));
-        mView.showTrailer(appIntent, webIntent);
+        mView.showTrailer(vidKey);
 
     }
 
