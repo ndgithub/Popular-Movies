@@ -31,9 +31,7 @@ public interface MovieDetailsContract {
 
         void showDate(String date);
 
-        void showFavButton();
-
-        void showFavorites();
+        void goToFavorites();
 
         void showCastList(ArrayList<CastMember> castList);
 
@@ -43,24 +41,26 @@ public interface MovieDetailsContract {
 
         void showTrailer(String videoKey);
 
-        void updateFavorite(boolean fav);
+        void notifyUserErrorRemovingFav();
 
-        void notifyErrorRemovingFav();
+        void notifyUserErrorAddingFav();
 
-        void notifyErrorAddingFav();
+        void notifyUserErrorLoadingCast();
 
-        void notifyErrorLoadingCast();
+        void notifyUserErrorLoadingReviews();
 
-        void notifyErrorLoadingReviews();
+        void notifyUserErrorLoadingTrailers();
 
-        void notifyErrorLoadingTrailers();
+        void updateFavButtonImage(boolean isFavorite);
+
+        void notifyUserFavStatusChanged(boolean isFavorite);
     }
 
     interface UserActionsListener {
         void start(Movie selectedMovie);
-        void onFavoriteButtonClicked(boolean fav, Movie selectedMovie);
+        void onFavoriteButtonClicked();
         void onTrailerClicked(Video selectedVideo);
         void onGoToFavorites();
-        boolean isFavorite(Movie selectedMovie);
+        boolean isFavorite();
     }
 }

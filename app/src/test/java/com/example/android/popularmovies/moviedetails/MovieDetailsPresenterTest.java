@@ -38,12 +38,10 @@ public class MovieDetailsPresenterTest {
     ArgumentCaptor<ModelInterface.ReviewsLoadedCallback> mReviewsLoadedCallbackCaptor;
     @Captor
     ArgumentCaptor<ModelInterface.TrailersLoadedCallback> mTrailersLoadedCallbackCaptor;
-
     @Captor
     ArgumentCaptor<ModelInterface.addFavoritesCallback> mAddFavoritesCallbackCaptor;
     @Captor
     ArgumentCaptor<ModelInterface.removeFavoritesCallback> mRemoveFavoritesCallbackCaptor;
-
 
     private Movie mMovie;
     private MovieDetailsPresenter mPresenter;
@@ -56,7 +54,6 @@ public class MovieDetailsPresenterTest {
         mPresenter = new MovieDetailsPresenter(mModel, mView);
         mVideo = new Video("key","title");
     }
-
 
     @Test
     public void start_test() {

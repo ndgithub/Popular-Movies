@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements
         mContext = getApplicationContext();
         MainFragment mainFragment = new MainFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment, mainFragment).commit();
+
     }
 
     @Override //Interface method in ListFragment
@@ -48,7 +49,26 @@ public class MainActivity extends AppCompatActivity implements
 
 }
 
-//Test MovieDetailsPresenter
+
+//----------------------- Notes -----------------------//
+// move checking if fav to presenter.
+
+//Don't worry about testing DB, just test repo class calls right things, and gets
+// lists back.
+
+
+// Create Injection class for mock source set and produ.
+//    use this in presenter constructor.
+
+//Add empty view to favorites list
+
+//Espresso testing
+//Dagger
+//RetroFit
+//RxJava
+//Room
+
+
 
 
 

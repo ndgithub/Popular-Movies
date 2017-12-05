@@ -1,20 +1,23 @@
 package com.example.android.popularmovies.movielist;
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
-import com.example.android.popularmovies.data.MVPmodel;
-import com.example.android.popularmovies.data.ModelInterface;
+import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.data.MovieRepoInterface;
 
 import java.util.ArrayList;
 
 public class MovieListPresenter implements MovieListContract.UserActionsListener {
 
-    private ModelInterface mModel;
+    private MovieRepoInterface mModel;
     private MovieListContract.View mView;
+    public boolean fromTop;
 
-    public MovieListPresenter(ModelInterface model, MovieListContract.View view) {
+    public MovieListPresenter(MovieRepoInterface model, MovieListContract.View view) {
         mView = view;
         mModel = model;
     }
@@ -25,11 +28,12 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     }
 
     public void showMovieList() {
-        mModel.getMovieList(new ModelInterface.LoadMoviesCallback() {
+        mModel.getMovieList(new MovieRepoInterface.LoadMoviesCallback<ArrayList<Movie>>() {
             @Override
             public void onMoviesLoaded(ArrayList<Movie> movieList) {
                 if (movieList != null) {
                     mView.showMovieList(movieList);
+
                 }
             }
         });
@@ -37,7 +41,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
 
     @Override
     public void showFirst() {
-        if (MVPmodel.fromTop) {
+        if (fromTop) {
             onMovieSelected(0);
         }
     }
@@ -50,14 +54,28 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
 
     @Override
     public void onSortChanged(MenuItem item) {
-        MVPmodel.fromTop = true;
-        mModel.changeSortPreference(item);
+        fromTop = true;
+        int itemId = item.getItemId();
+        String pref = null;
+        switch (itemId) {
+            case (R.id.pop):
+                pref = "popular";
+                break;
+            case (R.id.top):
+                pref = "top_rated";
+                break;
+            case (R.id.fav):
+                pref =  "favorite";
+        }
+        mModel.changeSortPreference(pref);
         showMovieList();
     }
 
     @Override
     public void onMovieSelected(int position) {
-        MVPmodel.fromTop = false;
+        fromTop = false;
         mView.showMovieDetailsUI(position);
     }
+
+
 }

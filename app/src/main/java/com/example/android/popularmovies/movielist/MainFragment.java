@@ -18,9 +18,10 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
-import com.example.android.popularmovies.data.MVPmodel;
-import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.data.MovieRepo;
+import com.example.android.popularmovies.data.UserPrefImpl;
+import com.example.android.popularmovies.data.remote.MovieServiceApiImpl;
 import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
@@ -39,7 +40,6 @@ public class MainFragment extends Fragment implements MovieListContract.View {
 
     private  MovieListPresenter mPresenter;
 
-
     public MainFragment() {
     }
 
@@ -51,7 +51,8 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-        mPresenter = new MovieListPresenter(new MVPmodel(getActivity().getContentResolver(),mContext),this);
+        mPresenter = new MovieListPresenter(new MovieRepo(new UserPrefImpl(getActivity().getContentResolver(),mContext),new MovieServiceApiImpl(mContext)),this);
+
     }
 
     @Override
@@ -99,17 +100,19 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         });
     }
 
-    @Override  //View Interace Method
+    @Override  //View Interface Method
     public void showMovieDetailsUI(int position) {
-        Movie selectedMovie = mMovieList.get(position);
-        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("movie", Parcels.wrap(selectedMovie));
-        intent.putExtra("movi",bundle);
-        mCallback.onMovieSelected(bundle);
+        if (!mMovieList.isEmpty()) {
+            Movie selectedMovie = mMovieList.get(position);
+            Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("movie", Parcels.wrap(selectedMovie));
+            intent.putExtra("movi", bundle);
+            mCallback.onMovieSelected(bundle);
+        }
     }
 
-    @Override //View Interace Method
+    @Override //View Interface Method
     public void inflateSortOptionsMenu(String sortPref) {
         View menuItemView = getActivity().findViewById(R.id.sort_by);
         final PopupMenu popup = new PopupMenu(getActivity(), menuItemView);

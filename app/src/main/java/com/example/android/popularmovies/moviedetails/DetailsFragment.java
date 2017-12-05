@@ -21,13 +21,14 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.CastMember;
-import com.example.android.popularmovies.data.MVPmodel;
-import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
 
+import com.example.android.popularmovies.data.MovieRepo;
 import com.example.android.popularmovies.data.Review;
+import com.example.android.popularmovies.data.UserPrefImpl;
 import com.example.android.popularmovies.data.Video;
 
+import com.example.android.popularmovies.data.remote.MovieServiceApiImpl;
 import com.example.android.popularmovies.movielist.MainActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 import com.example.android.popularmovies.utils.PosterImageView;
@@ -55,7 +56,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     ImageView mFavButton;
 
     Movie mSelectedMovie;
-    boolean mFavorite;
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
     View mRootView;
     MovieDetailsContract.UserActionsListener mDetailsPresenter;
@@ -68,7 +68,8 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDetailsPresenter = new MovieDetailsPresenter(new MVPmodel(getActivity().getContentResolver(),getActivity()), this);
+        Log.v("***", "DetailsFragment: onCreate");
+        mDetailsPresenter = new MovieDetailsPresenter(new MovieRepo(new UserPrefImpl(getActivity().getContentResolver(), getActivity()), new MovieServiceApiImpl(getActivity())), this);
     }
 
     @Override
@@ -105,6 +106,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onStart() {
         super.onStart();
+        Log.v("***", "onStart details fragment");
         mDetailsPresenter.start(mSelectedMovie);
     }
 
@@ -113,7 +115,19 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_details, container, false);
-        mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
+        if (getArguments() != null) {
+            mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
+        }
+
+        mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);
+        mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDetailsPresenter.onFavoriteButtonClicked();
+            }
+        });
+
+
         return mRootView;
     }
 
@@ -138,7 +152,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     @Override
-    public void  showPoster(String path) {
+    public void showPoster(String path) {
         PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
         Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
     }
@@ -160,6 +174,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         TextView dateView = (TextView) mRootView.findViewById(R.id.date);
         dateView.setText(getString(R.string.release_date) + formatDate(date));
     }
+
     private String formatDate(String inputDate) {
         Date releaseDate;
         String newDateString;
@@ -175,7 +190,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
             return newDateString;
         }
     }
-
 
 
     private void showSnackbar(String message) {
@@ -199,7 +213,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         mCastGridView.setAdapter(mCastAdapter);
         TextView castEmptyView = (TextView) mRootView.findViewById(R.id.cast_empyt_view);
         mCastGridView.setEmptyView(castEmptyView);
-
 
         if (castList != null) {
             mCastAdapter.clear();
@@ -250,8 +263,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
 
-
-
     @Override
     public void showTrailer(String vidKey) {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vidKey));
@@ -265,7 +276,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     }
 
     @Override
-    public void showFavorites() {
+    public void goToFavorites() {
         if (ActivityUtils.isTwoPane(getActivity())) {
             mCallback.onGoToFavoritesList();
         } else {
@@ -274,55 +285,47 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         }
     }
 
-    public void showFavButton() {
-        mFavorite = mDetailsPresenter.isFavorite(mSelectedMovie);
 
-        mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);
-        if (mFavorite) {
+    public void updateFavButtonImage(boolean isFavorite) {
+        if (isFavorite) {
             mFavButton.setImageResource(R.drawable.ic_favorite_black_24dp);
         } else {
             mFavButton.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         }
-        mFavButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDetailsPresenter.onFavoriteButtonClicked(mFavorite, mSelectedMovie);
-
-            }
-        });
     }
 
-    public void updateFavorite(boolean fav) {
-        if (fav) {
-            mFavorite = true;
+
+    public void notifyUserFavStatusChanged(boolean isFavorite) {
+        if (isFavorite) {
             showSnackbar(getString(R.string.add_favorites));
         } else {
-            mFavorite = false;
             showSnackbar(getString(R.string.remove_favorites));
         }
-        showFavButton();
     }
 
     @Override
-    public void notifyErrorAddingFav() {
+    public void notifyUserErrorAddingFav() {
         Toast.makeText(getActivity(), getString(R.string.error_adding_fav), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void notifyErrorRemovingFav() {
+    public void notifyUserErrorRemovingFav() {
         Toast.makeText(getActivity(), getString(R.string.error_removing_fav), Toast.LENGTH_SHORT).show();
     }
+
     @Override
-    public void notifyErrorLoadingCast() {
+    public void notifyUserErrorLoadingCast() {
         Toast.makeText(getActivity(), R.string.error_retrieving_cast_data, Toast.LENGTH_SHORT).show();
 
     }
+
     @Override
-    public void notifyErrorLoadingTrailers() {
+    public void notifyUserErrorLoadingTrailers() {
         Toast.makeText(getActivity(), R.string.videos_unavailable, Toast.LENGTH_SHORT).show();
     }
+
     @Override
-    public void notifyErrorLoadingReviews() {
+    public void notifyUserErrorLoadingReviews() {
         Toast.makeText(getActivity(), R.string.reviews_unavailable, Toast.LENGTH_SHORT).show();
 
     }
