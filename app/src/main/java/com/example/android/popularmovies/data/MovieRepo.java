@@ -14,8 +14,9 @@ public class MovieRepo implements MovieRepoInterface {
 
     private MovieServiceAPI mMovieServiceAPI;
     private UserPrefInterface mUserPref;
-    private Movie mSelectedMovie;
+
     private ArrayList<Movie> mMovieList;
+    private Integer mCurrentMoviePos;
 
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
         mUserPref = userPref;
@@ -51,7 +52,7 @@ public class MovieRepo implements MovieRepoInterface {
 
     public void getTrailers(final MovieRepoInterface.TrailersLoadedCallback callback) {
 
-        mMovieServiceAPI.getTrailers(mSelectedMovie, new MovieServiceAPI.LoadTrailersCallback() {
+        mMovieServiceAPI.getTrailers(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadTrailersCallback() {
             @Override
             public void onTrailersLoaded(Object trailersList) {
                 callback.onVideosLoaded(trailersList);
@@ -67,7 +68,7 @@ public class MovieRepo implements MovieRepoInterface {
     }
 
     public void getCast(final MovieRepoInterface.CastLoadedCallback callback) {
-        mMovieServiceAPI.getCast(mSelectedMovie, new MovieServiceAPI.LoadCastCallback<ArrayList<CastMember>>() {
+        mMovieServiceAPI.getCast(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadCastCallback<ArrayList<CastMember>>() {
             @Override
             public void onCastLoaded(ArrayList<CastMember> castList) {
                 callback.onCastLoaded(castList);
@@ -85,7 +86,7 @@ public class MovieRepo implements MovieRepoInterface {
 
     public void getReviews(final MovieRepoInterface.ReviewsLoadedCallback callback) {
 
-        mMovieServiceAPI.getReviews(mSelectedMovie, new MovieServiceAPI.LoadReviewsCallback() {
+        mMovieServiceAPI.getReviews(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadReviewsCallback() {
             @Override
             public void onReviewsLoaded(Object reviewList) {
                 callback.onReviewsLoaded(reviewList);
@@ -100,23 +101,23 @@ public class MovieRepo implements MovieRepoInterface {
     }
 
     @Override
-    public void setSelectedMovie(Movie selectedMovie) {
-        mSelectedMovie = selectedMovie;
+    public void setSelectedMovie(int position) {
+        mCurrentMoviePos = position;
     }
 
     @Override
     public Movie getSelectedMovie() {
-        return mSelectedMovie;
+        return mMovieList.get(mCurrentMoviePos);
     }
 
 
     public boolean isFavorite() {
-        return mUserPref.isFavorite(mSelectedMovie);
+        return mUserPref.isFavorite(mMovieList.get(mCurrentMoviePos));
     }
 
     public void addToFavorites(final MovieRepoInterface.addFavoritesCallback callback) {
 
-        mUserPref.addToFavorites(mSelectedMovie, new UserPrefInterface.AddFavoriteCallback() {
+        mUserPref.addToFavorites(mMovieList.get(mCurrentMoviePos), new UserPrefInterface.AddFavoriteCallback() {
             @Override
             public void addSuccess() {
                 callback.successAddingToFav();
@@ -131,7 +132,7 @@ public class MovieRepo implements MovieRepoInterface {
     }
 
     public void removeFromFavorites(final MovieRepoInterface.removeFavoritesCallback callback) {
-        mUserPref.removeFromFavorites(mSelectedMovie, new UserPrefInterface.RemoveFavoriteCallback() {
+        mUserPref.removeFromFavorites(mMovieList.get(mCurrentMoviePos), new UserPrefInterface.RemoveFavoriteCallback() {
             @Override
             public void removeSuccess() {
                 callback.onSuccessRemovingFav();
@@ -147,6 +148,10 @@ public class MovieRepo implements MovieRepoInterface {
 
     public ArrayList<Movie> getCurrentMovieList() {
         return mMovieList;
+    }
+
+    public Integer getCurrentMoviePos() {
+        return mCurrentMoviePos;
     }
 
 

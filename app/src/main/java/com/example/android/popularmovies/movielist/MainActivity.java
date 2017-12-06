@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.moviedetails.DetailsFragment;
-import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
 
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
         MainFragment mainFragment = new MainFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment, mainFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mainFragment).commit();
 
     }
 
@@ -32,17 +31,17 @@ public class MainActivity extends AppCompatActivity implements
 
         if (ActivityUtils.isTwoPane(mContext)) {
             detailsFragment = new DetailsFragment();
-            getFragmentManager().beginTransaction().replace(R.id.details_fragment, detailsFragment).addToBackStack("deetFrag").commit();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_2, detailsFragment).addToBackStack("deetFrag").commit();
         } else {
-            Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-            startActivity(intent);
+            detailsFragment = new DetailsFragment();
+            getFragmentManager().beginTransaction().replace(R.id.fragment_1, detailsFragment).addToBackStack("deetFrag").commit();
         }
     }
 
     @Override //Interface Method
     public void onGoToFavoritesList() {
         MainFragment mainFragment = new MainFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.list_fragment, mainFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mainFragment).commit();
     }
 
 }

@@ -1,8 +1,7 @@
 package com.example.android.popularmovies.movielist;
 
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.R;
@@ -15,7 +14,6 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
 
     private MovieRepoInterface mModel;
     private MovieListContract.View mView;
-    public boolean fromTop;
 
     public MovieListPresenter(MovieRepoInterface model, MovieListContract.View view) {
         mView = view;
@@ -33,18 +31,15 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
             public void onMoviesLoaded(ArrayList<Movie> movieList) {
                 if (movieList != null) {
                     mView.showMovieList(movieList);
-
+                    if (mModel.getCurrentMoviePos() == null) {
+                        mModel.setSelectedMovie(0);
+                    }
+                    mView.showMovieDetailsUI();
                 }
             }
         });
     }
 
-    @Override
-    public void showFirst() {
-        if (fromTop) {
-            onMovieSelected(mModel.getCurrentMovieList().get(0));
-        }
-    }
 
     public void onSortByTapped() {
         String sortPref = mModel.getSortPref();
@@ -54,7 +49,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
 
     @Override
     public void onSortChanged(MenuItem item) {
-        fromTop = true;
+        mModel.setSelectedMovie(0);
         int itemId = item.getItemId();
         String pref = null;
         switch (itemId) {
@@ -65,16 +60,15 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
                 pref = "top_rated";
                 break;
             case (R.id.fav):
-                pref =  "favorite";
+                pref = "favorite";
         }
         mModel.changeSortPreference(pref);
         showMovieList();
     }
 
     @Override
-    public void onMovieSelected(Movie selectedMovie) {
-        fromTop = false;
-        mModel.setSelectedMovie(selectedMovie);
+    public void onMovieSelected(int position) {
+        mModel.setSelectedMovie(position);
         mView.showMovieDetailsUI();
     }
 

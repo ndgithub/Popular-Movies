@@ -94,7 +94,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onStart() {
         super.onStart();
-        Log.v("***", "onStart details fragment");
         mDetailsPresenter.start();
     }
 

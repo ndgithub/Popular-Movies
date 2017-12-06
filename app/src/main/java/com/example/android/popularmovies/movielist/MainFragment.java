@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,14 +18,10 @@ import android.widget.TextView;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.Movie;
-import com.example.android.popularmovies.data.MovieRepo;
 import com.example.android.popularmovies.data.ReposHolder;
 import com.example.android.popularmovies.data.UserPrefImpl;
 import com.example.android.popularmovies.data.remote.MovieServiceApiImpl;
-import com.example.android.popularmovies.moviedetails.MovieDetailActivity;
 import com.example.android.popularmovies.utils.ActivityUtils;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -88,24 +85,20 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Log.v("***", "start Presenter");
         mPresenter.start();
+
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.onMovieSelected(mMovieList.get(position));
+                mPresenter.onMovieSelected(position);
             }
         });
     }
 
-    @Override  //View Interace Method
+    @Override  //View Interface Method
     public void showMovieDetailsUI() {
         if (!mMovieList.isEmpty()) {
-            //Movie selectedMovie = mMovieList.get(position);
-//            Intent intent = new Intent(getContext(), MovieDetailActivity.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelable("movie", Parcels.wrap(selectedMovie));
-//            intent.putExtra("movi", bundle);
             mCallback.onMovieSelected();
         }
     }
@@ -144,7 +137,9 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieList = list;
         mMovieAdapter.addAll(mMovieList);
         if (ActivityUtils.isTwoPane(mContext)) {
-            mPresenter.showFirst();
+            if (!list.isEmpty()) {
+                //mPresenter.showFirst();
+            }
         }
     }
 

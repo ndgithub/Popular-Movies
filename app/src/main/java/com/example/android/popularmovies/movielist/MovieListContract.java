@@ -17,8 +17,8 @@ public interface MovieListContract {
 
     interface UserActionsListener {
         void onSortChanged(MenuItem item);
-        void onMovieSelected(Movie selectedMovie);
+        void onMovieSelected(int position);
         void start();
-        void showFirst();
+
     }
 }
