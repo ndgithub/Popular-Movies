@@ -50,8 +50,10 @@ public interface MovieRepoInterface {
     void setSelectedMovie(Movie selectedMovie);
 
     Movie getSelectedMovie();
+
+    ArrayList<Movie> getCurrentMovieList();
     
-    //----------------------- UserPrefStuff? -----------------------//
+    //----------------------- UserPrefStuff-----------------------//
     
     boolean isFavorite();
 

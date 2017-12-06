@@ -57,7 +57,7 @@ public interface MovieDetailsContract {
     }
 
     interface UserActionsListener {
-        void start(Movie selectedMovie);
+        void start();
         void onFavoriteButtonClicked();
         void onTrailerClicked(Video selectedVideo);
         void onGoToFavorites();

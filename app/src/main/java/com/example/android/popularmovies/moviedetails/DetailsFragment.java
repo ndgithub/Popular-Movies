@@ -24,6 +24,7 @@ import com.example.android.popularmovies.data.CastMember;
 import com.example.android.popularmovies.data.Movie;
 
 import com.example.android.popularmovies.data.MovieRepo;
+import com.example.android.popularmovies.data.ReposHolder;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.UserPrefImpl;
 import com.example.android.popularmovies.data.Video;
@@ -55,7 +56,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     ListView mReviewListView;
     ImageView mFavButton;
 
-    Movie mSelectedMovie;
     final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/w780";
     View mRootView;
     MovieDetailsContract.UserActionsListener mDetailsPresenter;
@@ -69,7 +69,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v("***", "DetailsFragment: onCreate");
-        mDetailsPresenter = new MovieDetailsPresenter(new MovieRepo(new UserPrefImpl(getActivity().getContentResolver(), getActivity()), new MovieServiceApiImpl(getActivity())), this);
+        mDetailsPresenter = new MovieDetailsPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(), getActivity()), new MovieServiceApiImpl(getActivity())), this);
     }
 
     @Override
@@ -86,28 +86,16 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
         }
     }
 
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("movie", Parcels.wrap(mSelectedMovie));
-    }
-
     public interface onGoToFavoritesListener {
         void onGoToFavoritesList();
     }
 
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         Log.v("***", "onStart details fragment");
-        mDetailsPresenter.start(mSelectedMovie);
+        mDetailsPresenter.start();
     }
 
     @Nullable
@@ -115,10 +103,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_details, container, false);
-        if (getArguments() != null) {
-            mSelectedMovie = Parcels.unwrap(getArguments().getParcelable("movie"));
-        }
-
         mFavButton = (ImageView) mRootView.findViewById(R.id.fav_button);
         mFavButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +119,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void showActivityTitle(String title) {
         if (!ActivityUtils.isTwoPane(getActivity())) {
-            getActivity().setTitle(mSelectedMovie.getTitle());
+            getActivity().setTitle(title);
         }
     }
 
@@ -154,7 +138,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void showPoster(String path) {
         PosterImageView posterView = (PosterImageView) mRootView.findViewById(R.id.poster);
-        Picasso.with(getActivity()).load(BASE_IMAGE_URL + mSelectedMovie.getPosterPath()).fit().centerInside().into(posterView);
+        Picasso.with(getActivity()).load(BASE_IMAGE_URL + path).fit().centerInside().into(posterView);
     }
 
     @Override

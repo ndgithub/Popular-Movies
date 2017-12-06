@@ -15,6 +15,7 @@ public class MovieRepo implements MovieRepoInterface {
     private MovieServiceAPI mMovieServiceAPI;
     private UserPrefInterface mUserPref;
     private Movie mSelectedMovie;
+    private ArrayList<Movie> mMovieList;
 
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
         mUserPref = userPref;
@@ -27,15 +28,15 @@ public class MovieRepo implements MovieRepoInterface {
 
     public void getMovieList(final LoadMoviesCallback callback) {
         String sortPref = mUserPref.getSortPref();
-        Log.v("***", "sortPref: " + sortPref);
         if (sortPref.equals("favorite")) {
-            ArrayList<Movie> movieList = mUserPref.getFavoritesList();
-            callback.onMoviesLoaded(movieList);
+            mMovieList = mUserPref.getFavoritesList();
+            callback.onMoviesLoaded(mMovieList);
         } else {
-            mMovieServiceAPI.getMovieList(sortPref, new LoadMoviesCallback() {
+            mMovieServiceAPI.getMovieList(sortPref, new LoadMoviesCallback<ArrayList<Movie>>() {
                 @Override
-                public void onMoviesLoaded(Object movieList) {
-                    callback.onMoviesLoaded(movieList);
+                public void onMoviesLoaded(ArrayList movieList) {
+                    mMovieList = movieList;
+                    callback.onMoviesLoaded(mMovieList);
                 }
             });
 
@@ -142,6 +143,10 @@ public class MovieRepo implements MovieRepoInterface {
             }
         });
 
+    }
+
+    public ArrayList<Movie> getCurrentMovieList() {
+        return mMovieList;
     }
 
 

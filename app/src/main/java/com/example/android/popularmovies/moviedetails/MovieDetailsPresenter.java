@@ -33,8 +33,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
     }
 
 
-    public void start(Movie selectedMovie) {
-        mModel.setSelectedMovie(selectedMovie);
+    public void start() {
         loadUI();
     }
 

@@ -42,7 +42,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     @Override
     public void showFirst() {
         if (fromTop) {
-            onMovieSelected(0);
+            onMovieSelected(mModel.getCurrentMovieList().get(0));
         }
     }
 
@@ -72,9 +72,10 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     }
 
     @Override
-    public void onMovieSelected(int position) {
+    public void onMovieSelected(Movie selectedMovie) {
         fromTop = false;
-        mView.showMovieDetailsUI(position);
+        mModel.setSelectedMovie(selectedMovie);
+        mView.showMovieDetailsUI();
     }
 
 

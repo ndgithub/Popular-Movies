@@ -28,15 +28,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override //Interface method in ListFragment
-    public void onMovieSelected(Bundle bundle) {
+    public void onMovieSelected() {
 
         if (ActivityUtils.isTwoPane(mContext)) {
             detailsFragment = new DetailsFragment();
-            detailsFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.details_fragment, detailsFragment).addToBackStack("deetFrag").commit();
         } else {
             Intent intent = new Intent(getApplicationContext(), MovieDetailActivity.class);
-            intent.putExtra("movieBundle", bundle);
             startActivity(intent);
         }
     }
@@ -51,14 +49,19 @@ public class MainActivity extends AppCompatActivity implements
 
 
 //----------------------- Notes -----------------------//
+
+// Create Injection class for mock source set and produ.
+//    use this in presenter constructor. This will allow not moving selected movie around with bndle.
+
+
+
 // move checking if fav to presenter.
 
 //Don't worry about testing DB, just test repo class calls right things, and gets
 // lists back.
 
 
-// Create Injection class for mock source set and produ.
-//    use this in presenter constructor.
+
 
 //Add empty view to favorites list
 

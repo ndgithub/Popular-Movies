@@ -10,14 +10,14 @@ import java.util.ArrayList;
 public interface MovieListContract {
 
     interface View {
-        void showMovieDetailsUI(int position);
+        void showMovieDetailsUI();
         void inflateSortOptionsMenu(String sortPref);
         void showMovieList(ArrayList<Movie> list);
     }
 
     interface UserActionsListener {
         void onSortChanged(MenuItem item);
-        void onMovieSelected(int position);
+        void onMovieSelected(Movie selectedMovie);
         void start();
         void showFirst();
     }
