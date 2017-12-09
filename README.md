@@ -2,7 +2,8 @@
 Android application thats shows popular and top rated moves using the tmdb.com API. This app was created to satisfy the requirements of Project 1 for Udacity Android Developers NanoDegree. 
 
 * Local database allows user to store and view favorite movies. 
-* Implements the MVP architectural pattern. 
+* Implements the MVP architectural pattern.
+* Uses Mockito and JUnit frameworks for unit testing.
 
 
 ## Screenshots
