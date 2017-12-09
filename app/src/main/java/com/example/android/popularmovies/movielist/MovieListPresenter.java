@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.movielist;
 
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.R;
@@ -29,22 +30,22 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     }
 
     public void showMovieList() {
-        mModel.getMovieList(new MovieRepoInterface.LoadMoviesCallback<ArrayList<Movie>>() {
+        Log.v("!!!", "ListPresenter is asking for movieList");
+        mModel.loadMovieList(new MovieRepoInterface.LoadMoviesCallback<ArrayList<Movie>>() {
             @Override
             public void onMoviesLoaded(ArrayList<Movie> movieList) {
                 if (movieList != null) {
                     mView.showMovieList(movieList);
+                    mView.onSortChanged();
                 }
             }
         });
     }
 
-
     public void onSortByTapped() {
         String sortPref = mModel.getSortPref();
         mView.inflateSortOptionsMenu(sortPref);
     }
-
 
     @Override
     public void onSortChanged(MenuItem item) {
@@ -63,7 +64,6 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
         }
         mModel.changeSortPreference(pref);
         showMovieList();
-        mView.onSortChanged();
     }
 
     @Override

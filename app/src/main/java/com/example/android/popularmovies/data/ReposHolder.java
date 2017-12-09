@@ -20,11 +20,9 @@ public class ReposHolder {
     public static synchronized MovieRepoInterface getMovieRepo(UserPrefInterface userPrefRepo, MovieServiceAPI movieServiceAPI) {
 
         if (mMovieRepo == null) {
-            Log.v("###", "Created new MovieRepo");
             mMovieRepo = new MovieRepo(userPrefRepo, movieServiceAPI);
             return mMovieRepo;
         } else {
-            Log.v("###", "Uses old MovieRepo");
             return mMovieRepo;
         }
     }

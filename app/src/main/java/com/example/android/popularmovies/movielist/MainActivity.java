@@ -6,10 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.android.popularmovies.R;
+import com.example.android.popularmovies.data.MovieRepoInterface;
+import com.example.android.popularmovies.data.ReposHolder;
+import com.example.android.popularmovies.data.UserPrefImpl;
+import com.example.android.popularmovies.data.remote.MovieServiceApiImpl;
 import com.example.android.popularmovies.moviedetails.DetailsFragment;
 import com.example.android.popularmovies.utils.ActivityUtils;
 
-public class MainActivity extends AppCompatActivity implements MainFragment.ListFragmentInterface,DetailsFragment.onGoToFavoritesListener {
+public class MainActivity extends AppCompatActivity implements MainFragment.ListFragmentInterface, DetailsFragment.onGoToFavoritesListener {
 
     MainFragment mListFragment;
     DetailsFragment mDetailsFragment;
@@ -23,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
         mShowListFragment = true;
-
         Log.v("@@@", "onCreate Actvity 1showListFragment: " + mShowListFragment);
         if (savedInstanceState != null) {
             Log.v("@@@", "savedInstance state not null.");
@@ -31,13 +34,26 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         }
         Log.v("@@@", "onCreate Actvity 2showListFragment: " + mShowListFragment);
 
+
+        //Initialize the repo and load up a movie list before the first fragment is loaded.
+        MovieRepoInterface movieRepo = ReposHolder.getMovieRepo(new UserPrefImpl(getContentResolver(), getApplicationContext()), new MovieServiceApiImpl(getApplicationContext()));
+        movieRepo.initializeMovieList(new MovieRepoInterface.InitMoviesCallback() {
+            @Override
+            public void onMoviesLoaded() {
+                loadFragments();
+            }
+        });
+
+    }
+
+    private void loadFragments() {
         //If tablet mode, load both fragments.
         if (ActivityUtils.isTwoPane(mContext)) {
             Log.v("@@@", "table mode");
             mListFragment = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mListFragment).commit();
             mDetailsFragment = new DetailsFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_2, mDetailsFragment).addToBackStack("deetFrag").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_2, mDetailsFragment).commit();
         }
         //  Load List Fragment
         else if (mShowListFragment) {
@@ -54,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         }
     }
 
-
     @Override //Interface method in ListFragment
     public void onMovieSelected() {
         Log.v("@@@", "onMovieSelected + mShowListFragment: " + mShowListFragment);
@@ -70,32 +85,25 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         }
     }
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.v("@@@", "onSaveInstanceState, mShowListFragment:  " + mShowListFragment);
         outState.putBoolean("showListFragment", mShowListFragment);
     }
 
     @Override //Interface Method
     public void onGoToFavoritesList() {
-        Log.v("***", "MainActivity: onGoToFavoritesList");
-        if (mListFragment == null) {
-            mListFragment = new MainFragment();
-        }
+        mListFragment = new MainFragment();
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mListFragment).commit();
     }
 
     public void onSortChanged() {
         if (ActivityUtils.isTwoPane(mContext)) {
-            if (mDetailsFragment == null) {
-                mDetailsFragment = new DetailsFragment();
-            }
-            Log.v("@@@", "MainActivity onSortChanged");
+            mDetailsFragment = new DetailsFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_2, mDetailsFragment).addToBackStack("deetFrag").commit();
         }
+
     }
 
     @Override

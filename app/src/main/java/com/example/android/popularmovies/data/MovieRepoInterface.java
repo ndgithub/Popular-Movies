@@ -14,6 +14,11 @@ public interface MovieRepoInterface {
         void onMoviesLoaded(T movieList);
     }
 
+    interface InitMoviesCallback {
+        void onMoviesLoaded();
+    }
+
+
     interface CastLoadedCallback<T> {
         void onCastLoaded(T cast);
         void onErrorLoadingCast();
@@ -38,8 +43,10 @@ public interface MovieRepoInterface {
         void onErrorRemovingFav();
         void onSuccessRemovingFav();
     }
-    
-    void getMovieList(LoadMoviesCallback callback);
+
+    void initializeMovieList(InitMoviesCallback callback);
+    void loadMovieList(LoadMoviesCallback callback);
+     ArrayList<Movie> returnCurrentMovieList();
 
     void getCast(MovieRepoInterface.CastLoadedCallback callback);
 

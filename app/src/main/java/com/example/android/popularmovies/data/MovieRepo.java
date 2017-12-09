@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.android.popularmovies.data.remote.MovieServiceAPI;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -21,13 +22,43 @@ public class MovieRepo implements MovieRepoInterface {
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
         mUserPref = userPref;
         mMovieServiceAPI = movieServiceAPI;
+
     }
 
     public void changeSortPreference(String sortPref) {
         mUserPref.changeSortPreference(sortPref);
     }
 
-    public void getMovieList(final LoadMoviesCallback callback) {
+    public void initializeMovieList(final InitMoviesCallback callback) {
+        if (mMovieList == null) {
+            Log.v("!!!", "Repo is about to set movie list");
+            String sortPref = mUserPref.getSortPref();
+            Log.v("!!!", "sortPref: " + sortPref);
+            if (sortPref.equals("favorite")) {
+                mMovieList = mUserPref.getFavoritesList();
+                Log.v("!!!", "movieList is set");
+            } else {
+                mMovieServiceAPI.getMovieList(sortPref, new LoadMoviesCallback<ArrayList<Movie>>() {
+                    @Override
+                    public void onMoviesLoaded(ArrayList movieList) {
+                        mMovieList = movieList;
+                        callback.onMoviesLoaded();
+                        Log.v("!!!", "movieList is set");
+
+                    }
+                });
+            }
+        }
+
+    }
+
+    @Override
+    public ArrayList<Movie> returnCurrentMovieList() {
+
+        return mMovieList;
+    }
+
+    public void loadMovieList(final LoadMoviesCallback callback) {
         String sortPref = mUserPref.getSortPref();
         if (sortPref.equals("favorite")) {
             mMovieList = mUserPref.getFavoritesList();
@@ -107,7 +138,10 @@ public class MovieRepo implements MovieRepoInterface {
 
     @Override
     public Movie getSelectedMovie() {
-        return mMovieList.get(mCurrentMoviePos);
+        if (!mMovieList.isEmpty()) {
+            return mMovieList.get(mCurrentMoviePos);
+        }
+        return null;
     }
 
 

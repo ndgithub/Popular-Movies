@@ -4,7 +4,10 @@
     android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#292847">
+    android:background="#292847"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    >
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,7 +19,7 @@
             android:layout_height="225dp"
             tools:ignore="ContentDescription"
             android:background="#292847"
-            android:alpha="0.8"/>
+            android:alpha="0.8" />
 
 
 
@@ -171,7 +174,8 @@
                         android:horizontalSpacing="18dp"
                         android:numColumns="3"
                         android:stretchMode="columnWidth"
-                        android:verticalSpacing="18dp" />
+                        android:verticalSpacing="18dp"
+                        />
 
                     <TextView
                         android:id="@+id/cast_empyt_view"

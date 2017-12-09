@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,13 +74,13 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         //if (ActivityUtils.isTwoPane(getActivity())) {
-            try {
-                mCallback = (onGoToFavoritesListener) activity;
-            } catch (ClassCastException e) {
-                throw new ClassCastException(activity.toString()
-                        + " must implement Ongotofaveslistener");
+        try {
+            mCallback = (onGoToFavoritesListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement Ongotofaveslistener");
 
-            }
+        }
         //}
     }
 
@@ -92,8 +93,14 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onStart() {
         super.onStart();
-        mDetailsPresenter.start();
         Log.v("***", "details fragment onStart");
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDetailsPresenter.start();
+
     }
 
     @Nullable
@@ -108,8 +115,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
                 mDetailsPresenter.onFavoriteButtonClicked();
             }
         });
-
-
         return mRootView;
     }
 

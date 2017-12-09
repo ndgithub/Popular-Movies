@@ -52,13 +52,13 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         super.onCreate(savedInstanceState);
         mContext = getContext();
         mPresenter = new MovieListPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(), mContext), new MovieServiceApiImpl(mContext)), this);
-        ActivityUtils.showListFragment = true;
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //Tell activity to set showListfragment to true;
+        //Tell activity to set showListfragment to true; in case orientation changes on phone layout
         mListFragmentImpl.onListFragmentShowing();
 
     }

@@ -38,53 +38,56 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
     }
 
     public void showMovieDetails() {
-        Movie selectedMovie = mModel.getSelectedMovie();
-        mView.showActivityTitle(selectedMovie.getTitle());
-        mView.showTitle(selectedMovie.getTitle());
-        mView.showRating(selectedMovie.getRating());
-        mView.showBackdrop(selectedMovie.getBackdropPath());
-        mView.showPoster(selectedMovie.getPosterPath());
-        mView.showOverview(selectedMovie.getOverview());
-        mView.showDate(selectedMovie.getDate());
-        mView.updateFavButtonImage(mModel.isFavorite());
+        if (!mModel.returnCurrentMovieList().isEmpty()) {
+            Log.v("!!!", "DetailsPresenter is asking for movieList");
+            Movie selectedMovie = mModel.getSelectedMovie();
+            mView.showActivityTitle(selectedMovie.getTitle());
+            mView.showTitle(selectedMovie.getTitle());
+            mView.showRating(selectedMovie.getRating());
+            mView.showBackdrop(selectedMovie.getBackdropPath());
+            mView.showPoster(selectedMovie.getPosterPath());
+            mView.showOverview(selectedMovie.getOverview());
+            mView.showDate(selectedMovie.getDate());
+            mView.updateFavButtonImage(mModel.isFavorite());
 
-        mModel.getCast(new MovieRepoInterface.CastLoadedCallback<ArrayList<CastMember>>() {
-            @Override
-            public void onCastLoaded(ArrayList<CastMember> castList) {
-                mView.showCastList(castList);
-            }
+            mModel.getCast(new MovieRepoInterface.CastLoadedCallback<ArrayList<CastMember>>() {
+                @Override
+                public void onCastLoaded(ArrayList<CastMember> castList) {
+                    mView.showCastList(castList);
+                }
 
-            @Override
-            public void onErrorLoadingCast() {
-                mView.notifyUserErrorLoadingCast();
-            }
+                @Override
+                public void onErrorLoadingCast() {
+                    mView.notifyUserErrorLoadingCast();
+                }
 
 
-        });
+            });
 
-        mModel.getTrailers(new MovieRepoInterface.TrailersLoadedCallback<ArrayList<Video>>() {
-            @Override
-            public void onVideosLoaded(ArrayList<Video> trailersList) {
-                mView.showTrailersList(trailersList);
-            }
+            mModel.getTrailers(new MovieRepoInterface.TrailersLoadedCallback<ArrayList<Video>>() {
+                @Override
+                public void onVideosLoaded(ArrayList<Video> trailersList) {
+                    mView.showTrailersList(trailersList);
+                }
 
-            @Override
-            public void onErrorLoadingVideos() {
-                mView.notifyUserErrorLoadingTrailers();
-            }
-        });
+                @Override
+                public void onErrorLoadingVideos() {
+                    mView.notifyUserErrorLoadingTrailers();
+                }
+            });
 
-        mModel.getReviews(new MovieRepoInterface.ReviewsLoadedCallback<ArrayList<Review>>() {
-            @Override
-            public void onReviewsLoaded(ArrayList<Review> reviewList) {
-                mView.showReviewList(reviewList);
-            }
+            mModel.getReviews(new MovieRepoInterface.ReviewsLoadedCallback<ArrayList<Review>>() {
+                @Override
+                public void onReviewsLoaded(ArrayList<Review> reviewList) {
+                    mView.showReviewList(reviewList);
+                }
 
-            @Override
-            public void onErrorLoadingReviews() {
-                mView.notifyUserErrorLoadingReviews();
-            }
-        });
+                @Override
+                public void onErrorLoadingReviews() {
+                    mView.notifyUserErrorLoadingReviews();
+                }
+            });
+        }
     }
 
 
