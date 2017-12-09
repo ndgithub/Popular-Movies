@@ -16,7 +16,7 @@ public class MovieRepo implements MovieRepoInterface {
     private UserPrefInterface mUserPref;
 
     private ArrayList<Movie> mMovieList;
-    private Integer mCurrentMoviePos;
+    private Integer mCurrentMoviePos = 0;
 
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
         mUserPref = userPref;
@@ -101,7 +101,7 @@ public class MovieRepo implements MovieRepoInterface {
     }
 
     @Override
-    public void setSelectedMovie(int position) {
+    public void setSelectedMoviePos(int position) {
         mCurrentMoviePos = position;
     }
 

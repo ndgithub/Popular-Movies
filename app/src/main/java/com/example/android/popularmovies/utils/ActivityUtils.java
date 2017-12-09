@@ -9,8 +9,10 @@ import com.example.android.popularmovies.R;
  */
 
 public class ActivityUtils {
+
     public static boolean isTwoPane(Context context) {
-        
         return context.getResources().getBoolean(R.bool.twoPane);
     }
+
+    public static boolean showListFragment = true;
 }

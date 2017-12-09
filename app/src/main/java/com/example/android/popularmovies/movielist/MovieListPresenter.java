@@ -1,12 +1,12 @@
 package com.example.android.popularmovies.movielist;
 
 
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.MovieRepoInterface;
+import com.example.android.popularmovies.utils.ActivityUtils;
 
 import java.util.ArrayList;
 
@@ -23,6 +23,9 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     @Override
     public void start() {
         showMovieList();
+//        if (mModel.getCurrentMoviePos() == null) {
+//            mModel.setSelectedMoviePos(0);
+//        }
     }
 
     public void showMovieList() {
@@ -31,10 +34,6 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
             public void onMoviesLoaded(ArrayList<Movie> movieList) {
                 if (movieList != null) {
                     mView.showMovieList(movieList);
-                    if (mModel.getCurrentMoviePos() == null) {
-                        mModel.setSelectedMovie(0);
-                    }
-                    mView.showMovieDetailsUI();
                 }
             }
         });
@@ -49,7 +48,7 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
 
     @Override
     public void onSortChanged(MenuItem item) {
-        mModel.setSelectedMovie(0);
+        mModel.setSelectedMoviePos(0);
         int itemId = item.getItemId();
         String pref = null;
         switch (itemId) {
@@ -64,11 +63,12 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
         }
         mModel.changeSortPreference(pref);
         showMovieList();
+        mView.onSortChanged();
     }
 
     @Override
     public void onMovieSelected(int position) {
-        mModel.setSelectedMovie(position);
+        mModel.setSelectedMoviePos(position);
         mView.showMovieDetailsUI();
     }
 

@@ -1,7 +1,7 @@
 package com.example.android.popularmovies.moviedetails;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,9 +21,7 @@ import android.widget.Toast;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.CastMember;
-import com.example.android.popularmovies.data.Movie;
 
-import com.example.android.popularmovies.data.MovieRepo;
 import com.example.android.popularmovies.data.ReposHolder;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.UserPrefImpl;
@@ -36,7 +34,6 @@ import com.example.android.popularmovies.utils.PosterImageView;
 
 import com.squareup.picasso.Picasso;
 
-import org.parceler.Parcels;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,7 +72,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (ActivityUtils.isTwoPane(getActivity())) {
+        //if (ActivityUtils.isTwoPane(getActivity())) {
             try {
                 mCallback = (onGoToFavoritesListener) activity;
             } catch (ClassCastException e) {
@@ -83,9 +80,10 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
                         + " must implement Ongotofaveslistener");
 
             }
-        }
+        //}
     }
 
+    //Interface implemented by activity
     public interface onGoToFavoritesListener {
         void onGoToFavoritesList();
     }
@@ -95,6 +93,7 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
     public void onStart() {
         super.onStart();
         mDetailsPresenter.start();
+        Log.v("***", "details fragment onStart");
     }
 
     @Nullable
@@ -260,12 +259,13 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     @Override
     public void goToFavorites() {
-        if (ActivityUtils.isTwoPane(getActivity())) {
-            mCallback.onGoToFavoritesList();
-        } else {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            startActivity(intent);
-        }
+//        if (ActivityUtils.isTwoPane(getActivity())) {
+//            mCallback.onGoToFavoritesList();
+//        } else {
+//            Intent intent = new Intent(getActivity(), MainActivity.class);
+//            startActivity(intent);
+//        }
+        mCallback.onGoToFavoritesList();
     }
 
 

@@ -47,11 +47,9 @@ public interface MovieRepoInterface {
 
     void getReviews(MovieRepoInterface.ReviewsLoadedCallback callback);
 
-    void setSelectedMovie(int position);
+    void setSelectedMoviePos(int position);
 
     Movie getSelectedMovie();
-
-    ArrayList<Movie> getCurrentMovieList();
 
     Integer getCurrentMoviePos();
     

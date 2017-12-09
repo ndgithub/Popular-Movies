@@ -29,25 +29,38 @@ public class MainFragment extends Fragment implements MovieListContract.View {
 
     private TextView mEmptyView;
     private GridView mGridView;
-    private onMovieSelectedListener mCallback;
+    private ListFragmentInterface mListFragmentImpl;
     private MovieAdapter mMovieAdapter;
     private ArrayList<Movie> mMovieList;
     private Context mContext;
 
-    private  MovieListPresenter mPresenter;
+    private MovieListPresenter mPresenter;
 
     public MainFragment() {
     }
 
-    public interface onMovieSelectedListener {
-         void onMovieSelected();
+    public interface ListFragmentInterface {
+        void onMovieSelected();
+        void onSortChanged();
+        void onListFragmentShowing();
     }
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-        mPresenter = new MovieListPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(),mContext),new MovieServiceApiImpl(mContext)),this);
+        mPresenter = new MovieListPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(), mContext), new MovieServiceApiImpl(mContext)), this);
+        ActivityUtils.showListFragment = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Tell activity to set showListfragment to true;
+        mListFragmentImpl.onListFragmentShowing();
+
     }
 
     @Override
@@ -56,10 +69,10 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         setHasOptionsMenu(true);
 
         try {
-            mCallback = (onMovieSelectedListener) context;
+            mListFragmentImpl = (ListFragmentInterface) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement onMovieSelectedListener");
+                    + " must implement ListFragmentInterface");
         }
 
     }
@@ -70,7 +83,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         super.onCreateView(inflater, container, savedInstanceState);
 
         mMovieList = new ArrayList<>();
-        mMovieAdapter = new MovieAdapter(getContext(),mMovieList);
+        mMovieAdapter = new MovieAdapter(getContext(), mMovieList);
 
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         mGridView = (GridView) rootView.findViewById(R.id.list_view);
@@ -99,7 +112,7 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     @Override  //View Interface Method
     public void showMovieDetailsUI() {
         if (!mMovieList.isEmpty()) {
-            mCallback.onMovieSelected();
+            mListFragmentImpl.onMovieSelected();
         }
     }
 
@@ -136,11 +149,11 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mMovieAdapter.clear();
         mMovieList = list;
         mMovieAdapter.addAll(mMovieList);
-        if (ActivityUtils.isTwoPane(mContext)) {
-            if (!list.isEmpty()) {
-                //mPresenter.showFirst();
-            }
-        }
+//        if (ActivityUtils.isTwoPane(mContext)) {
+//            if (!list.isEmpty()) {
+//                //mPresenter.showFirst();
+//            }
+//        }
     }
 
     @Override //Fragment
@@ -153,5 +166,10 @@ public class MainFragment extends Fragment implements MovieListContract.View {
         mPresenter.onSortByTapped();
         return true;
     }
+
+    public void onSortChanged() {
+        mListFragmentImpl.onSortChanged();
+    }
+
 
 }

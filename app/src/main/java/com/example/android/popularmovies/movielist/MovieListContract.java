@@ -13,12 +13,12 @@ public interface MovieListContract {
         void showMovieDetailsUI();
         void inflateSortOptionsMenu(String sortPref);
         void showMovieList(ArrayList<Movie> list);
+        void onSortChanged();
     }
 
     interface UserActionsListener {
         void onSortChanged(MenuItem item);
         void onMovieSelected(int position);
         void start();
-
     }
 }

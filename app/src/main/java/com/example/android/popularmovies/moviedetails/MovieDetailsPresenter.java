@@ -34,10 +34,10 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
 
 
     public void start() {
-        loadUI();
+        showMovieDetails();
     }
 
-    private void loadUI() {
+    public void showMovieDetails() {
         Movie selectedMovie = mModel.getSelectedMovie();
         mView.showActivityTitle(selectedMovie.getTitle());
         mView.showTitle(selectedMovie.getTitle());
@@ -95,7 +95,7 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
     @Override
     public void onGoToFavorites() {
         mModel.changeSortPreference("favorite");
-
+        mModel.setSelectedMoviePos(0);
         mView.goToFavorites();
     }
 
