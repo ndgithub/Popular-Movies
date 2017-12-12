@@ -24,13 +24,9 @@ public class MovieListPresenter implements MovieListContract.UserActionsListener
     @Override
     public void start() {
         showMovieList();
-//        if (mModel.getCurrentMoviePos() == null) {
-//            mModel.setSelectedMoviePos(0);
-//        }
     }
 
     public void showMovieList() {
-        Log.v("!!!", "ListPresenter is asking for movieList");
         mModel.loadMovieList(new MovieRepoInterface.LoadMoviesCallback<ArrayList<Movie>>() {
             @Override
             public void onMoviesLoaded(ArrayList<Movie> movieList) {

@@ -1,9 +1,13 @@
 package com.example.android.popularmovies.movielist;
 
+import android.test.AndroidTestCase;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.MovieRepo;
+import com.example.android.popularmovies.data.MovieRepoInterface;
+
+import junit.framework.TestCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,19 +27,22 @@ import static org.mockito.Mockito.when;
  * Created by Nicky on 11/17/17.
  */
 
-public class MovieListPresenterTest {
+public class MovieListPresenterTest extends TestCase {
 
     @Mock
     MovieListContract.View mView;
 
     @Mock
-    MovieRepo mModel;
+    MovieRepoInterface mModel;
 
     @Captor
     ArgumentCaptor<MovieRepo.LoadMoviesCallback> mLoadMoviesCallbackCaptor;
 
     @Captor
     ArgumentCaptor<MenuItem> mMenuItemCaptor;
+
+    @Mock
+    MenuItem menuItem;
 
     private MovieListPresenter mPresenter;
     private static ArrayList<Movie> movieList;
@@ -48,11 +56,22 @@ public class MovieListPresenterTest {
     }
 
     @Test
+    public void onSortChanged_test() {
+        //Call method under test
+        mPresenter.onSortChanged(menuItem);
+
+        //Verify that model updates sharedPref
+        verify(mModel).changeSortPreference(anyString());
+    }
+
+
+    @Test
     public void showMovieList_test() {
         mPresenter.showMovieList();
-        verify(mModel).getMovieList(mLoadMoviesCallbackCaptor.capture());
+        verify(mModel).loadMovieList(mLoadMoviesCallbackCaptor.capture());
         mLoadMoviesCallbackCaptor.getValue().onMoviesLoaded(movieList);
         verify(mView).showMovieList(movieList);
+        verify(mView).onSortChanged();
     }
 
     @Test
@@ -69,19 +88,12 @@ public class MovieListPresenterTest {
         verify(mView).inflateSortOptionsMenu(pref);
     }
 
-    @Test
-    public void onSortChanged_test() {
-        //Call method under test
-        mPresenter.onSortChanged(mMenuItemCaptor.capture());
 
-        //Verify that model updates sharedPref
-        verify(mModel).changeSortPreference(mMenuItemCaptor.capture());
-    }
 
     @Test
     public void onMovieSelected_test() {
         mPresenter.onMovieSelected(anyInt());
-         verify(mView).showMovieDetailsUI(anyInt());
+         verify(mView).showMovieDetailsUI();
 
     }
 }

@@ -27,13 +27,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
         mShowListFragment = true;
-        Log.v("@@@", "onCreate Actvity 1showListFragment: " + mShowListFragment);
         if (savedInstanceState != null) {
-            Log.v("@@@", "savedInstance state not null.");
             mShowListFragment = savedInstanceState.getBoolean("showListFragment");
         }
-        Log.v("@@@", "onCreate Actvity 2showListFragment: " + mShowListFragment);
-
 
         //Initialize the repo and load up a movie list before the first fragment is loaded.
         MovieRepoInterface movieRepo = ReposHolder.getMovieRepo(new UserPrefImpl(getContentResolver(), getApplicationContext()), new MovieServiceApiImpl(getApplicationContext()));
@@ -49,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
     private void loadFragments() {
         //If tablet mode, load both fragments.
         if (ActivityUtils.isTwoPane(mContext)) {
-            Log.v("@@@", "table mode");
             mListFragment = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mListFragment).commit();
             mDetailsFragment = new DetailsFragment();
@@ -57,13 +52,11 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
         }
         //  Load List Fragment
         else if (mShowListFragment) {
-            Log.v("@@@", "load list, mShowList: " + mShowListFragment);
             mListFragment = new MainFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mListFragment).commit();
         }
         // If orientation changed while showing detail fragment, load detail fragment.
         else {
-            Log.v("@@@", "load details, mShowList: " + mShowListFragment);
             getSupportFragmentManager().popBackStack();
             mDetailsFragment = new DetailsFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mDetailsFragment).addToBackStack("deetFrag").commit();
@@ -72,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
 
     @Override //Interface method in ListFragment
     public void onMovieSelected() {
-        Log.v("@@@", "onMovieSelected + mShowListFragment: " + mShowListFragment);
         if (ActivityUtils.isTwoPane(mContext)) {
             mDetailsFragment = new DetailsFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_2, mDetailsFragment).addToBackStack("deetFrag").commit();
@@ -81,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
             getSupportFragmentManager().popBackStack();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_1, mDetailsFragment).addToBackStack("deetFrag").commit();
             mShowListFragment = false;
-            Log.v("@@@", "2showListFragment: " + mShowListFragment);
         }
     }
 
@@ -115,11 +106,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
 
 //----------------------- Notes -----------------------//
 
-// Create Injection class for mock source set and produ.
-//    use this in presenter constructor. This will allow not moving selected movie around with bndle.
 
-//Don't worry about testing DB, just test repo class calls right things, and gets
-// lists back.
+// Work on MovieDetailsPresenterTest. Look at example, I think you need to make a mock repos.
+// Create Injection class for mock source set and production.
 
 //what happens if no wi-fi
 

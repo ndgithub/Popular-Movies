@@ -1,6 +1,5 @@
 package com.example.android.popularmovies.movielist;
 
-import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.data.Movie;

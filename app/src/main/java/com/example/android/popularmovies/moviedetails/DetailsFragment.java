@@ -264,12 +264,6 @@ public class DetailsFragment extends Fragment implements MovieDetailsContract.Vi
 
     @Override
     public void goToFavorites() {
-//        if (ActivityUtils.isTwoPane(getActivity())) {
-//            mCallback.onGoToFavoritesList();
-//        } else {
-//            Intent intent = new Intent(getActivity(), MainActivity.class);
-//            startActivity(intent);
-//        }
         mCallback.onGoToFavoritesList();
     }
 

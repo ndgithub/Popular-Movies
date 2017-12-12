@@ -1,8 +1,8 @@
 package com.example.android.popularmovies.moviedetails;
 
 import com.example.android.popularmovies.data.CastMember;
-import com.example.android.popularmovies.data.ModelInterface;
 import com.example.android.popularmovies.data.Movie;
+import com.example.android.popularmovies.data.MovieRepoInterface;
 import com.example.android.popularmovies.data.Review;
 import com.example.android.popularmovies.data.Video;
 
@@ -20,6 +20,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Nicky on 11/25/17.
@@ -30,18 +32,18 @@ public class MovieDetailsPresenterTest {
     @Mock
     private MovieDetailsContract.View mView;
     @Mock
-    private ModelInterface mModel;
+    private MovieRepoInterface mModel;
 
     @Captor
-    ArgumentCaptor<ModelInterface.CastLoadedCallback> mCastLoadedCallbackCaptor;
+    ArgumentCaptor<MovieRepoInterface.CastLoadedCallback> mCastLoadedCallbackCaptor;
     @Captor
-    ArgumentCaptor<ModelInterface.ReviewsLoadedCallback> mReviewsLoadedCallbackCaptor;
+    ArgumentCaptor<MovieRepoInterface.ReviewsLoadedCallback> mReviewsLoadedCallbackCaptor;
     @Captor
-    ArgumentCaptor<ModelInterface.TrailersLoadedCallback> mTrailersLoadedCallbackCaptor;
+    ArgumentCaptor<MovieRepoInterface.TrailersLoadedCallback> mTrailersLoadedCallbackCaptor;
     @Captor
-    ArgumentCaptor<ModelInterface.addFavoritesCallback> mAddFavoritesCallbackCaptor;
+    ArgumentCaptor<MovieRepoInterface.addFavoritesCallback> mAddFavoritesCallbackCaptor;
     @Captor
-    ArgumentCaptor<ModelInterface.removeFavoritesCallback> mRemoveFavoritesCallbackCaptor;
+    ArgumentCaptor<MovieRepoInterface.removeFavoritesCallback> mRemoveFavoritesCallbackCaptor;
 
     private Movie mMovie;
     private MovieDetailsPresenter mPresenter;
@@ -64,8 +66,10 @@ public class MovieDetailsPresenterTest {
         reviewList.add(new Review("author", "content", "path"));
         ArrayList<Video> trailerList = new ArrayList<>();
         trailerList.add(new Video("key", "title"));
+        when(mModel.getSelectedMovie()).thenReturn(mMovie);
         //Call method under test
-        mPresenter.start(mMovie);
+
+        mPresenter.start();
 
         //Verify view methods get called
         verify(mView).showActivityTitle(mMovie.getTitle());
@@ -76,72 +80,93 @@ public class MovieDetailsPresenterTest {
         verify(mView).showOverview(mMovie.getOverview());
         verify(mView).showDate(mMovie.getDate());
 
-        verify(mModel).getCast(eq(mMovie), mCastLoadedCallbackCaptor.capture());
+        verify(mModel).getCast(mCastLoadedCallbackCaptor.capture());
         mCastLoadedCallbackCaptor.getValue().onCastLoaded(castList);
         verify(mView).showCastList(castList);
         //If there is an error
         mCastLoadedCallbackCaptor.getValue().onErrorLoadingCast();
-        verify(mView).notifyErrorLoadingCast();
+        verify(mView).notifyUserErrorLoadingCast();
 
-        verify(mModel).getTrailers(eq(mMovie), mTrailersLoadedCallbackCaptor.capture());
+        verify(mModel).getTrailers(mTrailersLoadedCallbackCaptor.capture());
         mTrailersLoadedCallbackCaptor.getValue().onVideosLoaded(trailerList);
         verify(mView).showTrailersList(trailerList);
         //If there is an error
         mTrailersLoadedCallbackCaptor.getValue().onErrorLoadingVideos();
-        verify(mView).notifyErrorLoadingTrailers();
+        verify(mView).notifyUserErrorLoadingTrailers();
 
 
-        verify(mModel).getReviews(eq(mMovie), mReviewsLoadedCallbackCaptor.capture());
+        verify(mModel).getReviews(mReviewsLoadedCallbackCaptor.capture());
         mReviewsLoadedCallbackCaptor.getValue().onReviewsLoaded(reviewList);
         verify(mView).showReviewList(reviewList);
         //If there is an error
         mReviewsLoadedCallbackCaptor.getValue().onErrorLoadingReviews();
-        verify(mView).notifyErrorLoadingReviews();
+        verify(mView).notifyUserErrorLoadingReviews();
+
+
+        //Verify that no view methods are called if there is no current movie (no favorites)
+        reset(mView);
+        when(mModel.getSelectedMovie()).thenReturn(null);
+        verifyZeroInteractions(mView);
+
     }
 
     @Test
     public void isFavorite_test() throws Exception {
         //Call the method under test
-        mPresenter.isFavorite(mMovie);
+        mPresenter.isFavorite();
 
         //Verify
-        verify(mModel).isFavorite(mMovie);
+        verify(mModel).isFavorite();
     }
 
     @Test
-    public void onGoToFavorites() throws Exception {
+    public void onGoToFavorites_test() throws Exception {
         mPresenter.onGoToFavorites();
-        verify(mModel).updateSortToFavorites();
-        verify(mView).showFavorites();
+        verify(mModel).changeSortPreference("favorite");
+        verify(mModel).setSelectedMoviePos(0);
+        verify(mView).goToFavorites();
     }
 
     @Test
-    public void onFavoriteButtonClicked_test() throws Exception {
-        mPresenter.onFavoriteButtonClicked(true, mMovie);
-        verify(mModel).removeFromFavoritesDb(eq(mMovie), mRemoveFavoritesCallbackCaptor.capture());
-        //Removing from favorite success
+    public void onFavoriteButtonClicked_test_removed_from_favorites() throws Exception {
+        //Setup for already a favorite movie, and need to remove from favorites.
+        when(mModel.isFavorite()).thenReturn(true);
+        mPresenter.onFavoriteButtonClicked();
+        //Verify model is told
+        verify(mModel).removeFromFavorites(mRemoveFavoritesCallbackCaptor.capture());
+
+        //Removing from favorite success callback
+        when(mModel.isFavorite()).thenReturn(false);
         mRemoveFavoritesCallbackCaptor.getValue().onSuccessRemovingFav();
-        verify(mView).updateFavorite(false);
-        verify(mView, times(0)).notifyErrorRemovingFav();
+        verify(mView).updateFavButtonImage(false);
+        verify(mView).notifyUserFavStatusChanged(false);
 
-        reset(mView);
-        //Removing from favorite failure
+        //Removing from favorite error callback
+        when(mModel.isFavorite()).thenReturn(false);
         mRemoveFavoritesCallbackCaptor.getValue().onErrorRemovingFav();
-        verify(mView).notifyErrorRemovingFav();
-        verify(mView, times(0)).updateFavorite(anyBoolean());
+        verify(mView).notifyUserErrorRemovingFav();
 
 
-        //Add to favorites success
-        mPresenter.onFavoriteButtonClicked(false, mMovie);
-        verify(mModel).addToFavoritesDb(eq(mMovie), mAddFavoritesCallbackCaptor.capture());
-        mAddFavoritesCallbackCaptor.getValue().errorAddingToFav();
-        verify(mView).notifyErrorAddingFav();
-        verify(mView, times(0)).updateFavorite(anyBoolean());
-        reset(mView);
+
+
+    }
+    @Test
+    public void onFavoriteButtonClicked_test_added_tofavorites() throws Exception {
+        //Setup for not currently a fav movie, and need to add to favorites.
+        when(mModel.isFavorite()).thenReturn(false);
+        mPresenter.onFavoriteButtonClicked();
+        //Verify model is told
+        verify(mModel).addToFavorites(mAddFavoritesCallbackCaptor.capture());
+
+        //adding to favorites success callback
+        when(mModel.isFavorite()).thenReturn(true);
         mAddFavoritesCallbackCaptor.getValue().successAddingToFav();
-        verify(mView).updateFavorite(true);
-        verify(mView, times(0)).notifyErrorAddingFav();
+        verify(mView).updateFavButtonImage(true);
+        verify(mView).notifyUserFavStatusChanged(true);
 
+        // adding to favorites failure callback
+        mAddFavoritesCallbackCaptor.getValue().errorAddingToFav();
+        verify(mView).notifyUserErrorAddingFav();
     }
 
     @Test
