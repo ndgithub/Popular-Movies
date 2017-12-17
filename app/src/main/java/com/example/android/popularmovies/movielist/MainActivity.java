@@ -107,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
 //----------------------- Notes -----------------------//
 
 
-// Work on MovieDetailsPresenterTest. Look at example, I think you need to make a mock repos.
-// Create Injection class for mock source set and production.
+//Working on Test for MovieRepo. Don't need to test its dependecnies.
 
+// Create Injection class for mock source set and production.
 //what happens if no wi-fi
 
 //Add empty view to favorites list

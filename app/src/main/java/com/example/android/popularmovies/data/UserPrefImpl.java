@@ -79,7 +79,6 @@ public class UserPrefImpl implements UserPrefInterface {
 
     @Override
     public String getSortPref() {
-        Log.v("***", "mSharedPref: " + mSharedPref);
         return mSharedPref.getString("sort_by", "popular");
     }
 

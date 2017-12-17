@@ -16,7 +16,7 @@ public class MovieRepo implements MovieRepoInterface {
     private MovieServiceAPI mMovieServiceAPI;
     private UserPrefInterface mUserPref;
 
-    private ArrayList<Movie> mMovieList;
+    public ArrayList<Movie> mMovieList; //public for testing
     private Integer mCurrentMoviePos = 0;
 
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
@@ -31,30 +31,26 @@ public class MovieRepo implements MovieRepoInterface {
 
     public void initializeMovieList(final InitMoviesCallback callback) {
         if (mMovieList == null) {
-            Log.v("!!!", "Repo is about to set movie list");
             String sortPref = mUserPref.getSortPref();
-            Log.v("!!!", "sortPref: " + sortPref);
             if (sortPref.equals("favorite")) {
                 mMovieList = mUserPref.getFavoritesList();
-                Log.v("!!!", "movieList is set");
+                callback.onMoviesLoaded();
             } else {
-                mMovieServiceAPI.getMovieList(sortPref, new LoadMoviesCallback<ArrayList<Movie>>() {
-                    @Override
-                    public void onMoviesLoaded(ArrayList movieList) {
-                        mMovieList = movieList;
-                        callback.onMoviesLoaded();
-                        Log.v("!!!", "movieList is set");
+                mMovieServiceAPI.getMovieList(sortPref,
+                        new MovieServiceAPI.LoadMoviesCallback<ArrayList<Movie>>() {
+                            @Override
+                            public void onMoviesLoaded(ArrayList movieList) {
+                                mMovieList = movieList;
+                                callback.onMoviesLoaded();
 
-                    }
-                });
+                            }
+                        });
             }
         }
 
     }
 
-    @Override
     public ArrayList<Movie> returnCurrentMovieList() {
-
         return mMovieList;
     }
 
@@ -64,7 +60,8 @@ public class MovieRepo implements MovieRepoInterface {
             mMovieList = mUserPref.getFavoritesList();
             callback.onMoviesLoaded(mMovieList);
         } else {
-            mMovieServiceAPI.getMovieList(sortPref, new LoadMoviesCallback<ArrayList<Movie>>() {
+            mMovieServiceAPI.getMovieList(sortPref,
+                    new MovieServiceAPI.LoadMoviesCallback<ArrayList<Movie>>() {
                 @Override
                 public void onMoviesLoaded(ArrayList movieList) {
                     mMovieList = movieList;

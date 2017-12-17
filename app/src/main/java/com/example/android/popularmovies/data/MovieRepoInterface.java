@@ -45,8 +45,8 @@ public interface MovieRepoInterface {
     }
 
     void initializeMovieList(InitMoviesCallback callback);
+
     void loadMovieList(LoadMoviesCallback callback);
-     ArrayList<Movie> returnCurrentMovieList();
 
     void getCast(MovieRepoInterface.CastLoadedCallback callback);
 
@@ -58,8 +58,7 @@ public interface MovieRepoInterface {
 
     Movie getSelectedMovie();
 
-    Integer getCurrentMoviePos();
-    
+
     //----------------------- UserPrefStuff-----------------------//
     
     boolean isFavorite();

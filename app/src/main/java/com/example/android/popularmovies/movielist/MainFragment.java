@@ -51,7 +51,8 @@ public class MainFragment extends Fragment implements MovieListContract.View {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getContext();
-        mPresenter = new MovieListPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(), mContext), new MovieServiceApiImpl(mContext)), this);
+        mPresenter = new MovieListPresenter(ReposHolder.getMovieRepo(new UserPrefImpl(getActivity().getContentResolver(), mContext),
+                new MovieServiceApiImpl(mContext)), this);
 
     }
 

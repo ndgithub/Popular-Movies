@@ -34,7 +34,7 @@ public class MovieServiceApiImpl implements MovieServiceAPI {
     }
 
     @Override
-    public void getMovieList(final String sortPref, final MovieRepoInterface.LoadMoviesCallback callback) {
+    public void getMovieList(final String sortPref, final MovieServiceAPI.LoadMoviesCallback callback) {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET,
                         "https://api.themoviedb.org/3/movie/" + sortPref + "?api_key=" + QueryUtils.API_KEY + "&language=en-US",

@@ -28,7 +28,7 @@ public interface MovieServiceAPI {
         void onReviewsError();
     }
 
-    void getMovieList(String sortPref, MovieRepoInterface.LoadMoviesCallback callback);
+    void getMovieList(String sortPref, MovieServiceAPI.LoadMoviesCallback callback);
 
     void getCast(Movie selectedMovie, MovieServiceAPI.LoadCastCallback callback);
 

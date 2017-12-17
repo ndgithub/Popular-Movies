@@ -15,10 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -66,9 +63,10 @@ public class MovieDetailsPresenterTest {
         reviewList.add(new Review("author", "content", "path"));
         ArrayList<Video> trailerList = new ArrayList<>();
         trailerList.add(new Video("key", "title"));
-        when(mModel.getSelectedMovie()).thenReturn(mMovie);
-        //Call method under test
 
+        when(mModel.getSelectedMovie()).thenReturn(mMovie);
+
+        //Call method under test
         mPresenter.start();
 
         //Verify view methods get called

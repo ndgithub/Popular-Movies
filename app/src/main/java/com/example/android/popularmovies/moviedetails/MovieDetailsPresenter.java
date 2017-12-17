@@ -45,8 +45,6 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
                 public void onErrorLoadingCast() {
                     mView.notifyUserErrorLoadingCast();
                 }
-
-
             });
 
             mModel.getTrailers(new MovieRepoInterface.TrailersLoadedCallback<ArrayList<Video>>() {
