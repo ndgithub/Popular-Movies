@@ -1,13 +1,11 @@
 package com.example.android.popularmovies.movielist;
 
 
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.data.Movie;
 import com.example.android.popularmovies.data.MovieRepoInterface;
-import com.example.android.popularmovies.utils.ActivityUtils;
 
 import java.util.ArrayList;
 

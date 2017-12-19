@@ -158,12 +158,12 @@ public class MovieDetailsPresenterTest {
 
         //adding to favorites success callback
         when(mModel.isFavorite()).thenReturn(true);
-        mAddFavoritesCallbackCaptor.getValue().successAddingToFav();
+        mAddFavoritesCallbackCaptor.getValue().onSuccessAddingToFav();
         verify(mView).updateFavButtonImage(true);
         verify(mView).notifyUserFavStatusChanged(true);
 
         // adding to favorites failure callback
-        mAddFavoritesCallbackCaptor.getValue().errorAddingToFav();
+        mAddFavoritesCallbackCaptor.getValue().onErrorAddingToFav();
         verify(mView).notifyUserErrorAddingFav();
     }
 

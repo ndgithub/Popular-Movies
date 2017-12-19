@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
  * Created by Nicky on 11/17/17.
  */
 
-public class MovieListPresenterTest extends TestCase {
+public class MovieListPresenterTest {
 
     @Mock
     MovieListContract.View mView;
@@ -38,13 +38,10 @@ public class MovieListPresenterTest extends TestCase {
     @Captor
     ArgumentCaptor<MovieRepo.LoadMoviesCallback> mLoadMoviesCallbackCaptor;
 
-    @Captor
-    ArgumentCaptor<MenuItem> mMenuItemCaptor;
-
     @Mock
     MenuItem menuItem;
 
-    private MovieListPresenter mPresenter;
+    private MovieListPresenter mPresenter_testSub;
     private static ArrayList<Movie> movieList;
 
     @Before
@@ -52,13 +49,13 @@ public class MovieListPresenterTest extends TestCase {
         MockitoAnnotations.initMocks(this);
         movieList = new ArrayList<>();
         movieList.add(new Movie("346364", "/9E2y5Q7WlCVNEhP5GiVTjhEhx1o.jpg", "overview", "/tcheoA2nPATCm2vvXw2hVQoaEFD.jpg", "It", "7.3", "2017-09-05"));
-        mPresenter = new MovieListPresenter(mModel, mView);
+        mPresenter_testSub = new MovieListPresenter(mModel, mView);
     }
 
     @Test
     public void onSortChanged_test() {
         //Call method under test
-        mPresenter.onSortChanged(menuItem);
+        mPresenter_testSub.onSortChanged(menuItem);
 
         //Verify that model updates sharedPref
         verify(mModel).changeSortPreference(anyString());
@@ -67,7 +64,7 @@ public class MovieListPresenterTest extends TestCase {
 
     @Test
     public void showMovieList_test() {
-        mPresenter.showMovieList();
+        mPresenter_testSub.showMovieList();
         verify(mModel).loadMovieList(mLoadMoviesCallbackCaptor.capture());
         mLoadMoviesCallbackCaptor.getValue().onMoviesLoaded(movieList);
         verify(mView).showMovieList(movieList);
@@ -81,7 +78,7 @@ public class MovieListPresenterTest extends TestCase {
         when(mModel.getSortPref()).thenReturn(pref);
 
         //Call method under test
-        mPresenter.onSortByTapped();
+        mPresenter_testSub.onSortByTapped();
 
         //Verify
         verify(mModel).getSortPref();
@@ -92,7 +89,7 @@ public class MovieListPresenterTest extends TestCase {
 
     @Test
     public void onMovieSelected_test() {
-        mPresenter.onMovieSelected(anyInt());
+        mPresenter_testSub.onMovieSelected(anyInt());
          verify(mView).showMovieDetailsUI();
 
     }

@@ -21,27 +21,36 @@ public interface MovieRepoInterface {
 
     interface CastLoadedCallback<T> {
         void onCastLoaded(T cast);
+
         void onErrorLoadingCast();
     }
 
     interface ReviewsLoadedCallback<T> {
         void onReviewsLoaded(T reviews);
+
         void onErrorLoadingReviews();
     }
 
     interface TrailersLoadedCallback<T> {
         void onVideosLoaded(T trailers);
+
         void onErrorLoadingVideos();
     }
 
     interface addFavoritesCallback {
-        void errorAddingToFav();
-        void successAddingToFav();
+
+        void onSuccessAddingToFav();
+
+        void onErrorAddingToFav();
+
     }
 
     interface removeFavoritesCallback {
-        void onErrorRemovingFav();
         void onSuccessRemovingFav();
+
+        void onErrorRemovingFav();
+
+
     }
 
     void initializeMovieList(InitMoviesCallback callback);
@@ -60,7 +69,7 @@ public interface MovieRepoInterface {
 
 
     //----------------------- UserPrefStuff-----------------------//
-    
+
     boolean isFavorite();
 
     void removeFromFavorites(removeFavoritesCallback callback);

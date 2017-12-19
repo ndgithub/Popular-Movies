@@ -105,12 +105,12 @@ public class MovieDetailsPresenter implements MovieDetailsContract.UserActionsLi
         } else {
             mModel.addToFavorites(new MovieRepoInterface.addFavoritesCallback() {
                 @Override
-                public void errorAddingToFav() {
+                public void onErrorAddingToFav() {
                     mView.notifyUserErrorAddingFav();
                 }
 
                 @Override
-                public void successAddingToFav() {
+                public void onSuccessAddingToFav() {
                     mView.updateFavButtonImage(mModel.isFavorite());
                     mView.notifyUserFavStatusChanged(mModel.isFavorite());
                 }

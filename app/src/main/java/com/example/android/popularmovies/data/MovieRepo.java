@@ -17,7 +17,7 @@ public class MovieRepo implements MovieRepoInterface {
     private UserPrefInterface mUserPref;
 
     public ArrayList<Movie> mMovieList; //public for testing
-    private Integer mCurrentMoviePos = 0;
+    public Integer mCurrentMoviePos = 0; //public for testing
 
     public MovieRepo(UserPrefInterface userPref, MovieServiceAPI movieServiceAPI) {
         mUserPref = userPref;
@@ -75,12 +75,12 @@ public class MovieRepo implements MovieRepoInterface {
 
     public String getSortPref() {
         return mUserPref.getSortPref();
-
     }
 
     public void getTrailers(final MovieRepoInterface.TrailersLoadedCallback callback) {
 
-        mMovieServiceAPI.getTrailers(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadTrailersCallback() {
+        mMovieServiceAPI.getTrailers(getSelectedMovie(),
+                new MovieServiceAPI.LoadTrailersCallback() {
             @Override
             public void onTrailersLoaded(Object trailersList) {
                 callback.onVideosLoaded(trailersList);
@@ -91,12 +91,10 @@ public class MovieRepo implements MovieRepoInterface {
                 callback.onErrorLoadingVideos();
             }
         });
-
-
     }
 
     public void getCast(final MovieRepoInterface.CastLoadedCallback callback) {
-        mMovieServiceAPI.getCast(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadCastCallback<ArrayList<CastMember>>() {
+        mMovieServiceAPI.getCast(getSelectedMovie(), new MovieServiceAPI.LoadCastCallback<ArrayList<CastMember>>() {
             @Override
             public void onCastLoaded(ArrayList<CastMember> castList) {
                 callback.onCastLoaded(castList);
@@ -108,13 +106,11 @@ public class MovieRepo implements MovieRepoInterface {
             }
 
         });
-
-
     }
 
     public void getReviews(final MovieRepoInterface.ReviewsLoadedCallback callback) {
 
-        mMovieServiceAPI.getReviews(mMovieList.get(mCurrentMoviePos), new MovieServiceAPI.LoadReviewsCallback() {
+        mMovieServiceAPI.getReviews(getSelectedMovie(), new MovieServiceAPI.LoadReviewsCallback() {
             @Override
             public void onReviewsLoaded(Object reviewList) {
                 callback.onReviewsLoaded(reviewList);
@@ -143,27 +139,27 @@ public class MovieRepo implements MovieRepoInterface {
 
 
     public boolean isFavorite() {
-        return mUserPref.isFavorite(mMovieList.get(mCurrentMoviePos));
+        return mUserPref.isFavorite(getSelectedMovie());
     }
 
     public void addToFavorites(final MovieRepoInterface.addFavoritesCallback callback) {
 
-        mUserPref.addToFavorites(mMovieList.get(mCurrentMoviePos), new UserPrefInterface.AddFavoriteCallback() {
+        mUserPref.addToFavorites(getSelectedMovie(), new UserPrefInterface.AddFavoriteCallback() {
             @Override
             public void addSuccess() {
-                callback.successAddingToFav();
+                callback.onSuccessAddingToFav();
             }
 
             @Override
             public void addError() {
-                callback.errorAddingToFav();
+                callback.onErrorAddingToFav();
             }
         });
 
     }
 
     public void removeFromFavorites(final MovieRepoInterface.removeFavoritesCallback callback) {
-        mUserPref.removeFromFavorites(mMovieList.get(mCurrentMoviePos), new UserPrefInterface.RemoveFavoriteCallback() {
+        mUserPref.removeFromFavorites(getSelectedMovie(), new UserPrefInterface.RemoveFavoriteCallback() {
             @Override
             public void removeSuccess() {
                 callback.onSuccessRemovingFav();
@@ -177,12 +173,14 @@ public class MovieRepo implements MovieRepoInterface {
 
     }
 
-    public ArrayList<Movie> getCurrentMovieList() {
-        return mMovieList;
+    //Used for testing
+    public void setCurrentMovieList(ArrayList<Movie> movieList) {
+         mMovieList = movieList;
     }
 
-    public Integer getCurrentMoviePos() {
-        return mCurrentMoviePos;
+    //Used for testing
+    public void setCurrentMoviePos(int moviePos) {
+         mCurrentMoviePos = moviePos;
     }
 
 
