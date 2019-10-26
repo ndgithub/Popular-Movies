@@ -26,48 +26,48 @@ import static org.mockito.Mockito.when;
 public class MovieRepoTest {
 
     @Mock
-    MovieServiceAPI mMovieServiceAPI;
+    private MovieServiceAPI mMovieServiceAPI;
 
     @Mock
-    UserPrefInterface mUserPref;
+    private UserPrefInterface mUserPref;
 
     @Mock
-    MovieRepoInterface.InitMoviesCallback mInitMoviesCallback;
+    private MovieRepoInterface.InitMoviesCallback mInitMoviesCallback;
 
     @Mock
-    MovieRepoInterface.LoadMoviesCallback mLoadListCallback;
+    private MovieRepoInterface.LoadMoviesCallback mLoadListCallback;
     @Captor
-    ArgumentCaptor<MovieServiceAPI.LoadMoviesCallback> mMoviesCallbackCaptor;
+    private ArgumentCaptor<MovieServiceAPI.LoadMoviesCallback> mMoviesCallbackCaptor;
 
 
     @Mock
-    MovieRepoInterface.TrailersLoadedCallback mTrailersLoadedCallback;
+    private MovieRepoInterface.TrailersLoadedCallback mTrailersLoadedCallback;
     @Captor
-    ArgumentCaptor<MovieServiceAPI.LoadTrailersCallback> mTrailersCallbackCaptor;
+    private ArgumentCaptor<MovieServiceAPI.LoadTrailersCallback> mTrailersCallbackCaptor;
 
     @Mock
-    MovieRepoInterface.CastLoadedCallback mCastLoadedCallback;
+    private MovieRepoInterface.CastLoadedCallback mCastLoadedCallback;
     @Captor
-    ArgumentCaptor<MovieServiceAPI.LoadCastCallback> mCastCallbackCaptor;
+    private ArgumentCaptor<MovieServiceAPI.LoadCastCallback> mCastCallbackCaptor;
 
     @Mock
-    MovieRepoInterface.ReviewsLoadedCallback mReviewsLoadedCallback;
+    private MovieRepoInterface.ReviewsLoadedCallback mReviewsLoadedCallback;
     @Captor
-    ArgumentCaptor<MovieServiceAPI.LoadReviewsCallback> mReviewsCalbackCaptor;
+    private ArgumentCaptor<MovieServiceAPI.LoadReviewsCallback> mReviewsCallbackCaptor;
 
     @Mock
-    MovieRepoInterface.addFavoritesCallback mAddFavCallback;
+    private MovieRepoInterface.addFavoritesCallback mAddFavCallback;
     @Captor
-    ArgumentCaptor<UserPrefInterface.AddFavoriteCallback> mAddFavCallbackCaptor;
+    private ArgumentCaptor<UserPrefInterface.AddFavoriteCallback> mAddFavCallbackCaptor;
 
     @Mock
-    MovieRepoInterface.removeFavoritesCallback mRemoveFavCallback;
+    private MovieRepoInterface.removeFavoritesCallback mRemoveFavCallback;
     @Captor
-    ArgumentCaptor<UserPrefInterface.RemoveFavoriteCallback> mRemoveFavCallbackCaptor;
+    private ArgumentCaptor<UserPrefInterface.RemoveFavoriteCallback> mRemoveFavCallbackCaptor;
 
 
-    MovieRepo mMovieRepo_testSub;
-    Movie mCurrentMovie;
+    private MovieRepo mMovieRepo_testSub;
+    private Movie mCurrentMovie;
 
     @Before
     public void testSetup() {
@@ -221,12 +221,12 @@ public class MovieRepoTest {
         mMovieRepo_testSub.getReviews(mReviewsLoadedCallback);
 
         //Verify
-        verify(mMovieServiceAPI).getReviews(eq(mCurrentMovie), mReviewsCalbackCaptor.capture());
+        verify(mMovieServiceAPI).getReviews(eq(mCurrentMovie), mReviewsCallbackCaptor.capture());
         //On Success
-        mReviewsCalbackCaptor.getValue().onReviewsLoaded(reviewList);
+        mReviewsCallbackCaptor.getValue().onReviewsLoaded(reviewList);
         mReviewsLoadedCallback.onReviewsLoaded(reviewList);
         //On Error
-        mReviewsCalbackCaptor.getValue().onReviewsError();
+        mReviewsCallbackCaptor.getValue().onReviewsError();
         mReviewsLoadedCallback.onErrorLoadingReviews();
     }
 

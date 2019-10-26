@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.List
 // Create Injection class for mock source set and production.
 //what happens if no wi-fi
 
-//Add empty view to favorites list
+// empty view to favorites list
 
 //Espresso testing
 //Dagger
